@@ -57,15 +57,28 @@ jobs:
         run: |
           echo "Find transition to '진행 중' for $JIRA_KEY"
 
-          TRANSITIONS=$(curl --fail --silent --request GET \
+          HTTP_RESPONSE=$(curl --silent --show-error --write-out "HTTP_STATUS:%{http_code}" \
+            --request GET \
             --url "https://${JIRA_BASE_URL}/rest/api/3/issue/${JIRA_KEY}/transitions" \
             --user "${JIRA_USER_EMAIL}:${JIRA_API_TOKEN}" \
             --header "Accept: application/json")
 
-          echo "Available transitions:"
-          echo "$TRANSITIONS" | jq '.transitions[] | {id, name, to: .to.name}'
+          # HTTP_STATUS 뒷부분 떼어내기
+          HTTP_BODY=$(echo "$HTTP_RESPONSE" | sed -e 's/HTTP_STATUS\:.*//g')
+          HTTP_STATUS=$(echo "$HTTP_RESPONSE" | tr -d '\n' | sed -e 's/.*HTTP_STATUS://')
 
-          INPROG_ID=$(echo "$TRANSITIONS" | jq -r '.transitions[] | select(.to.name=="진행 중") | .id')
+          echo "HTTP_STATUS=$HTTP_STATUS"
+          echo "RAW_BODY=$HTTP_BODY"
+
+          if [ "$HTTP_STATUS" -ge 400 ]; then
+            echo "Failed to get transitions. Status=$HTTP_STATUS"
+            exit 1
+          fi
+
+          echo "Available transitions:"
+          echo "$HTTP_BODY" | jq '.transitions[] | {id, name, to: .to.name}'
+
+          INPROG_ID=$(echo "$HTTP_BODY" | jq -r '.transitions[] | select(.to.name=="진행 중") | .id')
 
           if [ -z "$INPROG_ID" ]; then
             echo "No transition to '진행 중' found. Skip."
