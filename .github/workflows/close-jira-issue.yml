@@ -1,0 +1,46 @@
+name: Close Jira issue
+
+on:
+  issues:
+    types:
+      - closed   # 깃허브 이슈가 닫힐 때
+
+jobs:
+  close-issue:
+    runs-on: ubuntu-latest
+    env:
+      JIRA_BASE_URL: ${{ secrets.JIRA_BASE_URL }}
+      JIRA_API_TOKEN: ${{ secrets.JIRA_API_TOKEN }}
+      JIRA_USER_EMAIL: ${{ secrets.JIRA_USER_EMAIL }}
+
+    steps:
+      - name: Check Jira login
+        run: |
+          curl --fail --request GET \
+          --url "https://${JIRA_BASE_URL}/rest/api/3/myself" \
+          --user "${JIRA_USER_EMAIL}:${JIRA_API_TOKEN}" \
+          --header "Accept: application/json"
+
+      - name: Extract Jira key from comment
+        id: extract
+        run: |
+          # 이슈 제목에 [WEG-1] 이런 형식이 있다고 가정하면 제목에서 뽑을 수도 있고,
+          # 댓글에 "Jira Issue Created: [WEG-1](...)" 라고 적혀 있으니 거기서 뽑을 수도 있음.
+          # 우선 간단하게 제목에서 뽑는 버전:
+          TITLE="${{ github.event.issue.title }}"
+          KEY=$(echo "$TITLE" | grep -oE '[A-Z]+-[0-9]+' || true)
+          echo "JIRA_KEY=$KEY" >> $GITHUB_ENV
+
+      - name: Close Jira issue
+        if: env.JIRA_KEY != ''
+        run: |
+          # 완료 상태 transition id는 프로젝트마다 다르니까, 
+          # 일단 31 같은 값은 실제 프로젝트에서 조회해서 바꿔야 함.
+          curl --fail --silent --request POST \
+            --url "https://${JIRA_BASE_URL}/rest/api/3/issue/${{ env.JIRA_KEY }}/transitions" \
+            --user "${JIRA_USER_EMAIL}:${JIRA_API_TOKEN}" \
+            --header "Accept: application/json" \
+            --header "Content-Type: application/json" \
+            --data '{
+              "transition": { "id": "31" }
+            }'
