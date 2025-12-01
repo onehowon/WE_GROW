@@ -1,0 +1,70 @@
+name: Create Jira issue
+
+on:
+  issues:
+    types:
+      - opened   # 깃허브 이슈가 생성될 때 트리거
+
+jobs:
+  issue-sync:
+    name: Create Jira issue
+    runs-on: ubuntu-latest
+    env:
+      JIRA_BASE_URL: ${{ secrets.JIRA_BASE_URL }}
+      JIRA_API_TOKEN: ${{ secrets.JIRA_API_TOKEN }}
+      JIRA_USER_EMAIL: ${{ secrets.JIRA_USER_EMAIL }}
+      PROJECT_KEY: ${{ secrets.PROJECT_KEY }}
+
+    steps:
+      - name: Check Jira login
+        run: |
+          curl --fail --request GET \
+          --url "https://${JIRA_BASE_URL}/rest/api/3/myself" \
+          --user "${JIRA_USER_EMAIL}:${JIRA_API_TOKEN}" \
+          --header "Accept: application/json"
+
+      - name: Create Jira issue
+        id: create-issue
+        run: |
+          # GitHub 이슈 제목/본문 가져오기
+          TITLE="${{ github.event.issue.title }}"
+          BODY="${{ github.event.issue.body }}"
+
+          # Jira 이슈 생성
+          RESPONSE=$(curl --fail --silent --request POST \
+            --url "https://${JIRA_BASE_URL}/rest/api/3/issue" \
+            --user "${JIRA_USER_EMAIL}:${JIRA_API_TOKEN}" \
+            --header "Accept: application/json" \
+            --header "Content-Type: application/json" \
+            --data "{
+              \"fields\": {
+                \"project\": { \"key\": \"${PROJECT_KEY}\" },
+                \"issuetype\": { \"name\": \"Story\" },
+                \"summary\": \"${TITLE}\",
+                \"description\": {
+                  \"type\": \"doc\",
+                  \"version\": 1,
+                  \"content\": [
+                    {
+                      \"type\": \"paragraph\",
+                      \"content\": [
+                        { \"type\": \"text\", \"text\": \"${BODY:-No description}\" }
+                      ]
+                    }
+                  ]
+                }
+              }
+            }")
+
+          echo "Response: $RESPONSE"
+          ISSUE_KEY=$(echo "$RESPONSE" | jq -r '.key')
+          echo "ISSUE_KEY=$ISSUE_KEY" >> $GITHUB_ENV
+
+      - name: Comment Jira link on GitHub issue
+        if: env.ISSUE_KEY != ''
+        uses: actions-cool/issues-helper@v3
+        with:
+          actions: 'create-comment'
+          token: ${{ secrets.GITHUB_TOKEN }}
+          issue-number: ${{ github.event.issue.number }}
+          body: 'Jira Issue Created: [${{ env.ISSUE_KEY }}](https://${{ secrets.JIRA_BASE_URL }}/browse/${{ env.ISSUE_KEY }})'
