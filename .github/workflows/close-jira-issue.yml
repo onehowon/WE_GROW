@@ -1,9 +1,14 @@
 name: Close Jira issue
 
+permissions:
+  issues: write
+  contents: read
+
 on:
   issues:
     types:
-      - closed   # 깃허브 이슈가 닫힐 때
+      - closed
+
 
 jobs:
   close-issue:
