@@ -43,7 +43,7 @@ jobs:
           fi
           echo "JIRA_KEY=$JIRA_KEY"
 
-      # 3) Jira 로그인 체크 (토큰/이메일 제대로인지 확인)
+      # 3) Jira 로그인 체크
       - name: Jira login check
         run: |
           curl --fail --request GET \
