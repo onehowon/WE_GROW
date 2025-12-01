@@ -45,8 +45,7 @@ jobs:
         run: |
           JIRA_KEY="${JIRA_KEY}"
 
-          # 여기 값을 "리뷰 중" transition id로 바꿔라
-          IN_REVIEW_ID="21"
+          IN_REVIEW_ID="31"
 
           echo "Move $JIRA_KEY to In Review (transition: $IN_REVIEW_ID)"
 
@@ -77,7 +76,7 @@ jobs:
           JIRA_KEY="${JIRA_KEY}"
 
           # 여기 값을 "완료" transition id로 바꿔라
-          DONE_ID="31"
+          DONE_ID="41"
 
           echo "Move $JIRA_KEY to Done (transition: $DONE_ID)"
 
