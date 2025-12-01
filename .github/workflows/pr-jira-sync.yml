@@ -16,18 +16,25 @@ jobs:
       JIRA_USER_EMAIL: ${{ secrets.JIRA_USER_EMAIL }}
 
     steps:
-      # 1) PR 제목에서 [WEG-4] 같은 JIRA 키 추출
-      - name: Extract Jira key from PR title
+      # 1) PR 제목 + 브랜치 이름에서 JIRA 키 추출
+      - name: Extract Jira key from PR title or branch
         id: extract-key
         run: |
           PR_TITLE="${{ github.event.pull_request.title }}"
+          BRANCH="${{ github.head_ref }}"
           echo "PR_TITLE=$PR_TITLE"
+          echo "BRANCH=$BRANCH"
 
-          # [WEG-4] 또는 WEG-4 형식의 키를 추출
-          KEY=$(echo "$PR_TITLE" | grep -oE '[A-Z]+-[0-9]+' || true)
+          # 1차: PR 제목에서 [WEG-6], WEG-6 같이 생긴 것 찾기 (대소문자 무시)
+          KEY=$(echo "$PR_TITLE" | grep -oiE '[A-Z]+-[0-9]+' | head -n1 || true)
+
+          # 2차: 못 찾으면 브랜치 이름에서 찾기 (feat/WEG-6_login 같은 케이스)
+          if [ -z "$KEY" ]; then
+            KEY=$(echo "$BRANCH" | grep -oiE '[A-Z]+-[0-9]+' | head -n1 || true)
+          fi
 
           if [ -z "$KEY" ]; then
-            echo "No JIRA key found in PR title. (expected like: [WEG-4])"
+            echo "No JIRA key found in title or branch. (expected like: [WEG-6] or feat/WEG-6_xxx)"
           else
             echo "Found JIRA key: $KEY"
           fi
@@ -57,9 +64,12 @@ jobs:
         run: |
           echo "Find transition to '진행 중' for $JIRA_KEY"
 
+          URL="https://${JIRA_BASE_URL}/rest/api/3/issue/${JIRA_KEY}/transitions"
+          echo "GET $URL"
+
           HTTP_RESPONSE=$(curl --silent --show-error --write-out "HTTP_STATUS:%{http_code}" \
             --request GET \
-            --url "https://${JIRA_BASE_URL}/rest/api/3/issue/${JIRA_KEY}/transitions" \
+            --url "$URL" \
             --user "${JIRA_USER_EMAIL}:${JIRA_API_TOKEN}" \
             --header "Accept: application/json")
 
@@ -110,9 +120,12 @@ jobs:
         run: |
           echo "Find transition to '완료' for $JIRA_KEY"
 
+          URL="https://${JIRA_BASE_URL}/rest/api/3/issue/${JIRA_KEY}/transitions"
+          echo "GET $URL"
+
           HTTP_RESPONSE=$(curl --silent --show-error --write-out "HTTP_STATUS:%{http_code}" \
             --request GET \
-            --url "https://${JIRA_BASE_URL}/rest/api/3/issue/${JIRA_KEY}/transitions" \
+            --url "$URL" \
             --user "${JIRA_USER_EMAIL}:${JIRA_API_TOKEN}" \
             --header "Accept: application/json")
 
