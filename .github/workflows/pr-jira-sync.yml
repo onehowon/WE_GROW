@@ -1,5 +1,6 @@
 name: Sync Jira on PR events
 
+# test
 on:
   pull_request:
     types: [opened, reopened, closed]
