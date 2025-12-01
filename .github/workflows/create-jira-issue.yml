@@ -1,9 +1,14 @@
 name: Create Jira issue
 
+permissions:
+  issues: write       # GitHub 이슈에 댓글 쓰려고 필요
+  contents: read      # 코드 체크아웃 등 기본 권한
+
 on:
   issues:
     types:
-      - opened   # 깃허브 이슈가 생성될 때 트리거
+      - opened
+
 
 jobs:
   issue-sync:
