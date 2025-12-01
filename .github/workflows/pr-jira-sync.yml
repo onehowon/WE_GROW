@@ -59,7 +59,7 @@ jobs:
             --header "Accept: application/json"
 
       # 4) PR open / reopen 시 → Jira 이슈를 "진행 중"으로 이동 + PR opened 댓글
-      - name: Move Jira issue to In Progress on PR opened
+            - name: Move Jira issue to In Progress on PR opened
         if: github.event.action == 'opened' || github.event.action == 'reopened'
         run: |
           echo "Find transition to '진행 중' for $JIRA_KEY"
@@ -96,23 +96,56 @@ jobs:
 
           echo "Move $JIRA_KEY to '진행 중' (transition id: $INPROG_ID)"
 
-          curl --fail --silent --request POST \
-            --url "https://${JIRA_BASE_URL}/rest/api/3/issue/${JIRA_KEY}/transitions" \
+          # --- 여기부터 POST도 상태/바디 찍기 ---
+          POST_URL="https://${JIRA_BASE_URL}/rest/api/3/issue/${JIRA_KEY}/transitions"
+          echo "POST $POST_URL"
+
+          POST_RESPONSE=$(curl --silent --show-error --write-out "HTTP_STATUS:%{http_code}" \
+            --request POST \
+            --url "$POST_URL" \
             --user "${JIRA_USER_EMAIL}:${JIRA_API_TOKEN}" \
             --header "Accept: application/json" \
             --header "Content-Type: application/json" \
             --data "{
               \"transition\": { \"id\": \"${INPROG_ID}\" }
-            }"
+            }")
 
-          curl --fail --silent --request POST \
-            --url "https://${JIRA_BASE_URL}/rest/api/3/issue/${JIRA_KEY}/comment" \
+          POST_BODY=$(echo "$POST_RESPONSE" | sed -e 's/HTTP_STATUS\:.*//g')
+          POST_STATUS=$(echo "$POST_RESPONSE" | tr -d '\n' | sed -e 's/.*HTTP_STATUS://')
+
+          echo "TRANSITION_HTTP_STATUS=$POST_STATUS"
+          echo "TRANSITION_RAW_BODY=$POST_BODY"
+
+          if [ "$POST_STATUS" -ge 400 ]; then
+            echo "Failed to transition issue. Status=$POST_STATUS"
+            exit 1
+          fi
+
+          # 성공했다면 댓글 추가
+          COMMENT_URL="https://${JIRA_BASE_URL}/rest/api/3/issue/${JIRA_KEY}/comment"
+          echo "POST $COMMENT_URL (add comment)"
+
+          COMMENT_RESPONSE=$(curl --silent --show-error --write-out "HTTP_STATUS:%{http_code}" \
+            --request POST \
+            --url "$COMMENT_URL" \
             --user "${JIRA_USER_EMAIL}:${JIRA_API_TOKEN}" \
             --header "Accept: application/json" \
             --header "Content-Type: application/json" \
             --data "{
               \"body\": \"PR #${{ github.event.pull_request.number }} opened: ${{ github.event.pull_request.html_url }}\"
-            }"
+            }")
+
+          COMMENT_BODY=$(echo "$COMMENT_RESPONSE" | sed -e 's/HTTP_STATUS\:.*//g')
+          COMMENT_STATUS=$(echo "$COMMENT_RESPONSE" | tr -d '\n' | sed -e 's/.*HTTP_STATUS://')
+
+          echo "COMMENT_HTTP_STATUS=$COMMENT_STATUS"
+          echo "COMMENT_RAW_BODY=$COMMENT_BODY"
+
+          if [ "$COMMENT_STATUS" -ge 400 ]; then
+            echo "Failed to add comment. Status=$COMMENT_STATUS"
+            exit 1
+          fi
+
 
       # 5) PR closed + merged == true → Jira 이슈를 "완료"로 이동 + PR merged 댓글
       - name: Move Jira issue to Done on PR merged
