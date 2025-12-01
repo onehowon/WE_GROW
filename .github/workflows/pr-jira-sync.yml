@@ -11,27 +11,39 @@ jobs:
   jira-pr-sync:
     runs-on: ubuntu-latest
     env:
-      JIRA_BASE_URL: ${{ secrets.JIRA_BASE_URL }}
+      JIRA_BASE_URL: ${{ secrets.JIRA_BASE_URL }}      # 예: ajou-team-niy9vdqg.atlassian.net
       JIRA_API_TOKEN: ${{ secrets.JIRA_API_TOKEN }}
       JIRA_USER_EMAIL: ${{ secrets.JIRA_USER_EMAIL }}
 
     steps:
+      # 1) PR 제목에서 [WEG-4] 같은 JIRA 키 추출
       - name: Extract Jira key from PR title
         id: extract-key
         run: |
           PR_TITLE="${{ github.event.pull_request.title }}"
           echo "PR_TITLE=$PR_TITLE"
-          # [WEG-4] 처럼 대괄호 안의 키를 찾는다
-          KEY=$(echo "$PR_TITLE" | grep -oE '[A-Z]+-[0-9]+')
-          echo "JIRA_KEY=$KEY" >> $GITHUB_ENV
 
-      - name: Check Jira key exists
-        run: |
-          if [ -z "${JIRA_KEY}" ]; then
-            echo "No JIRA key found in PR title. Skip."
-            exit 0
+          # [WEG-4] 또는 WEG-4 형식의 키를 추출
+          KEY=$(echo "$PR_TITLE" | grep -oE '[A-Z]+-[0-9]+' || true)
+
+          if [ -z "$KEY" ]; then
+            echo "No JIRA key found in PR title. (expected like: [WEG-4])"
+          else
+            echo "Found JIRA key: $KEY"
           fi
 
+          echo "JIRA_KEY=$KEY" >> $GITHUB_ENV
+
+      # 2) Jira 키가 없으면 그냥 스킵
+      - name: Stop if no Jira key
+        run: |
+          if [ -z "$JIRA_KEY" ]; then
+            echo "JIRA_KEY is empty. Skip Jira sync."
+            exit 0
+          fi
+          echo "JIRA_KEY=$JIRA_KEY"
+
+      # 3) Jira 로그인 체크 (토큰/이메일 제대로인지 확인)
       - name: Jira login check
         run: |
           curl --fail --request GET \
@@ -39,27 +51,38 @@ jobs:
             --user "${JIRA_USER_EMAIL}:${JIRA_API_TOKEN}" \
             --header "Accept: application/json"
 
-      # PR 열릴 때 / reopened → 리뷰 중(or 진행 중) 상태로 전환 + 댓글
-      - name: Move Jira issue to In Review on PR opened
+      # 4) PR open / reopen 시 → Jira 이슈를 "진행 중"으로 이동 + PR opened 댓글
+      - name: Move Jira issue to In Progress on PR opened
         if: github.event.action == 'opened' || github.event.action == 'reopened'
         run: |
-          JIRA_KEY="${JIRA_KEY}"
+          echo "Find transition to '진행 중' for $JIRA_KEY"
 
-          IN_REVIEW_ID="31"
+          TRANSITIONS=$(curl --fail --silent --request GET \
+            --url "https://${JIRA_BASE_URL}/rest/api/3/issue/${JIRA_KEY}/transitions" \
+            --user "${JIRA_USER_EMAIL}:${JIRA_API_TOKEN}" \
+            --header "Accept: application/json")
 
-          echo "Move $JIRA_KEY to In Review (transition: $IN_REVIEW_ID)"
+          echo "Available transitions:"
+          echo "$TRANSITIONS" | jq '.transitions[] | {id, name, to: .to.name}'
 
-          # 상태 전환
+          INPROG_ID=$(echo "$TRANSITIONS" | jq -r '.transitions[] | select(.to.name=="진행 중") | .id')
+
+          if [ -z "$INPROG_ID" ]; then
+            echo "No transition to '진행 중' found. Skip."
+            exit 0
+          fi
+
+          echo "Move $JIRA_KEY to '진행 중' (transition id: $INPROG_ID)"
+
           curl --fail --silent --request POST \
             --url "https://${JIRA_BASE_URL}/rest/api/3/issue/${JIRA_KEY}/transitions" \
             --user "${JIRA_USER_EMAIL}:${JIRA_API_TOKEN}" \
             --header "Accept: application/json" \
             --header "Content-Type: application/json" \
             --data "{
-              \"transition\": { \"id\": \"${IN_REVIEW_ID}\" }
+              \"transition\": { \"id\": \"${INPROG_ID}\" }
             }"
 
-          # Jira 코멘트 추가 (선택)
           curl --fail --silent --request POST \
             --url "https://${JIRA_BASE_URL}/rest/api/3/issue/${JIRA_KEY}/comment" \
             --user "${JIRA_USER_EMAIL}:${JIRA_API_TOKEN}" \
@@ -69,16 +92,28 @@ jobs:
               \"body\": \"PR #${{ github.event.pull_request.number }} opened: ${{ github.event.pull_request.html_url }}\"
             }"
 
-      # PR이 closed + merged == true → 완료 상태로 전환
+      # 5) PR closed + merged == true → Jira 이슈를 "완료"로 이동 + PR merged 댓글
       - name: Move Jira issue to Done on PR merged
         if: github.event.action == 'closed' && github.event.pull_request.merged == true
         run: |
-          JIRA_KEY="${JIRA_KEY}"
+          echo "Find transition to '완료' for $JIRA_KEY"
 
-          # 여기 값을 "완료" transition id로 바꿔라
-          DONE_ID="41"
+          TRANSITIONS=$(curl --fail --silent --request GET \
+            --url "https://${JIRA_BASE_URL}/rest/api/3/issue/${JIRA_KEY}/transitions" \
+            --user "${JIRA_USER_EMAIL}:${JIRA_API_TOKEN}" \
+            --header "Accept: application/json")
 
-          echo "Move $JIRA_KEY to Done (transition: $DONE_ID)"
+          echo "Available transitions:"
+          echo "$TRANSITIONS" | jq '.transitions[] | {id, name, to: .to.name}'
+
+          DONE_ID=$(echo "$TRANSITIONS" | jq -r '.transitions[] | select(.to.name=="완료") | .id')
+
+          if [ -z "$DONE_ID" ]; then
+            echo "No transition to '완료' found. Skip."
+            exit 0
+          fi
+
+          echo "Move $JIRA_KEY to '완료' (transition id: $DONE_ID)"
 
           curl --fail --silent --request POST \
             --url "https://${JIRA_BASE_URL}/rest/api/3/issue/${JIRA_KEY}/transitions" \
