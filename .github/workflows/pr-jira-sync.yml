@@ -11,12 +11,11 @@ jobs:
   jira-pr-sync:
     runs-on: ubuntu-latest
     env:
-      JIRA_BASE_URL: ${{ secrets.JIRA_BASE_URL }}      # 예: ajou-team-niy9vdqg.atlassian.net
+      JIRA_BASE_URL: ${{ secrets.JIRA_BASE_URL }}
       JIRA_API_TOKEN: ${{ secrets.JIRA_API_TOKEN }}
       JIRA_USER_EMAIL: ${{ secrets.JIRA_USER_EMAIL }}
 
     steps:
-      # 1) PR 제목 + 브랜치 이름에서 JIRA 키 추출
       - name: Extract Jira key from PR title or branch
         id: extract-key
         run: |
@@ -25,32 +24,21 @@ jobs:
           echo "PR_TITLE=$PR_TITLE"
           echo "BRANCH=$BRANCH"
 
-          # 1차: PR 제목에서 [WEG-6], WEG-6 형태 찾기
           KEY=$(echo "$PR_TITLE" | grep -oiE '[A-Z]+-[0-9]+' | head -n1 || true)
-
-          # 2차: 못 찾으면 브랜치 이름에서 (feat/WEG-6_login 등)
           if [ -z "$KEY" ]; then
             KEY=$(echo "$BRANCH" | grep -oiE '[A-Z]+-[0-9]+' | head -n1 || true)
           fi
 
-          if [ -z "$KEY" ]; then
-            echo "No JIRA key found in title or branch. (expected like: [WEG-6] or feat/WEG-6_xxx)"
-          else
-            echo "Found JIRA key: $KEY"
-          fi
-
+          echo "Found JIRA key: $KEY"
           echo "JIRA_KEY=$KEY" >> $GITHUB_ENV
 
-      # 2) Jira 키가 없으면 그냥 스킵
       - name: Stop if no Jira key
         run: |
           if [ -z "$JIRA_KEY" ]; then
-            echo "JIRA_KEY is empty. Skip Jira sync."
+            echo "JIRA_KEY empty → skip"
             exit 0
           fi
-          echo "JIRA_KEY=$JIRA_KEY"
 
-      # 3) Jira 로그인 체크
       - name: Jira login check
         run: |
           curl --fail --request GET \
@@ -58,126 +46,72 @@ jobs:
             --user "${JIRA_USER_EMAIL}:${JIRA_API_TOKEN}" \
             --header "Accept: application/json"
 
-      # 4) PR open / reopen 시 → Jira 이슈를 "진행 중"으로 이동
+      # ==============================
+      #  PR OPEN → "진행 중"으로 이동
+      # ==============================
       - name: Move Jira issue to In Progress on PR opened
         if: github.event.action == 'opened' || github.event.action == 'reopened'
         run: |
           echo "Find transition to '진행 중' for $JIRA_KEY"
 
           URL="https://${JIRA_BASE_URL}/rest/api/3/issue/${JIRA_KEY}/transitions"
-          echo "GET $URL"
 
-          HTTP_RESPONSE=$(curl --silent --show-error --write-out "HTTP_STATUS:%{http_code}" \
+          RESPONSE=$(curl --silent --show-error --write-out "HTTP_STATUS:%{http_code}" \
             --request GET \
             --url "$URL" \
             --user "${JIRA_USER_EMAIL}:${JIRA_API_TOKEN}" \
             --header "Accept: application/json")
 
-          HTTP_BODY=$(echo "$HTTP_RESPONSE" | sed -e 's/HTTP_STATUS\:.*//g')
-          HTTP_STATUS=$(echo "$HTTP_RESPONSE" | tr -d '\n' | sed -e 's/.*HTTP_STATUS://')
+          BODY=$(echo "$RESPONSE" | sed -e 's/HTTP_STATUS\:.*//g')
+          STATUS=$(echo "$RESPONSE" | tr -d '\n' | sed -e 's/.*HTTP_STATUS://')
 
-          echo "HTTP_STATUS=$HTTP_STATUS"
-          echo "RAW_BODY=$HTTP_BODY"
+          echo "HTTP_STATUS=$STATUS"
+          echo "$BODY" | jq '.transitions[] | {id,name,to: .to.name}'
 
-          if [ "$HTTP_STATUS" -ge 400 ]; then
-            echo "Failed to get transitions. Status=$HTTP_STATUS"
-            exit 1
-          fi
+          INPROG_ID=$(echo "$BODY" | jq -r '.transitions[] | select(.to.name=="진행 중") | .id')
 
-          echo "Available transitions:"
-          echo "$HTTP_BODY" | jq '.transitions[] | {id, name, to: .to.name}'
+          echo "INPROG_ID=$INPROG_ID"
 
-          INPROG_ID=$(echo "$HTTP_BODY" | jq -r '.transitions[] | select(.to.name=="진행 중") | .id')
-
-          if [ -z "$INPROG_ID" ]; then
-            echo "No transition to '진행 중' found. Skip."
-            exit 0
-          fi
-
-          echo "Move $JIRA_KEY to '진행 중' (transition id: $INPROG_ID)"
-
-          # --- 전환 POST + 상태/바디 로그 ---
-          POST_URL="https://${JIRA_BASE_URL}/rest/api/3/issue/${JIRA_KEY}/transitions"
-          echo "POST $POST_URL"
-
-          POST_RESPONSE=$(curl --silent --show-error --write-out "HTTP_STATUS:%{http_code}" \
-            --request POST \
-            --url "$POST_URL" \
+          curl --fail --silent --request POST \
+            --url "https://${JIRA_BASE_URL}/rest/api/3/issue/${JIRA_KEY}/transitions" \
             --user "${JIRA_USER_EMAIL}:${JIRA_API_TOKEN}" \
             --header "Accept: application/json" \
             --header "Content-Type: application/json" \
             --data "{
               \"transition\": { \"id\": \"${INPROG_ID}\" }
-            }")
+            }"
 
-          POST_BODY=$(echo "$POST_RESPONSE" | sed -e 's/HTTP_STATUS\:.*//g')
-          POST_STATUS=$(echo "$POST_RESPONSE" | tr -d '\n' | sed -e 's/.*HTTP_STATUS://')
-
-          echo "TRANSITION_HTTP_STATUS=$POST_STATUS"
-          echo "TRANSITION_RAW_BODY=$POST_BODY"
-
-          if [ "$POST_STATUS" -ge 400 ]; then
-            echo "Failed to transition issue. Status=$POST_STATUS"
-            exit 1
-          fi
-
-      # 5) PR closed + merged == true → Jira 이슈를 "완료"로 이동
+      # ==============================
+      # PR MERGED → "완료"로 이동
+      # ==============================
       - name: Move Jira issue to Done on PR merged
         if: github.event.action == 'closed' && github.event.pull_request.merged == true
         run: |
           echo "Find transition to '완료' for $JIRA_KEY"
 
           URL="https://${JIRA_BASE_URL}/rest/api/3/issue/${JIRA_KEY}/transitions"
-          echo "GET $URL"
 
-          HTTP_RESPONSE=$(curl --silent --show-error --write-out "HTTP_STATUS:%{http_code}" \
+          RESPONSE=$(curl --silent --show-error --write-out "HTTP_STATUS:%{http_code}" \
             --request GET \
             --url "$URL" \
             --user "${JIRA_USER_EMAIL}:${JIRA_API_TOKEN}" \
             --header "Accept: application/json")
 
-          HTTP_BODY=$(echo "$HTTP_RESPONSE" | sed -e 's/HTTP_STATUS\:.*//g')
-          HTTP_STATUS=$(echo "$HTTP_RESPONSE" | tr -d '\n' | sed -e 's/.*HTTP_STATUS://')
+          BODY=$(echo "$RESPONSE" | sed -e 's/HTTP_STATUS\:.*//g')
+          STATUS=$(echo "$RESPONSE" | tr -d '\n' | sed -e 's/.*HTTP_STATUS://')
 
-          echo "HTTP_STATUS=$HTTP_STATUS"
-          echo "RAW_BODY=$HTTP_BODY"
+          echo "HTTP_STATUS=$STATUS"
+          echo "$BODY" | jq '.transitions[] | {id,name,to: .to.name}'
 
-          if [ "$HTTP_STATUS" -ge 400 ]; then
-            echo "Failed to get transitions. Status=$HTTP_STATUS"
-            exit 1
-          fi
+          DONE_ID=$(echo "$BODY" | jq -r '.transitions[] | select(.to.name=="완료") | .id')
+          echo "DONE_ID=$DONE_ID"
 
-          echo "Available transitions:"
-          echo "$HTTP_BODY" | jq '.transitions[] | {id, name, to: .to.name}'
-
-          DONE_ID=$(echo "$HTTP_BODY" | jq -r '.transitions[] | select(.to.name=="완료") | .id')
-
-          if [ -z "$DONE_ID" ]; then
-            echo "No transition to '완료' found. Skip."
-            exit 0
-          fi
-
-          echo "Move $JIRA_KEY to '완료' (transition id: $DONE_ID)"
-
-          POST_URL="https://${JIRA_BASE_URL}/rest/api/3/issue/${JIRA_KEY}/transitions"
-          echo "POST $POST_URL"
-
-          POST_RESPONSE=$(curl --silent --show-error --write-out "HTTP_STATUS:%{http_code}" \
-            --request POST \
-            --url "$POST_URL" \
+          # transition 실행
+          curl --fail --silent --request POST \
+            --url "https://${JIRA_BASE_URL}/rest/api/3/issue/${JIRA_KEY}/transitions" \
             --user "${JIRA_USER_EMAIL}:${JIRA_API_TOKEN}" \
             --header "Accept: application/json" \
             --header "Content-Type: application/json" \
             --data "{
               \"transition\": { \"id\": \"${DONE_ID}\" }
-            }")
-
-          POST_BODY=$(echo "$POST_RESPONSE" | sed -e 's/HTTP_STATUS\:.*//g')
-          POST_STATUS=$(echo "$POST_RESPONSE" | tr -d '\n' | sed -e 's/.*HTTP_STATUS://')
-
-          echo "DONE_TRANSITION_HTTP_STATUS=$POST_STATUS"
-          echo "DONE_TRANSITION_RAW_BODY=$POST_BODY"
-
-          if [ "$POST_STATUS" -ge 400 ]; then
-            echo "Failed to transition issue to Done. Status=$POST_STATUS"
-            exit 1
+            }"
