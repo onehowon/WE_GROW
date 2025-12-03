@@ -59,7 +59,7 @@ jobs:
             --user "${JIRA_USER_EMAIL}:${JIRA_API_TOKEN}" \
             --header "Accept: application/json"
 
-      # 4) PR open / reopen 시 → Jira 이슈를 "진행 중"으로 이동 + PR opened 댓글
+      # 4) PR open / reopen 시 → Jira 이슈를 "진행 중"으로 이동
       - name: Move Jira issue to In Progress on PR opened
         if: github.event.action == 'opened' || github.event.action == 'reopened'
         run: |
@@ -106,16 +106,7 @@ jobs:
               \"transition\": { \"id\": \"${INPROG_ID}\" }
             }"
 
-          curl --fail --silent --request POST \
-            --url "https://${JIRA_BASE_URL}/rest/api/3/issue/${JIRA_KEY}/comment" \
-            --user "${JIRA_USER_EMAIL}:${JIRA_API_TOKEN}" \
-            --header "Accept: application/json" \
-            --header "Content-Type: application/json" \
-            --data "{
-              \"body\": \"PR #${{ github.event.pull_request.number }} opened: ${{ github.event.pull_request.html_url }}\"
-            }"
-
-      # 5) PR closed + merged == true → Jira 이슈를 "완료"로 이동 + PR merged 댓글
+      # 5) PR closed + merged == true → Jira 이슈를 "완료"로 이동
       - name: Move Jira issue to Done on PR merged
         if: github.event.action == 'closed' && github.event.pull_request.merged == true
         run: |
@@ -160,13 +151,4 @@ jobs:
             --header "Content-Type: application/json" \
             --data "{
               \"transition\": { \"id\": \"${DONE_ID}\" }
-            }"
-
-          curl --fail --silent --request POST \
-            --url "https://${JIRA_BASE_URL}/rest/api/3/issue/${JIRA_KEY}/comment" \
-            --user "${JIRA_USER_EMAIL}:${JIRA_API_TOKEN}" \
-            --header "Accept: application/json" \
-            --header "Content-Type: application/json" \
-            --data "{
-              \"body\": \"PR #${{ github.event.pull_request.number }} merged: ${{ github.event.pull_request.html_url }}\"
             }"
