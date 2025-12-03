@@ -1,0 +1,254 @@
+/* 전체 컨테이너 */
+.main-container {
+    position: relative;
+    width: 100%;
+    height: 85vh; /* 높이 약간 조정 */
+    background: #f0f4f8;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    font-family: 'Salesforce Sans', system-ui, -apple-system, sans-serif;
+}
+
+/* 배경 데코레이션 */
+.background-shape {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(90px);
+    z-index: 0;
+    opacity: 0.5;
+    animation: float 10s infinite ease-in-out;
+}
+.shape-1 {
+    width: 500px;
+    height: 500px;
+    background: #004b8d; /* WeGrow Navy */
+    top: -100px;
+    left: -100px;
+}
+.shape-2 {
+    width: 400px;
+    height: 400px;
+    background: #4b9fe1; /* WeGrow Blue */
+    bottom: -50px;
+    right: -50px;
+    animation-delay: 2s;
+}
+.shape-3 {
+    width: 200px;
+    height: 200px;
+    background: #ffffff;
+    top: 40%;
+    left: 40%;
+    opacity: 0.3;
+}
+
+/* 글래스모피즘 패널 */
+.glass-panel {
+    position: relative;
+    z-index: 1;
+    width: 1000px; /* 더 넓게 */
+    height: 600px;
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(24px);
+    border: 1px solid rgba(255, 255, 255, 0.9);
+    border-radius: 24px;
+    box-shadow: 0 25px 50px rgba(0, 20, 40, 0.15);
+    display: flex;
+    overflow: hidden;
+}
+
+/* 왼쪽 섹션 */
+.left-section {
+    flex: 1.2;
+    padding: 60px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center; /* 수직 중앙 정렬 */
+    align-items: flex-start; /* 왼쪽 정렬 */
+    background: linear-gradient(135deg, rgba(255,255,255,0.8), rgba(240,244,248,0.4));
+    border-right: 1px solid rgba(255,255,255,0.5);
+}
+
+.brand-logo {
+    width: 160px;
+    margin-bottom: 40px;
+    filter: drop-shadow(0 4px 6px rgba(0,0,0,0.1));
+    /* 애니메이션 수정: fadeDown 키프레임 사용 */
+    animation: fadeDown 1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    opacity: 0; /* 처음에 안 보이다가 나타나게 설정 */
+}
+
+.headline {
+    font-size: 3.2rem;
+    font-weight: 800;
+    line-height: 1.1;
+    color: #1a2634;
+    margin-bottom: 20px;
+    letter-spacing: -1.5px;
+}
+
+.highlight {
+    color: #0070d2; /* 강조색 */
+}
+
+.sub-headline {
+    font-size: 1.15rem;
+    color: #54698d;
+    line-height: 1.6;
+    margin-bottom: 40px;
+    max-width: 90%;
+}
+
+.feature-pills {
+    margin-top: auto;
+}
+
+.pill-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.pill {
+    background: #fff;
+    padding: 10px 18px;
+    border-radius: 12px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #004b8d;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    border: 1px solid rgba(0, 75, 141, 0.1);
+}
+
+/* 오른쪽 섹션 */
+.right-section {
+    flex: 0.8;
+    background: #ffffff;
+    padding: 60px 50px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.card-header {
+    margin-bottom: 30px;
+}
+
+.login-card h2 {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #1a2634;
+    margin-bottom: 8px;
+}
+
+.instruction {
+    color: #888;
+    font-size: 0.95rem;
+}
+
+.input-group {
+    margin-bottom: 20px;
+}
+
+.input-group label {
+    display: block;
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: #54698d;
+    margin-bottom: 8px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.custom-input {
+    width: 100%;
+    padding: 14px;
+    border: 2px solid #eef2f7;
+    border-radius: 10px;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    outline: none;
+    background: #f8fbff;
+}
+
+.custom-input:focus {
+    border-color: #0070d2;
+    background: #fff;
+    box-shadow: 0 0 0 3px rgba(0,112,210,0.1);
+}
+
+.cta-button {
+    width: 100%;
+    padding: 16px;
+    background: #1a2634;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.cta-button:hover {
+    background: #0070d2;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(0, 112, 210, 0.25);
+}
+
+.arrow-icon {
+    transition: transform 0.3s ease;
+}
+
+.cta-button:hover .arrow-icon {
+    transform: translateX(5px);
+}
+
+.footer-links {
+    margin-top: 40px;
+    text-align: center;
+}
+
+.footer-links a {
+    color: #0070d2;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+.copyright {
+    margin-top: 20px;
+    font-size: 0.75rem;
+    color: #ccc;
+}
+
+/* 애니메이션 */
+@keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* 새로 추가: 위에서 아래로 부드럽게 내려오는 애니메이션 */
+@keyframes fadeDown {
+    from { opacity: 0; transform: translateY(-30px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+/* 기존 animate-fade-down 클래스는 사용하지 않고 .brand-logo에 직접 적용했으므로 유지하거나 삭제해도 무방 */
+.animate-fade-up { animation: fadeUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards; opacity: 0; }
+.animate-fade-in { animation: fadeIn 1s ease forwards; opacity: 0; }
+.delay-1 { animation-delay: 0.2s; }
+.delay-2 { animation-delay: 0.4s; }
+.delay-3 { animation-delay: 0.6s; }

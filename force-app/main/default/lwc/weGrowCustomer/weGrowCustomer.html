@@ -1,0 +1,79 @@
+<template>
+    <div class="landing-container">
+        <!-- 왼쪽: 감성 영역 (브랜드 이미지 & 가치 제안) -->
+        <div class="brand-section">
+            <div class="brand-content animate-fade-in">
+                <!-- 로고 이미지 -->
+                <img src={logoUrl} alt="WeGrow" class="brand-logo"/>
+                
+                <h1 class="main-title">
+                    Work Smart,<br/>
+                    Grow Together.
+                </h1>
+                
+                <p class="sub-text">
+                    카카오톡 요청은 이제 그만.<br/>
+                    <strong>We:Grow 입주사 전용 포털</strong>에서<br/>
+                    시설 예약부터 민원 처리까지 한 번에 해결하세요.
+                </p>
+
+                <div class="feature-list">
+                    <div class="feature-item">
+                        <span class="icon">📱</span>
+                        <span>앱으로 끝내는 시설 예약</span>
+                    </div>
+                    <div class="feature-item">
+                        <span class="icon">⚡</span>
+                        <span>실시간 민원 처리 현황 확인</span>
+                    </div>
+                    <div class="feature-item">
+                        <span class="icon">🧾</span>
+                        <span>투명한 계약 및 관리비 조회</span>
+                    </div>
+                </div>
+            </div>
+            <!-- 배경 데코레이션 (원형) -->
+            <div class="circle-bg"></div>
+        </div>
+
+        <!-- 오른쪽: 기능 영역 (로그인 & 입주 문의) -->
+        <div class="action-section">
+            <div class="login-box animate-fade-up">
+                <div class="header-text">
+                    <h2>Member Login</h2>
+                    <p>입주사 멤버 계정으로 로그인하세요.</p>
+                </div>
+
+                <div class="input-group">
+                    <label>Email</label>
+                    <input type="email" placeholder="name@company.com" class="we-input" onchange={handleEmailChange}/>
+                </div>
+                
+                <div class="input-group">
+                    <label>Password</label>
+                    <input type="password" placeholder="••••••••" class="we-input"/>
+                </div>
+
+                <button class="btn-primary" onclick={handleLogin}>
+                    로그인 하기
+                </button>
+
+                <div class="divider">
+                    <span>또는</span>
+                </div>
+
+                <div class="secondary-actions">
+                    <p>아직 WeGrow 멤버가 아니신가요?</p>
+                    <button class="btn-outline">
+                        입주 투어 신청하기 (무료)
+                    </button>
+                </div>
+                
+                <p class="footer-info">
+                    지점: 강남, 성수, 판교 외 14개 지점<br/>
+                    문의: 02-1234-5678 (평일 09:00 - 18:00)
+                </p>
+            </div>
+        </div>
+    </div>
+</template>
