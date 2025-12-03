@@ -1,6 +1,5 @@
 name: Sync Jira on PR events
 
-# test
 on:
   pull_request:
     types: [opened, reopened, closed]
@@ -26,10 +25,10 @@ jobs:
           echo "PR_TITLE=$PR_TITLE"
           echo "BRANCH=$BRANCH"
 
-          # 1차: PR 제목에서 [WEG-6], WEG-6 같이 생긴 것 찾기 (대소문자 무시)
+          # 1차: PR 제목에서 [WEG-6], WEG-6 형태 찾기
           KEY=$(echo "$PR_TITLE" | grep -oiE '[A-Z]+-[0-9]+' | head -n1 || true)
 
-          # 2차: 못 찾으면 브랜치 이름에서 찾기 (feat/WEG-6_login 같은 케이스)
+          # 2차: 못 찾으면 브랜치 이름에서 (feat/WEG-6_login 등)
           if [ -z "$KEY" ]; then
             KEY=$(echo "$BRANCH" | grep -oiE '[A-Z]+-[0-9]+' | head -n1 || true)
           fi
@@ -97,14 +96,30 @@ jobs:
 
           echo "Move $JIRA_KEY to '진행 중' (transition id: $INPROG_ID)"
 
-          curl --fail --silent --request POST \
-            --url "https://${JIRA_BASE_URL}/rest/api/3/issue/${JIRA_KEY}/transitions" \
+          # --- 전환 POST + 상태/바디 로그 ---
+          POST_URL="https://${JIRA_BASE_URL}/rest/api/3/issue/${JIRA_KEY}/transitions"
+          echo "POST $POST_URL"
+
+          POST_RESPONSE=$(curl --silent --show-error --write-out "HTTP_STATUS:%{http_code}" \
+            --request POST \
+            --url "$POST_URL" \
             --user "${JIRA_USER_EMAIL}:${JIRA_API_TOKEN}" \
             --header "Accept: application/json" \
             --header "Content-Type: application/json" \
             --data "{
               \"transition\": { \"id\": \"${INPROG_ID}\" }
-            }"
+            }")
+
+          POST_BODY=$(echo "$POST_RESPONSE" | sed -e 's/HTTP_STATUS\:.*//g')
+          POST_STATUS=$(echo "$POST_RESPONSE" | tr -d '\n' | sed -e 's/.*HTTP_STATUS://')
+
+          echo "TRANSITION_HTTP_STATUS=$POST_STATUS"
+          echo "TRANSITION_RAW_BODY=$POST_BODY"
+
+          if [ "$POST_STATUS" -ge 400 ]; then
+            echo "Failed to transition issue. Status=$POST_STATUS"
+            exit 1
+          fi
 
       # 5) PR closed + merged == true → Jira 이슈를 "완료"로 이동
       - name: Move Jira issue to Done on PR merged
@@ -144,11 +159,25 @@ jobs:
 
           echo "Move $JIRA_KEY to '완료' (transition id: $DONE_ID)"
 
-          curl --fail --silent --request POST \
-            --url "https://${JIRA_BASE_URL}/rest/api/3/issue/${JIRA_KEY}/transitions" \
+          POST_URL="https://${JIRA_BASE_URL}/rest/api/3/issue/${JIRA_KEY}/transitions"
+          echo "POST $POST_URL"
+
+          POST_RESPONSE=$(curl --silent --show-error --write-out "HTTP_STATUS:%{http_code}" \
+            --request POST \
+            --url "$POST_URL" \
             --user "${JIRA_USER_EMAIL}:${JIRA_API_TOKEN}" \
             --header "Accept: application/json" \
             --header "Content-Type: application/json" \
             --data "{
               \"transition\": { \"id\": \"${DONE_ID}\" }
-            }"
+            }")
+
+          POST_BODY=$(echo "$POST_RESPONSE" | sed -e 's/HTTP_STATUS\:.*//g')
+          POST_STATUS=$(echo "$POST_RESPONSE" | tr -d '\n' | sed -e 's/.*HTTP_STATUS://')
+
+          echo "DONE_TRANSITION_HTTP_STATUS=$POST_STATUS"
+          echo "DONE_TRANSITION_RAW_BODY=$POST_BODY"
+
+          if [ "$POST_STATUS" -ge 400 ]; then
+            echo "Failed to transition issue to Done. Status=$POST_STATUS"
+            exit 1
