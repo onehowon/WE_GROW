@@ -58,7 +58,7 @@ jobs:
             --user "${JIRA_USER_EMAIL}:${JIRA_API_TOKEN}" \
             --header "Accept: application/json"
 
-      # 4) PR open / reopen 시 → Jira 이슈를 "진행 중"으로 이동 + PR opened 댓글
+      # 4) PR open / reopen 시 → Jira 이슈를 "진행 중"으로 이동
       - name: Move Jira issue to In Progress on PR opened
         if: github.event.action == 'opened' || github.event.action == 'reopened'
         run: |
@@ -96,7 +96,7 @@ jobs:
 
           echo "Move $JIRA_KEY to '진행 중' (transition id: $INPROG_ID)"
 
-          # --- 여기부터 POST도 상태/바디 찍기 ---
+          # --- 전환 POST + 상태/바디 로그 ---
           POST_URL="https://${JIRA_BASE_URL}/rest/api/3/issue/${JIRA_KEY}/transitions"
           echo "POST $POST_URL"
 
@@ -121,32 +121,7 @@ jobs:
             exit 1
           fi
 
-          # 성공했다면 댓글 추가
-          COMMENT_URL="https://${JIRA_BASE_URL}/rest/api/3/issue/${JIRA_KEY}/comment"
-          echo "POST $COMMENT_URL (add comment)"
-
-          COMMENT_RESPONSE=$(curl --silent --show-error --write-out "HTTP_STATUS:%{http_code}" \
-            --request POST \
-            --url "$COMMENT_URL" \
-            --user "${JIRA_USER_EMAIL}:${JIRA_API_TOKEN}" \
-            --header "Accept: application/json" \
-            --header "Content-Type: application/json" \
-            --data "{
-              \"body\": \"PR #${{ github.event.pull_request.number }} opened: ${{ github.event.pull_request.html_url }}\"
-            }")
-
-          COMMENT_BODY=$(echo "$COMMENT_RESPONSE" | sed -e 's/HTTP_STATUS\:.*//g')
-          COMMENT_STATUS=$(echo "$COMMENT_RESPONSE" | tr -d '\n' | sed -e 's/.*HTTP_STATUS://')
-
-          echo "COMMENT_HTTP_STATUS=$COMMENT_STATUS"
-          echo "COMMENT_RAW_BODY=$COMMENT_BODY"
-
-          if [ "$COMMENT_STATUS" -ge 400 ]; then
-            echo "Failed to add comment. Status=$COMMENT_STATUS"
-            exit 1
-          fi
-
-      # 5) PR closed + merged == true → Jira 이슈를 "완료"로 이동 + PR merged 댓글
+      # 5) PR closed + merged == true → Jira 이슈를 "완료"로 이동
       - name: Move Jira issue to Done on PR merged
         if: github.event.action == 'closed' && github.event.pull_request.merged == true
         run: |
@@ -185,6 +160,8 @@ jobs:
           echo "Move $JIRA_KEY to '완료' (transition id: $DONE_ID)"
 
           POST_URL="https://${JIRA_BASE_URL}/rest/api/3/issue/${JIRA_KEY}/transitions"
+          echo "POST $POST_URL"
+
           POST_RESPONSE=$(curl --silent --show-error --write-out "HTTP_STATUS:%{http_code}" \
             --request POST \
             --url "$POST_URL" \
@@ -204,26 +181,3 @@ jobs:
           if [ "$POST_STATUS" -ge 400 ]; then
             echo "Failed to transition issue to Done. Status=$POST_STATUS"
             exit 1
-          fi
-
-          COMMENT_URL="https://${JIRA_BASE_URL}/rest/api/3/issue/${JIRA_KEY}/comment"
-          COMMENT_RESPONSE=$(curl --silent --show-error --write-out "HTTP_STATUS:%{http_code}" \
-            --request POST \
-            --url "$COMMENT_URL" \
-            --user "${JIRA_USER_EMAIL}:${JIRA_API_TOKEN}" \
-            --header "Accept: application/json" \
-            --header "Content-Type: application/json" \
-            --data "{
-              \"body\": \"PR #${{ github.event.pull_request.number }} merged: ${{ github.event.pull_request.html_url }}\"
-            }")
-
-          COMMENT_BODY=$(echo "$COMMENT_RESPONSE" | sed -e 's/HTTP_STATUS\:.*//g')
-          COMMENT_STATUS=$(echo "$COMMENT_RESPONSE" | tr -d '\n' | sed -e 's/.*HTTP_STATUS://')
-
-          echo "DONE_COMMENT_HTTP_STATUS=$COMMENT_STATUS"
-          echo "DONE_COMMENT_RAW_BODY=$COMMENT_BODY"
-
-          if [ "$COMMENT_STATUS" -ge 400 ]; then
-            echo "Failed to add Done comment. Status=$COMMENT_STATUS"
-            exit 1
-          fi
