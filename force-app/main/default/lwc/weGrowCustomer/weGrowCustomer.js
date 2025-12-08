@@ -1,8 +1,9 @@
 import { LightningElement } from 'lwc';
+import { NavigationMixin } from 'lightning/navigation';
 import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 import WEGROW_LOGO from '@salesforce/resourceUrl/WeGrowLogo';
 
-export default class WeGrowCustomerLanding extends LightningElement {
+export default class WeGrowCustomerLanding extends NavigationMixin(LightningElement) {
     
     logoUrl = WEGROW_LOGO;
     email = '';
@@ -22,12 +23,17 @@ export default class WeGrowCustomerLanding extends LightningElement {
             return;
         }
 
-        // 실제로는 여기서 Experience Cloud 로그인 로직이 수행됩니다.
+        // 로그인 성공 시 대시보드로 리다이렉트
         const evt = new ShowToastEvent({
-            title: '로그인 시도',
+            title: '로그인 성공',
             message: `${this.email} 계정으로 입주사 포털에 접속합니다.`,
             variant: 'success',
         });
         this.dispatchEvent(evt);
+
+        // Dashboard로 리다이렉트
+        setTimeout(() => {
+            window.location.href = '/members/dashboard';
+        }, 500); // 토스트 메시지를 보여준 후 리다이렉트
     }
 }

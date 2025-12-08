@@ -1,0 +1,170 @@
+<template>
+    <div class="contract-container">
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <img src={logoUrl} alt="WE:GROW" class="sidebar-logo"/>
+                <p class="sidebar-tagline">Work Smart, Grow Together</p>
+            </div>
+
+            <nav class="sidebar-nav">
+                <div class="nav-item" onclick={navigateToDashboard}>
+                    <span class="nav-icon">📊</span>
+                    <span>대시보드</span>
+                </div>
+                <div class="nav-item" onclick={navigateToMyOffice}>
+                    <span class="nav-icon">🏢</span>
+                    <span>나의 오피스</span>
+                </div>
+                <div class="nav-item active" onclick={navigateToCharge}>
+                    <span class="nav-icon">💰</span>
+                    <span>계약 및 청구</span>
+                </div>
+                <div class="nav-item" onclick={navigateToService}>
+                    <span class="nav-icon">🔧</span>
+                    <span>시설 및 민원</span>
+                </div>
+            </nav>
+
+            <div class="sidebar-footer">
+                <div class="user-profile">
+                    <div class="user-avatar">👤</div>
+                    <div class="user-info">
+                        <p class="user-name">박재정 매니저</p>
+                        <p class="user-role">김재웅님의 파트너</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="main-content">
+            <div class="page-header">
+                <h1 class="page-title">계약 및 청구 관리</h1>
+                <button class="btn-download">전체계약내역(PDF) 다운로드</button>
+            </div>
+
+            <div class="contract-header-card">
+                <div class="contract-info-section">
+                    <h2 class="contract-main-title">강남 1호점 20년 임대 계약</h2>
+                    <span class="status-badge active">Active (계약 중)</span>
+                    <p class="contract-subtitle">계약 완료 : CTA-2024-0315 • 계약일: 2024.10.12</p>
+                </div>
+                <div class="contract-details-grid">
+                    <div class="detail-box">
+                        <p class="detail-label">계약 기간</p>
+                        <p class="detail-value">2024.10.25 ~ 2025.10.24</p>
+                        <p class="detail-note">자동갱신 7회 (D-330)</p>
+                    </div>
+                    <div class="detail-box">
+                        <p class="detail-label">보증금 (Deposit)</p>
+                        <p class="detail-value">100,000,000 원</p>
+                        <p class="detail-note">납부 완료 (Paid)</p>
+                    </div>
+                    <div class="detail-box">
+                        <p class="detail-label">월 임대료 (Monthly)</p>
+                        <p class="detail-value">5,500,000 원</p>
+                        <p class="detail-note">자동 청구 중</p>
+                    </div>
+                    <div class="detail-box">
+                        <p class="detail-label">진행</p>
+                        <p class="detail-value">계약 25회</p>
+                        <p class="detail-note">(총 48 회차)</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="content-grid">
+                <div class="billing-section">
+                    <div class="section-header-row">
+                        <h3>청구 및 납부 내역</h3>
+                        <select class="year-selector">
+                            <option>2024년</option>
+                            <option>2023년</option>
+                        </select>
+                    </div>
+
+                    <table class="billing-table">
+                        <thead>
+                            <tr>
+                                <th>월/건</th>
+                                <th>청구 금액</th>
+                                <th>납부 기한</th>
+                                <th>상태</th>
+                                <th>영수증</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="urgent">
+                                <td>2024년 11월</td>
+                                <td>5,500,000 원</td>
+                                <td class="due-date">2024.10.25 (D-3)</td>
+                                <td><span class="status-tag unpaid">미납 (Unpaid)</span></td>
+                                <td><a href="#" class="link-pdf">PDF 보기</a></td>
+                            </tr>
+                            <tr>
+                                <td>2024년 10월</td>
+                                <td>5,500,000 원</td>
+                                <td>2024.09.25</td>
+                                <td><span class="status-tag paid">납부 완료</span></td>
+                                <td><a href="#" class="link-pdf">PDF 보기</a></td>
+                            </tr>
+                            <tr>
+                                <td>보증금 (Deposit)</td>
+                                <td>100,000,000 원</td>
+                                <td>2024.10.12</td>
+                                <td><span class="status-tag paid">납부 완료</span></td>
+                                <td><a href="#" class="link-pdf">PDF 보기</a></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="info-section">
+                    <div class="info-card">
+                        <h3 class="card-title">납부 계좌 정보</h3>
+                        <div class="account-info-highlight">
+                            <p class="account-label">우리(입금계좌) Account</p>
+                            <p class="account-number">우리 1002-123-456789</p>
+                            <p class="account-holder">예금주: 위그로우_블루테크</p>
+                        </div>
+                        <p class="info-note">
+                            세금계산서는 입금 확인 후, 익월 10일까지 등록된 이메일로 발행됩니다.
+                        </p>
+                        <p class="info-note">
+                            납부 기한 이후 3영업일 이내에 입금되지 않으면 연체료가 부과될 수 있습니다.
+                        </p>
+                    </div>
+
+                    <div class="info-card">
+                        <div class="card-header-row">
+                            <h3 class="card-title">세금계산서 정보</h3>
+                            <a href="#" class="link-edit">수정</a>
+                        </div>
+                        <div class="tax-info-grid">
+                            <div class="tax-row">
+                                <span class="tax-label">사업자 번호</span>
+                                <span class="tax-value">120-81-12345</span>
+                            </div>
+                            <div class="tax-row">
+                                <span class="tax-label">상호명</span>
+                                <span class="tax-value">(주)블루테크</span>
+                            </div>
+                            <div class="tax-row">
+                                <span class="tax-label">대표자</span>
+                                <span class="tax-value">김대표</span>
+                            </div>
+                            <div class="tax-row">
+                                <span class="tax-label">등록 이메일</span>
+                                <span class="tax-value">finance@blutech.com</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="info-card">
+                        <h3 class="card-title">정산 문의</h3>
+                        <p class="inquiry-hours">08:00 ~ 18:00 (평일)</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</template>

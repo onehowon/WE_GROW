@@ -1,9 +1,7 @@
 <template>
     <div class="landing-container">
-        <!-- 왼쪽: 감성 영역 (브랜드 이미지 & 가치 제안) -->
         <div class="brand-section">
             <div class="brand-content animate-fade-in">
-                <!-- 로고 이미지 -->
                 <img src={logoUrl} alt="WeGrow" class="brand-logo"/>
                 
                 <h1 class="main-title">
@@ -32,11 +30,9 @@
                     </div>
                 </div>
             </div>
-            <!-- 배경 데코레이션 (원형) -->
             <div class="circle-bg"></div>
         </div>
 
-        <!-- 오른쪽: 기능 영역 (로그인 & 입주 문의) -->
         <div class="action-section">
             <div class="login-box animate-fade-up">
                 <div class="header-text">
@@ -57,17 +53,6 @@
                 <button class="btn-primary" onclick={handleLogin}>
                     로그인 하기
                 </button>
-
-                <div class="divider">
-                    <span>또는</span>
-                </div>
-
-                <div class="secondary-actions">
-                    <p>아직 WeGrow 멤버가 아니신가요?</p>
-                    <button class="btn-outline">
-                        입주 투어 신청하기 (무료)
-                    </button>
-                </div>
                 
                 <p class="footer-info">
                     지점: 강남, 성수, 판교 외 14개 지점<br/>
