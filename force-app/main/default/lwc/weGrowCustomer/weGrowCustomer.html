@@ -47,8 +47,15 @@
                 
                 <div class="input-group">
                     <label>Password</label>
-                    <input type="password" placeholder="••••••••" class="we-input"/>
+                    <input type="password" placeholder="••••••••" class="we-input" onchange={handlePasswordChange}/>
                 </div>
+
+                <template if:true={loginError}>
+                    <div class="error-message">
+                        <span>⚠️</span>
+                        <span>{loginError}</span>
+                    </div>
+                </template>
 
                 <button class="btn-primary" onclick={handleLogin}>
                     로그인 하기

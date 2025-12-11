@@ -1,0 +1,1352 @@
+/* ==============================================
+   WE:GROW Customer Portal - Unified Styles
+   4개 페이지 통합: Dashboard, MyOffice, Charge, Service
+   ============================================== */
+
+/* ===========================================
+   공통 레이아웃 및 사이드바
+   =========================================== */
+.portal-container {
+    display: flex;
+    width: 100%;
+    min-height: 100vh;
+    background: #f5f7fa;
+    font-family: 'Salesforce Sans', sans-serif;
+}
+
+.sidebar {
+    width: 280px;
+    background: linear-gradient(180deg, #1a2634 0%, #0d1219 100%);
+    color: white;
+    display: flex;
+    flex-direction: column;
+    padding: 30px 20px;
+    box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+    flex-shrink: 0;
+}
+
+.sidebar-header {
+    margin-bottom: 40px;
+}
+
+.sidebar-logo {
+    width: 120px;
+    margin-bottom: 10px;
+    filter: brightness(0) invert(1);
+}
+
+.sidebar-tagline {
+    font-size: 0.75rem;
+    color: #a0b0c0;
+    margin: 0;
+}
+
+.sidebar-nav {
+    flex: 1;
+}
+
+.nav-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 16px;
+    margin-bottom: 8px;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.3s;
+    font-size: 0.95rem;
+}
+
+.nav-item:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.nav-item.active {
+    background: #0070d2;
+    font-weight: 600;
+}
+
+.nav-icon {
+    font-size: 1.2rem;
+}
+
+.sidebar-footer {
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    padding-top: 20px;
+}
+
+.user-profile {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+}
+
+.user-avatar {
+    width: 40px;
+    height: 40px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+}
+
+.user-info {
+    flex: 1;
+}
+
+.user-name {
+    margin: 0;
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+.user-role {
+    margin: 0;
+    font-size: 0.75rem;
+    color: #a0b0c0;
+}
+
+/* 메인 콘텐츠 */
+.main-content {
+    flex: 1;
+    padding: 30px 40px;
+    overflow-y: auto;
+}
+
+.page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+    flex-wrap: wrap;
+    gap: 16px;
+}
+
+.page-title {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: #1a2634;
+    margin: 0;
+}
+
+/* ===========================================
+   공통 버튼 스타일
+   =========================================== */
+.btn-action {
+    padding: 12px 24px;
+    background: white;
+    border: 2px solid #0070d2;
+    border-radius: 10px;
+    color: #0070d2;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.btn-action:hover {
+    background: #0070d2;
+    color: white;
+}
+
+.btn-download {
+    padding: 12px 24px;
+    background: white;
+    border: 2px solid #0070d2;
+    border-radius: 10px;
+    color: #0070d2;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.btn-download:hover {
+    background: #0070d2;
+    color: white;
+}
+
+.btn-primary-full {
+    width: 100%;
+    padding: 14px;
+    background: #1a2634;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.btn-primary-full:hover {
+    background: #0070d2;
+    transform: translateY(-2px);
+}
+
+/* ===========================================
+   공통 카드 스타일
+   =========================================== */
+.info-card {
+    background: white;
+    padding: 24px;
+    border-radius: 16px;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+}
+
+.card-title {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: #1a2634;
+    margin: 0 0 20px 0;
+}
+
+.card-header-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.card-header-row h3 {
+    margin: 0;
+}
+
+.link-text {
+    color: #0070d2;
+    font-size: 0.9rem;
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.link-text:hover {
+    text-decoration: underline;
+}
+
+/* 상태 배지 */
+.status-badge {
+    display: inline-block;
+    padding: 6px 16px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+
+.status-badge.active {
+    background: #e6f4ea;
+    color: #1e8e3e;
+}
+
+.status-badge-active {
+    display: inline-block;
+    padding: 6px 16px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    background: #e6f4ea;
+    color: #1e8e3e;
+}
+
+.badge-success {
+    background: #e6f4ea;
+    color: #1e8e3e;
+    padding: 6px 12px;
+    border-radius: 8px;
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+
+/* ===========================================
+   [TAB 1] 대시보드 스타일
+   =========================================== */
+.header-left {
+    flex: 1;
+}
+
+.welcome-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: white;
+    padding: 12px 20px;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    font-weight: 600;
+    color: #1a2634;
+    margin-bottom: 12px;
+}
+
+.emoji {
+    font-size: 1.3rem;
+}
+
+.contract-date {
+    font-size: 0.9rem;
+    color: #666;
+    margin: 0;
+}
+
+.progress-section {
+    background: white;
+    padding: 30px;
+    border-radius: 16px;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+    margin-bottom: 30px;
+}
+
+.progress-bar-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0;
+    padding: 20px 0;
+}
+
+.progress-step {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+}
+
+.step-indicator {
+    width: 16px;
+    height: 16px;
+    background: #e0e0e0;
+    border-radius: 50%;
+    position: relative;
+    z-index: 2;
+}
+
+.progress-step.completed .step-indicator {
+    background: #0070d2;
+}
+
+.progress-step.active .step-indicator {
+    background: #0070d2;
+    box-shadow: 0 0 0 4px rgba(0, 112, 210, 0.2);
+}
+
+.step-label {
+    margin-top: 12px;
+    font-size: 0.85rem;
+    color: #666;
+    white-space: nowrap;
+}
+
+.progress-step.completed .step-label,
+.progress-step.active .step-label {
+    color: #0070d2;
+    font-weight: 600;
+}
+
+.progress-line {
+    width: 80px;
+    height: 3px;
+    background: #e0e0e0;
+    margin: 0 -1px;
+}
+
+.progress-line.completed {
+    background: #0070d2;
+}
+
+.progress-line.active {
+    background: linear-gradient(to right, #0070d2 50%, #e0e0e0 50%);
+}
+
+.cards-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 24px;
+}
+
+.card {
+    background: #f8fbff;
+    border-radius: 16px;
+    padding: 24px;
+    border: 1px solid #eef2f7;
+    transition: all 0.3s;
+}
+
+.card:hover {
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+    transform: translateY(-2px);
+}
+
+.card-wide {
+    grid-column: 1 / -1;
+}
+
+.card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.card-header h3 {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #1a2634;
+    margin: 0;
+}
+
+.location-title {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: #1a2634;
+    margin: 0 0 8px 0;
+}
+
+.location-detail {
+    font-size: 0.95rem;
+    color: #666;
+    margin: 0 0 24px 0;
+}
+
+.info-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.info-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 12px;
+    background: white;
+    border-radius: 8px;
+}
+
+.info-label {
+    color: #666;
+    font-size: 0.9rem;
+}
+
+.info-value {
+    color: #1a2634;
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+.billing-amount {
+    font-size: 2.2rem;
+    font-weight: 800;
+    color: #1a2634;
+    margin: 0 0 4px 0;
+}
+
+.billing-note {
+    font-size: 0.85rem;
+    color: #666;
+    margin: 0 0 24px 0;
+}
+
+.billing-breakdown {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 16px;
+}
+
+.breakdown-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 0;
+    border-bottom: 1px solid #eef2f7;
+}
+
+.breakdown-row.highlight {
+    background: #fff3e0;
+    padding: 12px;
+    border-radius: 8px;
+    border-bottom: none;
+}
+
+.breakdown-label {
+    color: #666;
+    font-size: 0.9rem;
+}
+
+.breakdown-value {
+    color: #1a2634;
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+.breakdown-value.discount {
+    color: #ff6b35;
+}
+
+.request-list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    margin-bottom: 16px;
+}
+
+.request-item {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 16px;
+    background: white;
+    border-radius: 12px;
+    border-left: 4px solid #0070d2;
+}
+
+.request-icon {
+    width: 48px;
+    height: 48px;
+    background: #f0f4f8;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    flex-shrink: 0;
+}
+
+.request-content {
+    flex: 1;
+}
+
+.request-content h4 {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #1a2634;
+    margin: 0 0 4px 0;
+}
+
+.request-content p {
+    font-size: 0.85rem;
+    color: #666;
+    margin: 0;
+}
+
+.btn-status {
+    padding: 8px 20px;
+    background: #e0e0e0;
+    color: #666;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.btn-status.active {
+    background: #0070d2;
+    color: white;
+}
+
+.btn-add-request {
+    width: 100%;
+    padding: 14px;
+    background: white;
+    border: 2px dashed #0070d2;
+    border-radius: 10px;
+    color: #0070d2;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.btn-add-request:hover {
+    background: #f0f4f8;
+}
+
+/* ===========================================
+   [TAB 2] 나의 오피스 스타일
+   =========================================== */
+.office-banner {
+    width: 100%;
+    height: 220px;
+    border-radius: 16px;
+    display: flex;
+    align-items: flex-end;
+    margin-bottom: 24px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+}
+
+.banner-overlay {
+    padding: 30px;
+    width: 100%;
+}
+
+.office-name {
+    font-size: 2rem;
+    font-weight: 800;
+    color: white;
+    margin: 0 0 8px 0;
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+}
+
+.office-type {
+    font-size: 1.1rem;
+    color: rgba(255, 255, 255, 0.9);
+    margin: 0;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.office-stats {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    margin-bottom: 30px;
+}
+
+.stat-item {
+    background: white;
+    padding: 20px;
+    border-radius: 12px;
+    text-align: center;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.stat-label {
+    font-size: 0.85rem;
+    color: #666;
+    margin: 0 0 8px 0;
+}
+
+.stat-value {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: #1a2634;
+    margin: 0;
+}
+
+.content-grid {
+    display: grid;
+    grid-template-columns: 1fr 400px;
+    gap: 24px;
+}
+
+.left-column,
+.right-column {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+.info-row-detail {
+    display: flex;
+    gap: 16px;
+    padding: 16px;
+    background: #f8fbff;
+    border-radius: 12px;
+    margin-bottom: 16px;
+}
+
+.info-icon {
+    font-size: 1.8rem;
+    flex-shrink: 0;
+}
+
+.info-content {
+    flex: 1;
+}
+
+.info-title {
+    font-size: 0.9rem;
+    color: #666;
+    margin: 0 0 8px 0;
+}
+
+.info-value-large {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: #1a2634;
+    margin: 0 0 8px 0;
+}
+
+.info-value-wifi {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #1a2634;
+    margin: 0;
+}
+
+.info-note {
+    font-size: 0.75rem;
+    color: #999;
+    margin: 0;
+}
+
+.info-note-small {
+    font-size: 0.75rem;
+    color: #0070d2;
+    margin: 8px 0 0 0;
+}
+
+.btn-small {
+    padding: 8px 16px;
+    background: white;
+    border: 1px solid #0070d2;
+    border-radius: 6px;
+    color: #0070d2;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.progress-bar-mini {
+    height: 8px;
+    background: #e0e0e0;
+    border-radius: 4px;
+    margin-bottom: 8px;
+    overflow: hidden;
+}
+
+.progress-fill {
+    height: 100%;
+    background: #0070d2;
+    border-radius: 4px;
+}
+
+.progress-note {
+    font-size: 0.85rem;
+    color: #0070d2;
+    font-weight: 600;
+    margin: 0;
+}
+
+.layout-placeholder {
+    width: 100%;
+    height: 200px;
+    background: #f0f4f8;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px dashed #d0d0d0;
+}
+
+.layout-placeholder p {
+    color: #999;
+    font-size: 0.95rem;
+}
+
+.contract-info {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.contract-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    padding: 12px;
+    background: #f8fbff;
+    border-radius: 8px;
+    flex-wrap: wrap;
+    gap: 4px;
+}
+
+.contract-row.highlight {
+    background: #fff3e0;
+}
+
+.contract-label {
+    font-size: 0.9rem;
+    color: #666;
+}
+
+.contract-value {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #1a2634;
+}
+
+.contract-sub {
+    font-size: 0.8rem;
+    color: #888;
+}
+
+.contract-value.warning {
+    color: #ff6b35;
+}
+
+.facility-team {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.team-member {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+}
+
+.member-icon {
+    width: 50px;
+    height: 50px;
+    background: #f0f4f8;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+}
+
+.member-info {
+    flex: 1;
+}
+
+.member-name {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #1a2634;
+    margin: 0 0 4px 0;
+}
+
+.member-role {
+    font-size: 0.85rem;
+    color: #666;
+    margin: 0;
+}
+
+.contact-info {
+    font-size: 0.95rem;
+    color: #1a2634;
+    margin: 0;
+}
+
+/* ===========================================
+   [TAB 3] 계약 및 청구 스타일
+   =========================================== */
+.contract-header-card {
+    background: white;
+    padding: 30px;
+    border-radius: 16px;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+    margin-bottom: 30px;
+}
+
+.contract-info-section {
+    margin-bottom: 24px;
+}
+
+.contract-main-title {
+    font-size: 1.8rem;
+    font-weight: 800;
+    color: #1a2634;
+    margin: 0 16px 8px 0;
+    display: inline-block;
+}
+
+.contract-subtitle {
+    font-size: 0.9rem;
+    color: #666;
+    margin: 8px 0 0 0;
+}
+
+.contract-details-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+}
+
+.detail-box {
+    background: #f8fbff;
+    padding: 20px;
+    border-radius: 12px;
+    border-left: 4px solid #0070d2;
+}
+
+.detail-label {
+    font-size: 0.85rem;
+    color: #666;
+    margin: 0 0 8px 0;
+}
+
+.detail-value {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: #1a2634;
+    margin: 0 0 8px 0;
+}
+
+.detail-link {
+    font-size: 0.85rem;
+    color: #0070d2;
+    margin: 0;
+}
+
+.detail-link.highlight {
+    color: #ff6b35;
+}
+
+.detail-link.success {
+    color: #1e8e3e;
+}
+
+.detail-note {
+    font-size: 0.8rem;
+    color: #666;
+    margin: 0;
+}
+
+.charge-grid {
+    grid-template-columns: 1fr 400px;
+}
+
+.billing-section {
+    background: white;
+    padding: 24px;
+    border-radius: 16px;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+}
+
+.section-header-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.section-header-row h3 {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: #1a2634;
+    margin: 0;
+}
+
+.year-selector {
+    padding: 8px 16px;
+    border: 2px solid #eef2f7;
+    border-radius: 8px;
+    background: white;
+    color: #1a2634;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.year-selector:hover {
+    border-color: #0070d2;
+}
+
+.billing-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.billing-table thead {
+    background: #f8fbff;
+}
+
+.billing-table th {
+    padding: 14px 16px;
+    text-align: left;
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: #666;
+    border-bottom: 2px solid #eef2f7;
+}
+
+.billing-table td {
+    padding: 16px;
+    border-bottom: 1px solid #eef2f7;
+    font-size: 0.95rem;
+}
+
+.billing-table tr.urgent {
+    background: #fff3e0;
+}
+
+.due-date {
+    color: #ff6b35;
+    font-weight: 600;
+}
+
+.status-tag {
+    display: inline-block;
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+
+.status-tag.paid {
+    background: #e6f4ea;
+    color: #1e8e3e;
+}
+
+.status-tag.unpaid {
+    background: #fce8e6;
+    color: #d93025;
+}
+
+.link-pdf {
+    color: #0070d2;
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.link-pdf:hover {
+    text-decoration: underline;
+}
+
+.link-edit {
+    color: #0070d2;
+    font-size: 0.9rem;
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.link-edit:hover {
+    text-decoration: underline;
+}
+
+.account-info-highlight {
+    background: #f0f8ff;
+    padding: 20px;
+    border-radius: 12px;
+    border: 2px solid #0070d2;
+    margin-bottom: 16px;
+}
+
+.account-label {
+    font-size: 0.85rem;
+    color: #666;
+    margin: 0 0 8px 0;
+}
+
+.account-number {
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: #0070d2;
+    margin: 0 0 8px 0;
+}
+
+.account-holder {
+    font-size: 0.95rem;
+    color: #1a2634;
+    font-weight: 600;
+    margin: 0;
+}
+
+.warning-text {
+    color: #ff6b35;
+}
+
+.tax-info {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.tax-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 12px;
+    background: #f8fbff;
+    border-radius: 8px;
+}
+
+.tax-label {
+    font-size: 0.9rem;
+    color: #666;
+}
+
+.tax-value {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #1a2634;
+}
+
+/* ===========================================
+   [TAB 4] 시설 및 민원 스타일
+   =========================================== */
+.service-form-container {
+    max-width: 900px;
+    background: white;
+    padding: 40px;
+    border-radius: 16px;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+}
+
+.form-header {
+    margin-bottom: 32px;
+}
+
+.form-title {
+    font-size: 2rem;
+    font-weight: 800;
+    color: #1a2634;
+    margin: 0 0 12px 0;
+}
+
+.form-subtitle {
+    font-size: 1rem;
+    color: #666;
+    line-height: 1.6;
+    margin: 0;
+}
+
+.form-content {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+.form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.form-group.half {
+    flex: 1;
+}
+
+.form-label {
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: #1a2634;
+    margin-bottom: 8px;
+}
+
+.form-label.required::after {
+    content: ' *';
+    color: #d93025;
+}
+
+.form-select,
+.form-input {
+    padding: 14px 16px;
+    border: 2px solid #eef2f7;
+    border-radius: 10px;
+    font-size: 1rem;
+    transition: all 0.3s;
+    outline: none;
+    background: white;
+    color: #1a2634;
+}
+
+.form-select:focus,
+.form-input:focus {
+    border-color: #0070d2;
+}
+
+.form-select::placeholder,
+.form-input::placeholder {
+    color: #a0a0a0;
+}
+
+.form-textarea {
+    padding: 14px 16px;
+    border: 2px solid #eef2f7;
+    border-radius: 10px;
+    font-size: 1rem;
+    transition: all 0.3s;
+    outline: none;
+    font-family: 'Salesforce Sans', sans-serif;
+    resize: vertical;
+}
+
+.form-textarea:focus {
+    border-color: #0070d2;
+}
+
+.form-textarea::placeholder {
+    color: #a0a0a0;
+}
+
+.urgent-notice {
+    background: #fff3e0;
+    padding: 16px 20px;
+    border-radius: 10px;
+    border-left: 4px solid #ff6b35;
+}
+
+.checkbox-input {
+    margin-right: 10px;
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+}
+
+.checkbox-label {
+    font-size: 1rem;
+    font-weight: 700;
+    cursor: pointer;
+    display: inline;
+}
+
+.urgent-label {
+    color: #ff6b35;
+}
+
+.urgent-note {
+    font-size: 0.85rem;
+    color: #666;
+    margin: 8px 0 0 28px;
+}
+
+.file-upload-area {
+    border: 2px dashed #d0d0d0;
+    border-radius: 10px;
+    padding: 40px;
+    text-align: center;
+    background: #fafbfc;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.file-upload-area:hover {
+    border-color: #0070d2;
+    background: #f0f8ff;
+}
+
+.upload-icon {
+    font-size: 3rem;
+    margin-bottom: 12px;
+}
+
+.upload-text {
+    font-size: 1rem;
+    color: #1a2634;
+    font-weight: 600;
+    margin: 0 0 8px 0;
+}
+
+.upload-note {
+    font-size: 0.85rem;
+    color: #666;
+    margin: 0;
+}
+
+.form-actions {
+    display: flex;
+    gap: 16px;
+    justify-content: flex-end;
+    margin-top: 16px;
+}
+
+.btn-cancel {
+    padding: 14px 32px;
+    background: white;
+    border: 2px solid #d0d0d0;
+    border-radius: 10px;
+    color: #666;
+    font-weight: 600;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.btn-cancel:hover {
+    border-color: #999;
+    color: #333;
+}
+
+.btn-submit {
+    padding: 14px 32px;
+    background: #0070d2;
+    border: none;
+    border-radius: 10px;
+    color: white;
+    font-weight: 600;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.btn-submit:hover {
+    background: #005fb2;
+    transform: translateY(-2px);
+}
+
+/* ===========================================
+   반응형 디자인
+   =========================================== */
+@media (max-width: 1200px) {
+    .contract-details-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 1024px) {
+    .portal-container {
+        flex-direction: column;
+    }
+    
+    .sidebar {
+        width: 100%;
+        padding: 20px;
+    }
+    
+    .sidebar-nav {
+        display: flex;
+        flex-direction: row;
+        overflow-x: auto;
+        gap: 8px;
+    }
+    
+    .nav-item {
+        white-space: nowrap;
+        margin-bottom: 0;
+    }
+    
+    .cards-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .content-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .charge-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .office-stats {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 768px) {
+    .main-content {
+        padding: 20px;
+    }
+    
+    .form-row {
+        grid-template-columns: 1fr;
+    }
+    
+    .service-form-container {
+        padding: 24px;
+    }
+    
+    .contract-details-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .billing-table {
+        font-size: 0.85rem;
+    }
+    
+    .billing-table th,
+    .billing-table td {
+        padding: 12px 8px;
+    }
+    
+    .form-actions {
+        flex-direction: column;
+    }
+    
+    .btn-cancel,
+    .btn-submit {
+        width: 100%;
+    }
+}
