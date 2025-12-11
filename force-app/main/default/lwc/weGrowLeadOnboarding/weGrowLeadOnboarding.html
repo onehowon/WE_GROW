@@ -1,58 +1,152 @@
 <template>
     <div class="main-container">
         
+        <!-- 헤더 (Step 1, 2, 3에서 표시) -->
+        <template if:true={showHeader}>
+            <header class="top-header">
+                <div class="header-left">
+                    <div class="logo-container">
+                        <span class="logo-icon">○</span>
+                        <span class="logo-text">WE-GROW</span>
+                    </div>
+                </div>
+                <div class="header-right">
+                    <div class="agent-status">
+                        <span class="status-dot"></span>
+                        <span>AI Agent 대기중</span>
+                    </div>
+                </div>
+            </header>
+        </template>
+
         <!-- [STEP 1] 랜딩 페이지 -->
         <template if:true={isStep1}>
-            <div class="step-container fade-in">
+            <div class="step-container fade-in step1-container">
+                <!-- 배경 이미지 오버레이 -->
+                <div class="bg-overlay"></div>
+                
                 <div class="landing-content">
-                    <div class="brand-logo">WE:GROW</div>
-                    <h1 class="landing-title">어떤 오피스를<br/>찾고 계신가요?</h1>
-                    <p class="landing-desc">AI가 고객님의 니즈를 분석하여<br/>최적의 공간 TOP 3를 추천해 드립니다.</p>
+                    <!-- AI Finder 배지 -->
+                    <div class="finder-badge">
+                        <span class="badge-icon">○</span>
+                        <span>Agentforce based Workspace Finder</span>
+                    </div>
                     
+                    <!-- 메인 타이틀 -->
+                    <h1 class="landing-title">
+                        AI의 속도로 찾는<br/>
+                        <span class="gradient-text">당신만의 완벽한 오피스</span>
+                    </h1>
+                    
+                    <!-- 설명 텍스트 -->
+                    <p class="landing-desc">
+                        팀 규모, 선호 지역, 원하는 분위기만 말씀해 주세요.<br/>
+                        AI 에이전트가 수천 개의 매물 중 최적의 공간을 즉시 찾아드립니다.
+                    </p>
+                    
+                    <!-- 검색 박스 -->
                     <div class="search-box">
+                        <span class="search-icon">○</span>
                         <input type="text" class="prompt-input" 
-                               placeholder="예: 강남역 근처, 20명, 예산 500만원, 채광 좋은 곳" 
+                               placeholder="예: 강남역 채광 좋은 4인실 찾아줘" 
                                value={userPrompt}
                                onchange={handlePromptInput}>
                         <button class="btn-search" onclick={goToStep2}>
-                            <span>분석 시작</span>
+                            <span class="arrow-icon">→</span>
+                        </button>
+                    </div>
+                    
+                    <!-- 추천 태그 -->
+                    <div class="suggestion-tags">
+                        <button class="tag-btn" onclick={handleTagClick} data-tag="강남역 4인실">
+                            <span class="tag-icon building">🏢</span>
+                            <span>강남역 4인실</span>
+                        </button>
+                        <button class="tag-btn" onclick={handleTagClick} data-tag="성수동 스튜디오">
+                            <span class="tag-icon studio">🎨</span>
+                            <span>성수동 스튜디오</span>
+                        </button>
+                        <button class="tag-btn" onclick={handleTagClick} data-tag="여의도 CEO급">
+                            <span class="tag-icon ceo">🏛️</span>
+                            <span>여의도 CEO급</span>
                         </button>
                     </div>
                 </div>
             </div>
         </template>
 
-        <!-- [STEP 2] AI 분석 로딩 (애니메이션) -->
+        <!-- [STEP 2] AI 분석 로딩 -->
         <template if:true={isStep2}>
             <div class="step-container fade-in center-content">
                 <div class="ai-loader">
+                    <div class="loader-circle">
+                        <span class="refresh-icon">⟳</span>
+                    </div>
                     <div class="pulse-ring"></div>
                 </div>
-                <h2 class="loading-text">AI가 최적의 공간을<br/>분석하고 있습니다...</h2>
-                <p class="loading-sub">입력하신 조건: <span class="highlight">{userPrompt}</span></p>
+                <h2 class="loading-text">AI가 분석 중입니다...</h2>
+                <p class="loading-sub">
+                    "<span class="highlight">{userPrompt}</span>" 조건에 맞는 공간을 찾고 있습니다.
+                </p>
+                <div class="loading-dots">
+                    <span class="dot"></span>
+                    <span class="dot"></span>
+                    <span class="dot"></span>
+                </div>
             </div>
         </template>
 
         <!-- [STEP 3] BEST 3 추천 결과 -->
         <template if:true={isStep3}>
-            <div class="step-container fade-in">
-                <div class="header-simple">
-                    <h2>추천 공간 BEST 3</h2>
-                    <p>고객님의 조건에 가장 잘 맞는 곳이에요.</p>
+            <div class="step-container fade-in step3-container">
+                <div class="result-header">
+                    <div class="result-left">
+                        <div class="status-badge">
+                            <span class="status-indicator"></span>
+                            <span>AI 분석 및 매칭 완료</span>
+                        </div>
+                        <h1 class="result-title">
+                            고객님을 위한 <span class="highlight-blue">BEST 3</span> 공간을 찾았습니다.
+                        </h1>
+                    </div>
+                    <button class="btn-retry" onclick={resetProcess}>
+                        <span class="search-icon-small">🔍</span>
+                        <span>다시 검색하기</span>
+                    </button>
                 </div>
-                <div class="card-list">
+                
+                <div class="card-grid">
                     <template for:each={recommendations} for:item="space">
                         <div key={space.id} class="space-card" onclick={handleCardClick} data-id={space.id}>
-                            <div class="card-img" style="background-image: url('https://images.unsplash.com/photo-1497366216548-37526070297c?w=500&q=80');">
-                                <span class="badge-match">{space.matchRate}% 일치</span>
+                            <div class="card-img-wrapper">
+                                <img src={space.imageUrl} alt={space.name} class="card-img" />
+                                <span class="badge-match">
+                                    <span class="match-dot"></span>
+                                    적합도 {space.matchRate}%
+                                </span>
                             </div>
                             <div class="card-info">
-                                <h3>{space.name}</h3>
-                                <p class="loc">{space.location}</p>
-                                <div class="tags">
+                                <h3 class="card-title">{space.name}</h3>
+                                <p class="card-location">
+                                    <span class="location-icon">📍</span>
+                                    {space.location}
+                                </p>
+                                <div class="card-tags">
                                     <template for:each={space.tags} for:item="tag">
-                                        <span key={tag} class="tag">{tag}</span>
+                                        <span key={tag} class="card-tag">{tag}</span>
                                     </template>
+                                </div>
+                                <div class="card-footer">
+                                    <div class="price-info">
+                                        <span class="price-label">월 이용료</span>
+                                        <div class="price-value">
+                                            <span class="price-number">{space.priceNumber}</span>
+                                            <span class="price-unit">원</span>
+                                        </div>
+                                    </div>
+                                    <button class="btn-arrow">
+                                        <span>→</span>
+                                    </button>
                                 </div>
                             </div>
                         </div>
@@ -61,109 +155,202 @@
             </div>
         </template>
 
-        <!-- [STEP 4] 상세 페이지 -->
-        <template if:true={isStep4}>
-            <div class="step-container slide-up">
-                <div class="detail-header">
-                    <button class="btn-back" onclick={goBackToStep3}>← 뒤로</button>
-                    <span class="badge-best">AI 강력 추천</span>
-                </div>
-                <template if:true={selectedSpace.id}>
-                    <div class="detail-hero" style="background-image: url('https://images.unsplash.com/photo-1497366216548-37526070297c?w=500&q=80');"></div>
-                    <div class="detail-content">
-                        <h1>{selectedSpace.name}</h1>
-                        <p class="price">{selectedSpace.price}</p>
-                        <hr/>
-                        <div class="specs">
-                            <div class="spec-item"><strong>면적</strong> {selectedSpace.size}</div>
-                            <div class="spec-item"><strong>수용</strong> {selectedSpace.capacity}</div>
+        <!-- [STEP 4~7] 상세 페이지 + 모달들 -->
+        <template if:true={isDetailView}>
+            <div class="detail-view-container">
+                <!-- 상세 페이지 배경 (항상 표시) -->
+                <div class="detail-background">
+                    <header class="top-header">
+                        <div class="header-left">
+                            <div class="logo-container">
+                                <span class="logo-icon">○</span>
+                                <span class="logo-text">WE-GROW</span>
+                            </div>
                         </div>
-                        <div class="features">
-                            <h3>주요 특징</h3>
-                            <ul>
-                                <li>✨ 창가 통유리 구조로 채광 우수</li>
-                                <li>🚀 전용 라운지 및 회의실 2개 포함</li>
-                                <li>🛡️ 3중 보안 시스템 및 24시간 출입</li>
-                            </ul>
+                        <div class="header-right">
+                            <div class="agent-status">
+                                <span class="status-dot"></span>
+                                <span>AI Agent 대기중</span>
+                            </div>
+                        </div>
+                    </header>
+                    
+                    <div class="detail-split-view">
+                        <!-- 왼쪽: 이미지 영역 -->
+                        <div class="detail-image-section">
+                            <img src={selectedSpace.imageUrl} alt={selectedSpace.name} class="detail-full-image" />
+                            <div class="detail-image-overlay">
+                                <div class="verified-badge">
+                                    <span class="verified-dot"></span>
+                                    <span>인증된 매물</span>
+                                </div>
+                                <div class="detail-space-info">
+                                    <h2 class="detail-space-name">{selectedSpace.name}</h2>
+                                    <p class="detail-space-location">
+                                        <span class="location-pin">📍</span>
+                                        {selectedSpace.location}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- 오른쪽: 정보 패널 -->
+                        <div class="detail-info-panel">
+                            <button class="panel-close" onclick={goBackToStep3}>×</button>
+                            
+                            <div class="panel-price-row">
+                                <div class="panel-price-item">
+                                    <span class="price-label-small">월 이용료</span>
+                                    <div class="panel-price">
+                                        <span class="price-big">{selectedSpace.priceNumber}</span>
+                                        <span class="price-won">원</span>
+                                    </div>
+                                </div>
+                                <div class="panel-price-item">
+                                    <span class="price-label-small">수용 인원</span>
+                                    <div class="panel-capacity">
+                                        <span class="capacity-number">{selectedSpace.capacityNumber}</span>
+                                        <span class="capacity-unit">인</span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="panel-section">
+                                <h3 class="section-title">공간 소개</h3>
+                                <p class="section-desc">{selectedSpace.description}</p>
+                            </div>
+                            
+                            <div class="panel-section">
+                                <h3 class="section-title">편의 시설 및 혜택</h3>
+                                <div class="amenity-grid">
+                                    <template for:each={selectedSpace.amenities} for:item="amenity">
+                                        <div key={amenity.name} class="amenity-item">
+                                            <span class="amenity-check">✓</span>
+                                            <span>{amenity.name}</span>
+                                        </div>
+                                    </template>
+                                </div>
+                            </div>
+                            
+                            <button class="btn-cta" onclick={goToStep5}>
+                                <span>투어 예약 및 견적 신청</span>
+                                <span class="cta-arrow">→</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- [STEP 5] 맞춤 견적 및 투어 신청 모달 -->
+                <template if:true={isStep5}>
+                    <div class="modal-overlay fade-in" onclick={goToStep4}>
+                        <div class="form-modal slide-up" onclick={stopPropagation}>
+                            <div class="form-modal-header">
+                                <div class="form-icon">
+                                    <span>📋</span>
+                                </div>
+                                <h2 class="form-title">맞춤 견적 및 투어 신청</h2>
+                                <p class="form-subtitle">남겨주신 정보로 담당자가 24시간 내에 연락드립니다.</p>
+                            </div>
+                            
+                            <div class="selected-space-badge">
+                                <span class="badge-building-icon">🏢</span>
+                                <span>{selectedSpace.name}</span>
+                            </div>
+                            
+                            <div class="form-group full-width">
+                                <label>이름</label>
+                                <input type="text" class="form-input" placeholder="홍길동" 
+                                       value={customerInfo.name} data-field="name" onchange={handleInputChange}>
+                            </div>
+                            
+                            <div class="form-group full-width">
+                                <label>연락처</label>
+                                <input type="tel" class="form-input" placeholder="010-1234-5678" 
+                                       value={customerInfo.phone} data-field="phone" onchange={handleInputChange}>
+                            </div>
+                            
+                            <div class="form-group full-width">
+                                <label>회사명</label>
+                                <input type="text" class="form-input" placeholder="주식회사 위그로우" 
+                                       value={customerInfo.company} data-field="company" onchange={handleInputChange}>
+                            </div>
+                            
+                            <div class="form-group full-width">
+                                <label>이메일</label>
+                                <input type="email" class="form-input" placeholder="example@company.com" 
+                                       value={customerInfo.email} data-field="email" onchange={handleInputChange}>
+                            </div>
+                            
+                            <button class="btn-submit" onclick={goToStep6}>
+                                <span>다음 단계로</span>
+                                <span class="submit-arrow">→</span>
+                            </button>
                         </div>
                     </div>
                 </template>
-                <div class="bottom-cta">
-                    <button class="btn-primary full-width" onclick={goToStep5}>투어 및 견적 신청하기</button>
-                </div>
-            </div>
-        </template>
 
-        <!-- [STEP 5] 고객 정보 입력 -->
-        <template if:true={isStep5}>
-            <div class="step-container fade-in">
-                <div class="header-simple">
-                    <h2>방문자 정보 입력</h2>
-                    <p>상세 안내를 위해 연락처를 남겨주세요.</p>
-                </div>
-                <div class="form-container">
-                    <div class="input-group">
-                        <label>회사명</label>
-                        <input type="text" class="we-input" value={customerInfo.company} data-field="company" onchange={handleInputChange}>
+                <!-- [STEP 6] 상담 정보 전송 모달 -->
+                <template if:true={isStep6}>
+                    <div class="modal-overlay fade-in" onclick={goToStep5}>
+                        <div class="choice-modal slide-up" onclick={stopPropagation}>
+                            <h2 class="choice-title">상담 정보 전송</h2>
+                            <p class="choice-subtitle">원하시는 진행 방식을 선택해 주세요.</p>
+                            
+                            <div class="radio-group">
+                                <label class="radio-item" onclick={selectEmailOption}>
+                                    <div class="radio-circle">
+                                        <template if:true={isEmailSelected}>
+                                            <span class="radio-dot"></span>
+                                        </template>
+                                    </div>
+                                    <div class="radio-content">
+                                        <h4>상세 제안서 이메일 수신</h4>
+                                        <p>평면도, 상세 옵션, 견적서 포함</p>
+                                    </div>
+                                    <span class="radio-icon">✉️</span>
+                                </label>
+                                
+                                <label class="radio-item" onclick={selectMeetingOption}>
+                                    <div class="radio-circle">
+                                        <template if:true={isMeetingSelected}>
+                                            <span class="radio-dot"></span>
+                                        </template>
+                                    </div>
+                                    <div class="radio-content">
+                                        <h4>담당자와 Zoom 미팅 예약</h4>
+                                        <p>매니저와 15분 화상 상담</p>
+                                    </div>
+                                    <span class="radio-icon">🎥</span>
+                                </label>
+                            </div>
+                            
+                            <div class="choice-buttons">
+                                <button class="btn-cancel" onclick={goToStep5}>취소</button>
+                                <button class="btn-confirm" onclick={submitForm}>신청하기</button>
+                            </div>
+                        </div>
                     </div>
-                    <div class="input-group">
-                        <label>담당자명</label>
-                        <input type="text" class="we-input" value={customerInfo.name} data-field="name" onchange={handleInputChange}>
-                    </div>
-                    <div class="input-group">
-                        <label>연락처</label>
-                        <input type="tel" class="we-input" value={customerInfo.phone} data-field="phone" onchange={handleInputChange}>
-                    </div>
-                    <div class="input-group">
-                        <label>이메일</label>
-                        <input type="email" class="we-input" value={customerInfo.email} data-field="email" onchange={handleInputChange}>
-                    </div>
-                </div>
-                <div class="bottom-cta">
-                    <button class="btn-primary full-width" onclick={goToStep6}>다음 단계로</button>
-                </div>
-            </div>
-        </template>
+                </template>
 
-        <!-- [STEP 6] 후속 액션 선택 -->
-        <template if:true={isStep6}>
-            <div class="step-container fade-in">
-                <div class="header-simple">
-                    <h2>어떻게 도와드릴까요?</h2>
-                    <p>원하시는 방식을 선택해주세요.</p>
-                </div>
-                <div class="choice-container">
-                    <button class="choice-card" onclick={handleFinalChoice} data-type="email">
-                        <div class="icon-circle">📧</div>
-                        <h3>이메일로 제안서 받기</h3>
-                        <p>상세 견적과 공간 소개서를 메일로 보내드립니다.</p>
-                    </button>
-                    <button class="choice-card" onclick={handleFinalChoice} data-type="meeting">
-                        <div class="icon-circle">📅</div>
-                        <h3>담당자와 미팅 잡기</h3>
-                        <p>전문 매니저와 투어 일정을 바로 조율합니다.</p>
-                    </button>
-                </div>
-            </div>
-        </template>
-
-        <!-- [STEP 7] 접수 완료 -->
-        <template if:true={isStep7}>
-            <div class="step-container fade-in center-content">
-                <div class="success-icon">🎉</div>
-                <h1 class="success-title">접수가 완료되었습니다!</h1>
-                <p class="success-desc">
-                    <strong>{customerInfo.name}</strong> 님, 감사합니다.<br/>
-                    <template if:true={isMeeting}>
-                        담당자가 <strong>{customerInfo.phone}</strong> 번호로<br/>
-                        1시간 이내에 연락드리겠습니다.
-                    </template>
-                    <template if:false={isMeeting}>
-                        <strong>{customerInfo.email}</strong> 주소로<br/>
-                        제안서가 발송되었습니다.
-                    </template>
-                </p>
-                <button class="btn-outline" onclick={resetProcess}>처음으로 돌아가기</button>
+                <!-- [STEP 7] 접수 완료 모달 -->
+                <template if:true={isStep7}>
+                    <div class="modal-overlay fade-in">
+                        <div class="success-modal slide-up">
+                            <div class="success-check">
+                                <span>✓</span>
+                            </div>
+                            <h2 class="success-title">접수가 완료되었습니다!</h2>
+                            <p class="success-desc">
+                                전담 매니저가 배정되었습니다.<br/>
+                                <span class="highlight-text">3일 이내(영업일 기준)</span>로 안내 연락을<br/>
+                                드리겠습니다.
+                            </p>
+                            <button class="btn-home" onclick={resetProcess}>
+                                처음으로 돌아가기
+                            </button>
+                        </div>
+                    </div>
+                </template>
             </div>
         </template>
 
