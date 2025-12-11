@@ -1,0 +1,771 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WE:GROW 고객포털</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; 
+            background: #f5f7fa; 
+            color: #333;
+        }
+        
+        /* 로그인 페이지 */
+        .login-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        
+        .login-box {
+            background: white;
+            padding: 60px 50px;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+            width: 100%;
+            max-width: 450px;
+        }
+        
+        .login-logo {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        
+        .login-logo h1 {
+            color: #0070d2;
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+        
+        .login-logo p {
+            color: #999;
+            font-size: 0.95rem;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
+        
+        .form-group input {
+            width: 100%;
+            padding: 14px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border 0.3s;
+        }
+        
+        .form-group input:focus {
+            outline: none;
+            border-color: #0070d2;
+            box-shadow: 0 0 0 3px rgba(0,112,210,0.1);
+        }
+        
+        .login-btn {
+            width: 100%;
+            padding: 14px;
+            background: #0070d2;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.3s;
+            margin-top: 20px;
+        }
+        
+        .login-btn:hover {
+            background: #005ab3;
+        }
+        
+        /* 메인 레이아웃 */
+        .main-container {
+            display: flex;
+            min-height: 100vh;
+            background: #f5f7fa;
+        }
+        
+        .sidebar {
+            width: 250px;
+            background: linear-gradient(180deg, #1a2634 0%, #0d1219 100%);
+            color: white;
+            padding: 30px 0;
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+            box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+        }
+        
+        .sidebar-header {
+            padding: 0 20px;
+            margin-bottom: 40px;
+        }
+        
+        .sidebar-header h2 {
+            color: #0070d2;
+            font-size: 1.3rem;
+            margin-bottom: 8px;
+            font-weight: 700;
+        }
+        
+        .sidebar-header p {
+            color: #a0b0c0;
+            font-size: 0.85rem;
+            margin: 0;
+        }
+        
+        .nav {
+            padding: 0 12px;
+        }
+        
+        .nav-item {
+            padding: 14px 16px;
+            margin-bottom: 8px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            gap: 14px;
+            align-items: center;
+            color: #a0b0c0;
+            font-size: 0.95rem;
+            font-weight: 500;
+        }
+        
+        .nav-item:hover {
+            background: rgba(0,112,210,0.2);
+            color: #0070d2;
+        }
+        
+        .nav-item.active {
+            background: #0070d2;
+            color: white;
+            font-weight: 600;
+        }
+        
+        .nav-item-icon {
+            font-size: 1.3rem;
+            display: flex;
+            align-items: center;
+        }
+        
+        /* 메인 컨텐츠 */
+        .main-content {
+            flex: 1;
+            margin-left: 250px;
+            padding: 40px;
+        }
+        
+        .page {
+            display: none;
+            animation: fadeIn 0.4s ease-in;
+        }
+        
+        .page.active {
+            display: block;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        /* 페이지 헤더 */
+        .page-header {
+            margin-bottom: 40px;
+        }
+        
+        .page-header h1 {
+            font-size: 2rem;
+            color: #1a2634;
+            margin-bottom: 8px;
+            font-weight: 700;
+        }
+        
+        .page-header p {
+            color: #999;
+            font-size: 0.95rem;
+        }
+        
+        /* 카드 스타일 */
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+        
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+            transition: transform 0.3s, box-shadow 0.3s;
+            border: 1px solid #e8e8e8;
+        }
+        
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+        }
+        
+        .card-title {
+            font-size: 0.95rem;
+            color: #999;
+            margin-bottom: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .card-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #1a2634;
+            margin-bottom: 15px;
+        }
+        
+        .card-status {
+            display: inline-block;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+        
+        .status-active { background: #e6f7ff; color: #0070d2; }
+        .status-pending { background: #fffbe6; color: #ad8b00; }
+        .status-inactive { background: #f5f5f5; color: #999; }
+        
+        /* 테이블 스타일 */
+        .table-container {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+            border: 1px solid #e8e8e8;
+        }
+        
+        .table-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #1a2634;
+            margin-bottom: 25px;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        th {
+            background: #f5f7fa;
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+            color: #666;
+            font-size: 0.9rem;
+            border-bottom: 2px solid #e8e8e8;
+        }
+        
+        td {
+            padding: 15px;
+            border-bottom: 1px solid #e8e8e8;
+            color: #333;
+            font-size: 0.95rem;
+        }
+        
+        tr:hover {
+            background: #f9fafb;
+        }
+        
+        /* 나의 오피스 페이지 */
+        .office-banner {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            height: 300px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 3rem;
+        }
+        
+        .office-details {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            margin-bottom: 30px;
+            border: 1px solid #e8e8e8;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+        }
+        
+        .office-details h2 {
+            font-size: 1.5rem;
+            color: #1a2634;
+            margin-bottom: 20px;
+        }
+        
+        .office-info-row {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .info-item {
+            border-bottom: 1px solid #e8e8e8;
+            padding-bottom: 15px;
+        }
+        
+        .info-label {
+            color: #999;
+            font-size: 0.85rem;
+            margin-bottom: 8px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .info-value {
+            color: #1a2634;
+            font-size: 1rem;
+            font-weight: 600;
+        }
+        
+        .amenities-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+        }
+        
+        .amenity-item {
+            background: #f5f7fa;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+            font-size: 0.9rem;
+            color: #666;
+            border: 1px solid #e8e8e8;
+        }
+        
+        /* 계약 및 청구 페이지 */
+        .contract-info {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            margin-bottom: 30px;
+            border: 1px solid #e8e8e8;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+        }
+        
+        .billing-schedule {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            border: 1px solid #e8e8e8;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+        }
+        
+        /* 시설 및 민원 페이지 */
+        .issues-list {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            border: 1px solid #e8e8e8;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+        }
+        
+        .issue-item {
+            padding: 20px;
+            border-bottom: 1px solid #e8e8e8;
+            display: flex;
+            gap: 20px;
+            align-items: flex-start;
+        }
+        
+        .issue-item:last-child {
+            border-bottom: none;
+        }
+        
+        .issue-number {
+            background: #f5f7fa;
+            color: #0070d2;
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+        
+        .issue-content h3 {
+            color: #1a2634;
+            margin-bottom: 8px;
+        }
+        
+        .issue-content p {
+            color: #999;
+            font-size: 0.9rem;
+            margin-bottom: 10px;
+        }
+        
+        .issue-date {
+            color: #999;
+            font-size: 0.85rem;
+        }
+    </style>
+</head>
+<body>
+
+<!-- 로그인 페이지 -->
+<div id="loginPage" class="login-container">
+    <div class="login-box">
+        <div class="login-logo">
+            <h1>WE:GROW</h1>
+            <p>고객 포털 로그인</p>
+        </div>
+        <form id="loginForm">
+            <div class="form-group">
+                <label for="email">이메일</label>
+                <input type="email" id="email" placeholder="이메일을 입력하세요" required>
+            </div>
+            <div class="form-group">
+                <label for="password">비밀번호</label>
+                <input type="password" id="password" placeholder="비밀번호를 입력하세요" required>
+            </div>
+            <button type="submit" class="login-btn">로그인</button>
+        </form>
+    </div>
+</div>
+
+<!-- 메인 포탈 -->
+<div id="mainPortal" style="display: none;">
+    <div class="main-container">
+        <!-- 좌측 네비게이션 -->
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <h2>WE:GROW</h2>
+                <p>고객 포털</p>
+            </div>
+            <div class="nav">
+                <div class="nav-item active" onclick="switchPage('dashboard')">
+                    <span class="nav-item-icon">📊</span>
+                    <span>대시보드</span>
+                </div>
+                <div class="nav-item" onclick="switchPage('myOffice')">
+                    <span class="nav-item-icon">🏢</span>
+                    <span>나의 오피스</span>
+                </div>
+                <div class="nav-item" onclick="switchPage('charge')">
+                    <span class="nav-item-icon">📋</span>
+                    <span>계약 및 청구</span>
+                </div>
+                <div class="nav-item" onclick="switchPage('service')">
+                    <span class="nav-item-icon">🛠️</span>
+                    <span>시설 및 민원</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- 메인 컨텐츠 -->
+        <div class="main-content">
+            <!-- 대시보드 페이지 -->
+            <div id="dashboard" class="page active">
+                <div class="page-header">
+                    <h1>대시보드</h1>
+                    <p>당신의 계약 정보 및 시설 현황을 한눈에 확인하세요</p>
+                </div>
+
+                <div class="cards-grid">
+                    <div class="card">
+                        <div class="card-title">계약 상태</div>
+                        <div class="card-value">활성</div>
+                        <span class="card-status status-active">진행중</span>
+                    </div>
+                    <div class="card">
+                        <div class="card-title">계약 기간</div>
+                        <div class="card-value">24개월</div>
+                        <span class="card-status status-pending">진행중</span>
+                    </div>
+                    <div class="card">
+                        <div class="card-title">임차 면적</div>
+                        <div class="card-value">250㎡</div>
+                        <span class="card-status status-active">확정</span>
+                    </div>
+                    <div class="card">
+                        <div class="card-title">월 임차료</div>
+                        <div class="card-value">3,500만원</div>
+                        <span class="card-status status-inactive">평균</span>
+                    </div>
+                </div>
+
+                <div class="table-container">
+                    <div class="table-title">최근 결제 내역</div>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>결제월</th>
+                                <th>항목</th>
+                                <th>금액</th>
+                                <th>상태</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>2024년 1월</td>
+                                <td>월 임차료</td>
+                                <td>3,500,000원</td>
+                                <td><span class="card-status status-active">완료</span></td>
+                            </tr>
+                            <tr>
+                                <td>2023년 12월</td>
+                                <td>월 임차료</td>
+                                <td>3,500,000원</td>
+                                <td><span class="card-status status-active">완료</span></td>
+                            </tr>
+                            <tr>
+                                <td>2023년 11월</td>
+                                <td>월 임차료</td>
+                                <td>3,500,000원</td>
+                                <td><span class="card-status status-active">완료</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- 나의 오피스 페이지 -->
+            <div id="myOffice" class="page">
+                <div class="page-header">
+                    <h1>나의 오피스</h1>
+                    <p>계약하신 오피스의 상세 정보</p>
+                </div>
+
+                <div class="office-banner">🏢</div>
+
+                <div class="office-details">
+                    <h2>서울 강남 비즈니스 센터</h2>
+                    <div class="office-info-row">
+                        <div class="info-item">
+                            <div class="info-label">지역</div>
+                            <div class="info-value">서울 강남구</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">임차 면적</div>
+                            <div class="info-value">250㎡</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">건물명</div>
+                            <div class="info-value">WE:GROW 센터</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">층수</div>
+                            <div class="info-value">3층</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">계약 시작일</div>
+                            <div class="info-value">2023년 1월 1일</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">계약 종료일</div>
+                            <div class="info-value">2025년 1월 1일</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="office-details">
+                    <h2>편의시설</h2>
+                    <div class="amenities-grid">
+                        <div class="amenity-item">📶 고속 인터넷</div>
+                        <div class="amenity-item">🅿️ 주차장</div>
+                        <div class="amenity-item">☕ 카페</div>
+                        <div class="amenity-item">🚿 샤워실</div>
+                        <div class="amenity-item">🏋️ 피트니스</div>
+                        <div class="amenity-item">📞 24시간 지원</div>
+                        <div class="amenity-item">🌿 휴게실</div>
+                        <div class="amenity-item">🎓 컨퍼런스</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 계약 및 청구 페이지 -->
+            <div id="charge" class="page">
+                <div class="page-header">
+                    <h1>계약 및 청구</h1>
+                    <p>계약 내용 및 청구 정보를 확인하세요</p>
+                </div>
+
+                <div class="contract-info">
+                    <h2>계약 정보</h2>
+                    <div class="office-info-row">
+                        <div class="info-item">
+                            <div class="info-label">계약 종류</div>
+                            <div class="info-value">전용오피스</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">계약 기간</div>
+                            <div class="info-value">24개월</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">임차 면적</div>
+                            <div class="info-value">250㎡</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">월 임차료</div>
+                            <div class="info-value">3,500,000원</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">계약 상태</div>
+                            <div class="info-value">진행중</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">보증금</div>
+                            <div class="info-value">100,000,000원</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="billing-schedule">
+                    <div class="table-title">청구 일정</div>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>청구월</th>
+                                <th>기본료</th>
+                                <th>추가 서비스</th>
+                                <th>합계</th>
+                                <th>상태</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>2024년 1월</td>
+                                <td>3,500,000원</td>
+                                <td>200,000원</td>
+                                <td>3,700,000원</td>
+                                <td><span class="card-status status-active">완료</span></td>
+                            </tr>
+                            <tr>
+                                <td>2023년 12월</td>
+                                <td>3,500,000원</td>
+                                <td>200,000원</td>
+                                <td>3,700,000원</td>
+                                <td><span class="card-status status-active">완료</span></td>
+                            </tr>
+                            <tr>
+                                <td>2023년 11월</td>
+                                <td>3,500,000원</td>
+                                <td>200,000원</td>
+                                <td>3,700,000원</td>
+                                <td><span class="card-status status-active">완료</span></td>
+                            </tr>
+                            <tr>
+                                <td>2023년 10월</td>
+                                <td>3,500,000원</td>
+                                <td>200,000원</td>
+                                <td>3,700,000원</td>
+                                <td><span class="card-status status-pending">예정</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- 시설 및 민원 페이지 -->
+            <div id="service" class="page">
+                <div class="page-header">
+                    <h1>시설 및 민원</h1>
+                    <p>시설 관련 문의 및 민원을 관리하세요</p>
+                </div>
+
+                <div class="issues-list">
+                    <div class="table-title">최근 민원 내역</div>
+                    <div class="issue-item">
+                        <div class="issue-number">1</div>
+                        <div class="issue-content">
+                            <h3>에어컨 점검 요청</h3>
+                            <p>3층 회의실의 에어컨에서 이상음이 발생합니다. 점검 및 정비를 부탁드립니다.</p>
+                            <div class="issue-date">2024년 1월 15일 · 상태: 진행중</div>
+                        </div>
+                    </div>
+                    <div class="issue-item">
+                        <div class="issue-number">2</div>
+                        <div class="issue-content">
+                            <h3>주차장 예약 문의</h3>
+                            <p>추가 주차장 이용 가능 여부 및 예약 절차에 대해 문의합니다.</p>
+                            <div class="issue-date">2024년 1월 12일 · 상태: 완료</div>
+                        </div>
+                    </div>
+                    <div class="issue-item">
+                        <div class="issue-number">3</div>
+                        <div class="issue-content">
+                            <h3>인터넷 속도 개선 요청</h3>
+                            <p>사무실 일부 구역에서 인터넷 속도가 저하되고 있습니다. 확인 부탁드립니다.</p>
+                            <div class="issue-date">2024년 1월 8일 · 상태: 완료</div>
+                        </div>
+                    </div>
+                    <div class="issue-item">
+                        <div class="issue-number">4</div>
+                        <div class="issue-content">
+                            <h3>청소 서비스 일정 변경</h3>
+                            <p>매주 월요일 청소 일정을 수요일로 변경 요청합니다.</p>
+                            <div class="issue-date">2024년 1월 5일 · 상태: 완료</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function switchPage(pageName) {
+        // 모든 페이지 숨기기
+        const pages = document.querySelectorAll('.page');
+        pages.forEach(page => page.classList.remove('active'));
+        
+        // 모든 네비게이션 항목 비활성화
+        const navItems = document.querySelectorAll('.nav-item');
+        navItems.forEach(item => item.classList.remove('active'));
+        
+        // 선택한 페이지 표시
+        document.getElementById(pageName).classList.add('active');
+        
+        // 선택한 네비게이션 항목 활성화
+        event.target.closest('.nav-item').classList.add('active');
+    }
+
+    document.getElementById('loginForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        const email = document.getElementById('email').value;
+        const password = document.getElementById('password').value;
+        
+        // 간단한 검증 (실제로는 서버에서 검증)
+        if(email && password) {
+            document.getElementById('loginPage').style.display = 'none';
+            document.getElementById('mainPortal').style.display = 'flex';
+        }
+    });
+</script>
+
+</body>
+</html>

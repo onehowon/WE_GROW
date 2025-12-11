@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WE:GROW Lead Onboarding Test</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        /* 공통 스타일 */
+        .main-container {
+            width: 100%;
+            min-height: 100vh;
+            background-color: #f8f9fa;
+            position: relative;
+            font-family: 'Noto Sans KR', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            color: #1a2634;
+            overflow-x: hidden;
+        }
+
+        .step-container {
+            max-width: 500px;
+            margin: 0 auto;
+            padding: 40px 20px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            position: relative;
+            z-index: 2;
+        }
+
+        /* 애니메이션 */
+        .fade-in { animation: fadeIn 0.6s ease-out forwards; }
+        .slide-up { animation: slideUp 0.5s ease-out forwards; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* [STEP 1] Landing */
+        .landing-content { text-align: left; }
+        .brand-logo { font-weight: 900; color: #0070d2; margin-bottom: 20px; font-size: 1.2rem; }
+        .landing-title { font-size: 2.8rem; font-weight: 800; line-height: 1.2; margin-bottom: 20px; color: #1a2634; }
+        .landing-desc { font-size: 1.1rem; color: #666; margin-bottom: 40px; line-height: 1.6; }
+
+        .search-box { position: relative; }
+        .prompt-input {
+            width: 100%; padding: 20px; padding-right: 60px;
+            border: 2px solid #e0e0e0; border-radius: 16px;
+            font-size: 1rem; box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+            transition: all 0.3s;
+        }
+        .prompt-input:focus { outline: none; border-color: #0070d2; }
+        .btn-search {
+            position: absolute; right: 10px; top: 10px; bottom: 10px;
+            background: #1a2634; color: white; border: none;
+            border-radius: 12px; padding: 0 20px; cursor: pointer;
+            display: flex; align-items: center; gap: 8px;
+            transition: transform 0.2s;
+            font-weight: 600;
+        }
+        .btn-search:hover { transform: scale(1.05); }
+
+        /* [STEP 2] Loading */
+        .center-content { text-align: center; align-items: center; }
+        .ai-loader { position: relative; width: 100px; height: 100px; display: flex; align-items: center; justify-content: center; background: #1a2634; border-radius: 50%; margin: 0 auto 30px; }
+        .pulse-ring {
+            position: absolute; width: 100%; height: 100%; border-radius: 50%;
+            border: 4px solid #0070d2; animation: pulse 2s infinite;
+        }
+        @keyframes pulse { 0% { transform: scale(1); opacity: 1; } 100% { transform: scale(1.5); opacity: 0; } }
+        .loading-text { font-size: 1.5rem; font-weight: 700; margin-bottom: 10px; }
+        .loading-sub { color: #888; font-size: 0.9rem; }
+        .highlight { color: #0070d2; font-weight: bold; }
+
+        /* [STEP 3] Best 3 Cards */
+        .header-simple { text-align: center; margin-bottom: 30px; }
+        .header-simple h2 { font-size: 1.8rem; font-weight: 700; margin-bottom: 8px; }
+        .header-simple p { color: #888; }
+        .card-list { display: flex; flex-direction: column; gap: 20px; }
+        .space-card {
+            background: white; border-radius: 20px; overflow: hidden;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.05); cursor: pointer;
+            transition: transform 0.2s;
+        }
+        .space-card:hover { transform: translateY(-5px); }
+        .card-img { height: 180px; background-size: cover; background-position: center; position: relative; }
+        .badge-match {
+            position: absolute; top: 15px; left: 15px;
+            background: #0070d2; color: white; padding: 5px 12px;
+            border-radius: 20px; font-size: 0.8rem; font-weight: bold;
+        }
+        .card-info { padding: 20px; }
+        .card-info h3 { font-size: 1.3rem; font-weight: 700; margin-bottom: 5px; }
+        .loc { color: #666; font-size: 0.9rem; margin-bottom: 10px; }
+        .tags { display: flex; flex-wrap: wrap; gap: 8px; }
+        .tag { background: #f0f4f8; color: #555; padding: 4px 10px; border-radius: 8px; font-size: 0.8rem; }
+
+        /* [STEP 4] Detail */
+        .detail-header { position: absolute; top: 20px; left: 0; width: 100%; padding: 0 20px; display: flex; justify-content: space-between; z-index: 10; }
+        .btn-back { background: rgba(255,255,255,0.8); border: none; padding: 8px 16px; border-radius: 20px; cursor: pointer; font-weight: bold; backdrop-filter: blur(5px); }
+        .badge-best { background: #1a2634; color: white; padding: 8px 16px; border-radius: 20px; font-weight: bold; font-size: 0.8rem; }
+        .detail-hero { width: 100%; height: 350px; background-size: cover; background-position: center; border-radius: 0 0 30px 30px; margin-bottom: 20px; }
+        .detail-content { padding: 20px; }
+        .detail-content h1 { font-size: 2rem; font-weight: 800; margin-bottom: 5px; }
+        .price { color: #0070d2; font-size: 1.4rem; font-weight: 700; margin-bottom: 20px; }
+        .specs { display: flex; gap: 20px; margin-bottom: 30px; background: white; padding: 15px; border-radius: 12px; }
+        .spec-item { flex: 1; }
+        .features { margin-bottom: 20px; }
+        .features h3 { font-size: 1.1rem; font-weight: 700; margin-bottom: 15px; }
+        .features ul { list-style: none; padding-left: 0; }
+        .features li { padding: 8px 0; color: #555; }
+        .bottom-cta { position: fixed; bottom: 0; left: 0; width: 100%; padding: 20px; background: white; border-top: 1px solid #eee; max-width: 500px; }
+
+        /* [STEP 5] Inputs */
+        .form-container { margin-bottom: 100px; }
+        .input-group { margin-bottom: 20px; }
+        .input-group label { display: block; font-weight: 600; margin-bottom: 8px; color: #555; }
+        .we-input { width: 100%; padding: 15px; border: 2px solid #eee; border-radius: 12px; font-size: 1rem; }
+        .we-input:focus { border-color: #1a2634; outline: none; }
+
+        /* Buttons */
+        .btn-primary { background: #0070d2; color: white; border: none; padding: 18px; border-radius: 16px; font-size: 1.1rem; font-weight: 700; cursor: pointer; transition: background 0.2s; width: 100%; }
+        .btn-primary:hover { background: #005fb2; }
+        .full-width { width: 100%; }
+
+        /* [STEP 6] Choice */
+        .choice-container { display: flex; flex-direction: column; gap: 20px; margin-bottom: 100px; }
+        .choice-card {
+            background: white; border: 2px solid #eee; border-radius: 20px; padding: 30px;
+            text-align: left; cursor: pointer; transition: all 0.2s;
+            width: 100%;
+        }
+        .choice-card:hover { border-color: #0070d2; background: #f0f8ff; }
+        .icon-circle { width: 50px; height: 50px; background: #f0f4f8; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; margin-bottom: 15px; }
+        .choice-card h3 { font-size: 1.1rem; font-weight: 700; margin-bottom: 5px; }
+        .choice-card p { color: #666; font-size: 0.9rem; }
+
+        /* [STEP 7] Success */
+        .success-icon { font-size: 5rem; margin-bottom: 20px; animation: pop 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        .success-title { font-size: 2rem; font-weight: 800; margin-bottom: 20px; }
+        .success-desc { color: #666; line-height: 1.8; margin-bottom: 30px; }
+        .btn-outline { background: transparent; border: 2px solid #1a2634; padding: 15px 30px; border-radius: 30px; font-weight: bold; cursor: pointer; margin-top: 30px; }
+        @keyframes pop { 0% { transform: scale(0); } 100% { transform: scale(1); } }
+
+        .hidden { display: none; }
+    </style>
+</head>
+<body>
+    <div class="main-container">
+        
+        <!-- [STEP 1] 랜딩 페이지 -->
+        <div id="step1" class="step-container fade-in">
+            <div class="landing-content">
+                <div class="brand-logo">WE:GROW</div>
+                <h1 class="landing-title">어떤 오피스를<br/>찾고 계신가요?</h1>
+                <p class="landing-desc">AI가 고객님의 니즈를 분석하여<br/>최적의 공간 TOP 3를 추천해 드립니다.</p>
+                
+                <div class="search-box">
+                    <input type="text" class="prompt-input" id="userPrompt"
+                           placeholder="예: 강남역 근처, 20명, 예산 500만원, 채광 좋은 곳">
+                    <button class="btn-search" onclick="goToStep2()">분석 시작</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- [STEP 2] AI 분석 로딩 (애니메이션) -->
+        <div id="step2" class="step-container fade-in center-content hidden">
+            <div class="ai-loader">
+                <div class="pulse-ring"></div>
+            </div>
+            <h2 class="loading-text">AI가 최적의 공간을<br/>분석하고 있습니다...</h2>
+            <p class="loading-sub">입력하신 조건: <span class="highlight" id="displayPrompt"></span></p>
+        </div>
+
+        <!-- [STEP 3] BEST 3 추천 결과 -->
+        <div id="step3" class="step-container fade-in hidden">
+            <div class="header-simple">
+                <h2>추천 공간 BEST 3</h2>
+                <p>고객님의 조건에 가장 잘 맞는 곳이에요.</p>
+            </div>
+            <div class="card-list" id="cardList"></div>
+        </div>
+
+        <!-- [STEP 4] 상세 페이지 -->
+        <div id="step4" class="step-container slide-up hidden">
+            <div class="detail-header">
+                <button class="btn-back" onclick="goBackToStep3()">← 뒤로</button>
+                <span class="badge-best">AI 강력 추천</span>
+            </div>
+            <div class="detail-hero" id="detailHero"></div>
+            <div class="detail-content">
+                <h1 id="detailName"></h1>
+                <p class="price" id="detailPrice"></p>
+                <hr/>
+                <div class="specs">
+                    <div class="spec-item"><strong>면적</strong> <span id="detailSize"></span></div>
+                    <div class="spec-item"><strong>수용</strong> <span id="detailCapacity"></span></div>
+                </div>
+                <div class="features">
+                    <h3>주요 특징</h3>
+                    <ul>
+                        <li>✨ 창가 통유리 구조로 채광 우수</li>
+                        <li>🚀 전용 라운지 및 회의실 2개 포함</li>
+                        <li>🛡️ 3중 보안 시스템 및 24시간 출입</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="bottom-cta">
+                <button class="btn-primary full-width" onclick="goToStep5()">투어 및 견적 신청하기</button>
+            </div>
+        </div>
+
+        <!-- [STEP 5] 고객 정보 입력 -->
+        <div id="step5" class="step-container fade-in hidden">
+            <div class="header-simple">
+                <h2>방문자 정보 입력</h2>
+                <p>상세 안내를 위해 연락처를 남겨주세요.</p>
+            </div>
+            <div class="form-container">
+                <div class="input-group">
+                    <label>회사명</label>
+                    <input type="text" class="we-input" id="company" placeholder="회사명">
+                </div>
+                <div class="input-group">
+                    <label>담당자명</label>
+                    <input type="text" class="we-input" id="name" placeholder="담당자명">
+                </div>
+                <div class="input-group">
+                    <label>연락처</label>
+                    <input type="tel" class="we-input" id="phone" placeholder="010-1234-5678">
+                </div>
+                <div class="input-group">
+                    <label>이메일</label>
+                    <input type="email" class="we-input" id="email" placeholder="example@company.com">
+                </div>
+            </div>
+            <div class="bottom-cta">
+                <button class="btn-primary full-width" onclick="goToStep6()">다음 단계로</button>
+            </div>
+        </div>
+
+        <!-- [STEP 6] 후속 액션 선택 -->
+        <div id="step6" class="step-container fade-in hidden">
+            <div class="header-simple">
+                <h2>어떻게 도와드릴까요?</h2>
+                <p>원하시는 방식을 선택해주세요.</p>
+            </div>
+            <div class="choice-container">
+                <button class="choice-card" onclick="handleFinalChoice('email')">
+                    <div class="icon-circle">📧</div>
+                    <h3>이메일로 제안서 받기</h3>
+                    <p>상세 견적과 공간 소개서를 메일로 보내드립니다.</p>
+                </button>
+                <button class="choice-card" onclick="handleFinalChoice('meeting')">
+                    <div class="icon-circle">📅</div>
+                    <h3>담당자와 미팅 잡기</h3>
+                    <p>전문 매니저와 투어 일정을 바로 조율합니다.</p>
+                </button>
+            </div>
+        </div>
+
+        <!-- [STEP 7] 접수 완료 -->
+        <div id="step7" class="step-container fade-in center-content hidden">
+            <div class="success-icon">🎉</div>
+            <h1 class="success-title">접수가 완료되었습니다!</h1>
+            <p class="success-desc">
+                <strong id="successName"></strong> 님, 감사합니다.<br/>
+                <span id="successMsg"></span>
+            </p>
+            <button class="btn-outline" onclick="resetProcess()">처음으로 돌아가기</button>
+        </div>
+
+    </div>
+
+    <script>
+        const recommendations = [
+            {
+                id: '1', name: '강남 1호점 301호', location: '서울 강남구 역삼로',
+                price: '월 550만원', size: '20인실', capacity: '20~25명',
+                matchRate: 98, tags: ['창가', '개별냉난방', '즉시입주'],
+                bgImage: 'https://images.unsplash.com/photo-1497366216548-37526070297c?w=500&q=80'
+            },
+            {
+                id: '2', name: '성수 2호점 201호', location: '서울 성동구 아차산로',
+                price: '월 500만원', size: '25인실', capacity: '20~30명',
+                matchRate: 95, tags: ['높은 층고', '스튜디오', '카페테리아'],
+                bgImage: 'https://images.unsplash.com/photo-1524758631624-e2822e304c36?w=500&q=80'
+            },
+            {
+                id: '3', name: '판교 1호점 505호', location: '경기 성남시 분당구',
+                price: '월 520만원', size: '20인실', capacity: '20명',
+                matchRate: 92, tags: ['IT특화', '보안철저', '주차편리'],
+                bgImage: 'https://images.unsplash.com/photo-1504384308090-c54be3852f33?w=500&q=80'
+            }
+        ];
+
+        let currentStep = 1;
+        let selectedSpace = null;
+        let userPrompt = '';
+        let isMeeting = false;
+
+        function showStep(step) {
+            for (let i = 1; i <= 7; i++) {
+                const el = document.getElementById(`step${i}`);
+                if (el) el.classList.add('hidden');
+            }
+            const current = document.getElementById(`step${step}`);
+            if (current) {
+                current.classList.remove('hidden');
+                current.classList.add(step === 4 ? 'slide-up' : 'fade-in');
+            }
+            currentStep = step;
+        }
+
+        function goToStep2() {
+            userPrompt = document.getElementById('userPrompt').value.trim();
+            if (!userPrompt) {
+                userPrompt = '강남역 근처, 20명, 합리적 가격';
+            }
+            document.getElementById('displayPrompt').textContent = userPrompt;
+            showStep(2);
+            
+            setTimeout(() => {
+                renderCards();
+                showStep(3);
+            }, 2500);
+        }
+
+        function renderCards() {
+            const cardList = document.getElementById('cardList');
+            cardList.innerHTML = recommendations.map(space => `
+                <div class="space-card" onclick="handleCardClick('${space.id}')">
+                    <div class="card-img" style="background-image: url('${space.bgImage}');">
+                        <span class="badge-match">${space.matchRate}% 일치</span>
+                    </div>
+                    <div class="card-info">
+                        <h3>${space.name}</h3>
+                        <p class="loc">${space.location}</p>
+                        <div class="tags">
+                            ${space.tags.map(tag => `<span class="tag">${tag}</span>`).join('')}
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function handleCardClick(spaceId) {
+            selectedSpace = recommendations.find(s => s.id === spaceId);
+            if (selectedSpace) {
+                document.getElementById('detailHero').style.backgroundImage = `url('${selectedSpace.bgImage}')`;
+                document.getElementById('detailName').textContent = selectedSpace.name;
+                document.getElementById('detailPrice').textContent = selectedSpace.price;
+                document.getElementById('detailSize').textContent = selectedSpace.size;
+                document.getElementById('detailCapacity').textContent = selectedSpace.capacity;
+                showStep(4);
+            }
+        }
+
+        function goBackToStep3() {
+            showStep(3);
+        }
+
+        function goToStep5() {
+            showStep(5);
+        }
+
+        function goToStep6() {
+            const company = document.getElementById('company').value.trim();
+            const name = document.getElementById('name').value.trim();
+            const phone = document.getElementById('phone').value.trim();
+            const email = document.getElementById('email').value.trim();
+            
+            if (!company || !name || !phone || !email) {
+                alert('모든 정보를 입력해주세요.');
+                return;
+            }
+            showStep(6);
+        }
+
+        function handleFinalChoice(type) {
+            isMeeting = type === 'meeting';
+            const name = document.getElementById('name').value;
+            const phone = document.getElementById('phone').value;
+            const email = document.getElementById('email').value;
+            
+            document.getElementById('successName').textContent = name;
+            if (isMeeting) {
+                document.getElementById('successMsg').innerHTML = 
+                    `담당자가 <strong>${phone}</strong> 번호로<br/>1시간 이내에 연락드리겠습니다.`;
+            } else {
+                document.getElementById('successMsg').innerHTML = 
+                    `<strong>${email}</strong> 주소로<br/>제안서가 발송되었습니다.`;
+            }
+            showStep(7);
+        }
+
+        function resetProcess() {
+            document.getElementById('userPrompt').value = '';
+            document.getElementById('company').value = '';
+            document.getElementById('name').value = '';
+            document.getElementById('phone').value = '';
+            document.getElementById('email').value = '';
+            selectedSpace = null;
+            userPrompt = '';
+            isMeeting = false;
+            showStep(1);
+        }
+
+        // 초기 로드
+        renderCards();
+    </script>
+</body>
+</html>
