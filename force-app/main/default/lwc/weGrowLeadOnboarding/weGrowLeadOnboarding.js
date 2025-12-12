@@ -1,4 +1,5 @@
 import { LightningElement, track } from 'lwc';
+// Apex 메서드 import (클래스명: WeGrowController, 메서드명: findOffices)
 import findOffices from '@salesforce/apex/WeGrowController.findOffices';
 
 export default class WeGrowOnboarding extends LightningElement {
@@ -7,111 +8,133 @@ export default class WeGrowOnboarding extends LightningElement {
     @track selectedSpace = {};
     @track recommendations = [];
 
-    // 단계별 Getter
-    get isStep1() { return this.step === 1; }
-    get isStep2() { return this.step === 2; }
-    get isStep3() { return this.step === 3; }
-    get isStep4() { return this.step === 4; }
-    get isStep5() { return this.step === 5; }
-    // Step 6는 플로 내부 로직으로 대체되므로 건너뜀.
-    get isStep7() { return this.step === 7; } 
+    // [Getter] 단계별 화면 표시 여부
+    get isStep1() { return this.step === 1; } // 검색어 입력
+    get isStep2() { return this.step === 2; } // 로딩 중
+    get isStep3() { return this.step === 3; } // 결과 목록
+    get isStep4() { return this.step === 4; } // 상세 보기
+    get isStep5() { return this.step === 5; } // Flow(신청) 모달
+    // Step 6는 건너뜀 (Flow 내부 처리)
+    get isStep7() { return this.step === 7; } // 완료 화면
     
     get isDetailView() { return this.step === 4; }
     get showHeader() { return this.step >= 1 && this.step <= 3; }
     
-    // 결과가 있는지 확인
+    // 결과가 있는지 확인 (결과 없으면 안내 문구 표시용)
     get hasResults() { return this.recommendations && this.recommendations.length > 0; }
 
-    // [STEP 1] 태그 클릭
+    // [STEP 1] 태그 클릭 핸들러
     handleTagClick(event) {
         this.userPrompt = event.currentTarget.dataset.tag;
     }
 
-    // [STEP 1] 입력 감지
+    // [STEP 1] 검색어 입력 핸들러
     handlePromptInput(event) {
         this.userPrompt = event.target.value;
     }
 
     // [STEP 1 -> 2 -> 3] 검색 실행 (Apex 연결)
     goToStep2() {
-    if (!this.userPrompt) this.userPrompt = '강남';
-    this.step = 2;
+        // 검색어가 비어있으면 기본값으로 '강남' 설정 (테스트 편의성)
+        if (!this.userPrompt) this.userPrompt = '강남';
+        this.step = 2; // 로딩 화면으로 전환
 
-    // ★ 안정적인 오피스 이미지 URL 모음 (무료 이미지 사이트 Pexels/Unsplash 고정 링크)
-    const OFFICE_IMAGES = [
-        'https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=800&q=80', // 깔끔한 오피스
-        'https://images.unsplash.com/photo-1524758631624-e2822e304c36?auto=format&fit=crop&w=800&q=80', // 로프트 스타일
-        'https://images.unsplash.com/photo-1504384308090-c54be3852f33?auto=format&fit=crop&w=800&q=80', // CEO실 느낌
-        'https://images.unsplash.com/photo-1497215728101-856f4ea42174?auto=format&fit=crop&w=800&q=80', // 밝은 회의실
-        'https://images.unsplash.com/photo-1556761175-5973dc0f32e7?auto=format&fit=crop&w=800&q=80'  // 모던한 라운지
-    ];
+        // ★ 요청하신 5개 목업 이미지 (순서대로 순환)
+        const OFFICE_IMAGES = [
+            'https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=800&q=80',
+            'https://images.unsplash.com/photo-1524758631624-e2822e304c36?auto=format&fit=crop&w=800&q=80',
+            'https://images.unsplash.com/photo-1504384308090-c54be3852f33?auto=format&fit=crop&w=800&q=80',
+            'https://images.unsplash.com/photo-1497215728101-856f4ea42174?auto=format&fit=crop&w=800&q=80',
+            'https://images.unsplash.com/photo-1556761175-5973dc0f32e7?auto=format&fit=crop&w=800&q=80'
+        ];
 
-    findOffices({ keyword: this.userPrompt })
-        .then(result => {
-            this.recommendations = result.map((asset, index) => {
-                return {
-                    id: asset.Id,
-                    name: asset.Name,
-                    location: asset.Branch_Account__r ? asset.Branch_Account__r.Name : '위치 정보 없음',
-                    priceNumber: asset.Price ? asset.Price.toLocaleString() : '문의',
-                    capacityNumber: asset.Capacity__c ? asset.Capacity__c : '-',
-                    matchRate: 99 - index,
-                    
-                    // ★ 핵심 수정: 순서대로 이미지 가져오기 (index % 길이)
-                    imageUrl: OFFICE_IMAGES[index % OFFICE_IMAGES.length],
-                    
-                    description: asset.Description || '상세 설명이 준비되지 않았습니다.',
-                    amenities: [{name:'24시간 보안'}, {name:'초고속 인터넷'}, {name:'라운지 이용'}]
-                };
+        // Apex 호출
+        findOffices({ keyword: this.userPrompt })
+            .then(result => {
+                // 가져온 Asset 데이터를 화면에 맞게 변환 (Mapping)
+                this.recommendations = result.map((asset, index) => {
+                    return {
+                        id: asset.Id,
+                        name: asset.Name,
+                        
+                        // [중요] 지점명: Asset(자산) -> Account(지점) 관계 필드 참조
+                        location: asset.Branch_Account__r ? asset.Branch_Account__r.Name : '위치 정보 없음',
+                        
+                        // 가격: Asset의 Price 필드 (3자리 콤마 포맷팅)
+                        priceNumber: asset.Price ? asset.Price.toLocaleString() : '문의',
+                        
+                        // 인원: 커스텀 필드 Capacity__c 사용
+                        capacityNumber: asset.Capacity__c ? asset.Capacity__c : '-',
+                        
+                        // 매칭률: 데모용으로 순서대로 조금씩 낮춤
+                        matchRate: 99 - index,
+                        
+                        // 이미지: 5개 이미지를 순환해서 할당 (index % 5)
+                        imageUrl: OFFICE_IMAGES[index % OFFICE_IMAGES.length],
+                        
+                        // 설명
+                        description: asset.Description || '상세 설명이 준비되지 않았습니다.',
+                        
+                        // 편의시설 (현재는 하드코딩, 필요시 Product 옵션과 연동 가능)
+                        amenities: [{name:'24시간 보안'}, {name:'초고속 인터넷'}, {name:'라운지 이용'}]
+                    };
+                });
+                
+                // 로딩 느낌을 주기 위해 1.5초 딜레이 후 결과 화면(Step 3)으로 이동
+                // eslint-disable-next-line @lwc/lwc/no-async-operation
+                setTimeout(() => { 
+                    this.step = 3; 
+                }, 1500);
+            })
+            .catch(error => {
+                console.error('Search Error:', error);
+                this.recommendations = []; // 에러 시 빈 결과
+                this.step = 3; // 결과 화면으로 이동하여 "결과 없음" 표시
             });
-            
-            // eslint-disable-next-line @lwc/lwc/no-async-operation
-            setTimeout(() => { this.step = 3; }, 1500);
-        })
-        .catch(error => {
-            console.error('Search Error:', error);
-            this.recommendations = [];
-            this.step = 3;
-        });
-}
+    }
 
-    // [STEP 3 -> 4] 상세 보기
+    // [STEP 3 -> 4] 카드 클릭 시 상세 보기
     handleCardClick(event) {
         const spaceId = event.currentTarget.dataset.id;
+        // 클릭한 ID에 해당하는 오피스 정보를 찾아서 selectedSpace에 저장
         this.selectedSpace = this.recommendations.find(s => s.id === spaceId);
         this.step = 4;
     }
 
+    // 이벤트 전파 방지 (모달 배경 클릭 시 닫기 방지 등)
     stopPropagation(event) { event.stopPropagation(); }
+    
+    // 뒤로 가기
     goBackToStep3() { this.step = 3; }
     goToStep4() { this.step = 4; }
 
-    // [STEP 4 -> 5] 신청하기 (플로 열기)
+    // [STEP 4 -> 5] 신청하기 버튼 (Flow 모달 열기)
     goToStep5() { this.step = 5; }
 
-    //플로에 넘겨줄 변수 (오피스 이름)
+    // [Flow 연동] Flow에 넘겨줄 변수 설정
     get flowInputVariables() {
         return [
             {
-                name: 'InterestAsset', // 플로의 입력 변수 API 이름
+                // Flow 내부에 'InterestAsset'이라는 '입력 전용 텍스트 변수'가 있어야 함
+                name: 'InterestAsset', 
                 type: 'String',
-                value: this.selectedSpace.name // 현재 보고 있는 오피스 이름
+                value: this.selectedSpace.name // 예: "강남점 101호"
             }
         ];
     }
 
-    //플로 완료 감지 (Step 5 -> 7)
-    // Step 6(추가 옵션) 기능은 Flow가 데이터를 처리하므로 생략하고 성공 화면으로 갑니다.
+    // [Flow 상태 감지] Flow가 완료(FINISHED)되면 완료 화면(Step 7)으로 이동
     handleFlowStatusChange(event) {
         if (event.detail.status === 'FINISHED') {
             this.step = 7;
         }
     }
 
-    // 처음으로
+    // [초기화] 처음으로 돌아가기
     resetProcess() {
         this.step = 1;
         this.userPrompt = '';
         this.recommendations = [];
+        this.selectedSpace = {};
     }
 }
