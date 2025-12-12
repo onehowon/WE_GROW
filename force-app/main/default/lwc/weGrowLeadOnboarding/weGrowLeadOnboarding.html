@@ -1,152 +1,104 @@
 <template>
     <div class="main-container">
         
-        <!-- 헤더 (Step 1, 2, 3에서 표시) -->
         <template if:true={showHeader}>
             <header class="top-header">
                 <div class="header-left">
                     <div class="logo-container">
-                        <span class="logo-icon">○</span>
-                        <span class="logo-text">WE-GROW</span>
+                        <span class="logo-icon">○</span><span class="logo-text">WE-GROW</span>
                     </div>
                 </div>
                 <div class="header-right">
                     <div class="agent-status">
-                        <span class="status-dot"></span>
-                        <span>AI Agent 대기중</span>
+                        <span class="status-dot"></span><span>AI Agent 대기중</span>
                     </div>
                 </div>
             </header>
         </template>
 
-        <!-- [STEP 1] 랜딩 페이지 -->
         <template if:true={isStep1}>
             <div class="step-container fade-in step1-container">
-                <!-- 배경 이미지 오버레이 -->
                 <div class="bg-overlay"></div>
-                
                 <div class="landing-content">
-                    <!-- AI Finder 배지 -->
                     <div class="finder-badge">
-                        <span class="badge-icon">○</span>
-                        <span>Agentforce based Workspace Finder</span>
+                        <span class="badge-icon">○</span><span>Agentforce based Workspace Finder</span>
                     </div>
-                    
-                    <!-- 메인 타이틀 -->
                     <h1 class="landing-title">
-                        AI의 속도로 찾는<br/>
-                        <span class="gradient-text">당신만의 완벽한 오피스</span>
+                        AI의 속도로 찾는<br/><span class="gradient-text">당신만의 완벽한 오피스</span>
                     </h1>
-                    
-                    <!-- 설명 텍스트 -->
                     <p class="landing-desc">
                         팀 규모, 선호 지역, 원하는 분위기만 말씀해 주세요.<br/>
-                        AI 에이전트가 수천 개의 매물 중 최적의 공간을 즉시 찾아드립니다.
+                        AI 에이전트가 실시간 공실 데이터에서 최적의 공간을 찾아드립니다.
                     </p>
-                    
-                    <!-- 검색 박스 -->
                     <div class="search-box">
                         <span class="search-icon">○</span>
                         <input type="text" class="prompt-input" 
                                placeholder="예: 강남역 채광 좋은 4인실 찾아줘" 
-                               value={userPrompt}
-                               onchange={handlePromptInput}>
-                        <button class="btn-search" onclick={goToStep2}>
-                            <span class="arrow-icon">→</span>
-                        </button>
+                               value={userPrompt} onchange={handlePromptInput}>
+                        <button class="btn-search" onclick={goToStep2}><span class="arrow-icon">→</span></button>
                     </div>
-                    
-                    <!-- 추천 태그 -->
                     <div class="suggestion-tags">
                         <button class="tag-btn" onclick={handleTagClick} data-tag="강남역 4인실">
-                            <span class="tag-icon building">🏢</span>
-                            <span>강남역 4인실</span>
+                            <span class="tag-icon building">🏢</span><span>강남역 4인실 오피스 추천해줘</span>
                         </button>
                         <button class="tag-btn" onclick={handleTagClick} data-tag="성수동 스튜디오">
-                            <span class="tag-icon studio">🎨</span>
-                            <span>성수동 스튜디오</span>
-                        </button>
-                        <button class="tag-btn" onclick={handleTagClick} data-tag="여의도 CEO급">
-                            <span class="tag-icon ceo">🏛️</span>
-                            <span>여의도 CEO급</span>
+                            <span class="tag-icon studio">🎨</span><span>을지로 채광 좋은 오피스 추천해줘</span>
                         </button>
                     </div>
                 </div>
             </div>
         </template>
 
-        <!-- [STEP 2] AI 분석 로딩 -->
         <template if:true={isStep2}>
             <div class="step-container fade-in center-content">
                 <div class="ai-loader">
-                    <div class="loader-circle">
-                        <span class="refresh-icon">⟳</span>
-                    </div>
+                    <div class="loader-circle"><span class="refresh-icon">⟳</span></div>
                     <div class="pulse-ring"></div>
                 </div>
                 <h2 class="loading-text">AI가 분석 중입니다...</h2>
-                <p class="loading-sub">
-                    "<span class="highlight">{userPrompt}</span>" 조건에 맞는 공간을 찾고 있습니다.
-                </p>
-                <div class="loading-dots">
-                    <span class="dot"></span>
-                    <span class="dot"></span>
-                    <span class="dot"></span>
-                </div>
+                <p class="loading-sub">"<span class="highlight">{userPrompt}</span>" 조건에 맞는 공간을 찾고 있습니다.</p>
             </div>
         </template>
 
-        <!-- [STEP 3] BEST 3 추천 결과 -->
         <template if:true={isStep3}>
             <div class="step-container fade-in step3-container">
                 <div class="result-header">
                     <div class="result-left">
-                        <div class="status-badge">
-                            <span class="status-indicator"></span>
-                            <span>AI 분석 및 매칭 완료</span>
-                        </div>
-                        <h1 class="result-title">
-                            고객님을 위한 <span class="highlight-blue">BEST 3</span> 공간을 찾았습니다.
-                        </h1>
+                        <div class="status-badge"><span class="status-indicator"></span><span>AI 분석 및 매칭 완료</span></div>
+                        <h1 class="result-title">고객님을 위한 <span class="highlight-blue">BEST 공간</span>을 찾았습니다.</h1>
                     </div>
                     <button class="btn-retry" onclick={resetProcess}>
-                        <span class="search-icon-small">🔍</span>
-                        <span>다시 검색하기</span>
+                        <span class="search-icon-small">🔍</span><span>다시 검색하기</span>
                     </button>
                 </div>
                 
                 <div class="card-grid">
+                    <template if:false={hasResults}>
+                        <div class="no-result" style="color:white; text-align:center; width:100%; padding:50px;">
+                            조건에 맞는 공실 오피스가 없습니다.
+                        </div>
+                    </template>
+
                     <template for:each={recommendations} for:item="space">
                         <div key={space.id} class="space-card" onclick={handleCardClick} data-id={space.id}>
                             <div class="card-img-wrapper">
                                 <img src={space.imageUrl} alt={space.name} class="card-img" />
-                                <span class="badge-match">
-                                    <span class="match-dot"></span>
-                                    적합도 {space.matchRate}%
-                                </span>
+                                <span class="badge-match"><span class="match-dot"></span>적합도 {space.matchRate}%</span>
                             </div>
                             <div class="card-info">
                                 <h3 class="card-title">{space.name}</h3>
-                                <p class="card-location">
-                                    <span class="location-icon">📍</span>
-                                    {space.location}
-                                </p>
+                                <p class="card-location"><span class="location-icon">📍</span>{space.location}</p>
                                 <div class="card-tags">
-                                    <template for:each={space.tags} for:item="tag">
-                                        <span key={tag} class="card-tag">{tag}</span>
-                                    </template>
+                                    <span class="card-tag">{space.capacityNumber}인실</span>
                                 </div>
                                 <div class="card-footer">
                                     <div class="price-info">
                                         <span class="price-label">월 이용료</span>
                                         <div class="price-value">
-                                            <span class="price-number">{space.priceNumber}</span>
-                                            <span class="price-unit">원</span>
+                                            <span class="price-number">{space.priceNumber}</span><span class="price-unit">원</span>
                                         </div>
                                     </div>
-                                    <button class="btn-arrow">
-                                        <span>→</span>
-                                    </button>
+                                    <button class="btn-arrow"><span>→</span></button>
                                 </div>
                             </div>
                         </div>
@@ -155,204 +107,86 @@
             </div>
         </template>
 
-        <!-- [STEP 4~7] 상세 페이지 + 모달들 -->
         <template if:true={isDetailView}>
             <div class="detail-view-container">
-                <!-- 상세 페이지 배경 (항상 표시) -->
                 <div class="detail-background">
-                    <header class="top-header">
-                        <div class="header-left">
-                            <div class="logo-container">
-                                <span class="logo-icon">○</span>
-                                <span class="logo-text">WE-GROW</span>
-                            </div>
-                        </div>
-                        <div class="header-right">
-                            <div class="agent-status">
-                                <span class="status-dot"></span>
-                                <span>AI Agent 대기중</span>
-                            </div>
-                        </div>
-                    </header>
-                    
                     <div class="detail-split-view">
-                        <!-- 왼쪽: 이미지 영역 -->
                         <div class="detail-image-section">
-                            <img src={selectedSpace.imageUrl} alt={selectedSpace.name} class="detail-full-image" />
+                            <img src={selectedSpace.imageUrl} class="detail-full-image" />
                             <div class="detail-image-overlay">
-                                <div class="verified-badge">
-                                    <span class="verified-dot"></span>
-                                    <span>인증된 매물</span>
-                                </div>
                                 <div class="detail-space-info">
                                     <h2 class="detail-space-name">{selectedSpace.name}</h2>
-                                    <p class="detail-space-location">
-                                        <span class="location-pin">📍</span>
-                                        {selectedSpace.location}
-                                    </p>
+                                    <p class="detail-space-location">📍 {selectedSpace.location}</p>
                                 </div>
                             </div>
                         </div>
-                        
-                        <!-- 오른쪽: 정보 패널 -->
                         <div class="detail-info-panel">
                             <button class="panel-close" onclick={goBackToStep3}>×</button>
-                            
                             <div class="panel-price-row">
                                 <div class="panel-price-item">
                                     <span class="price-label-small">월 이용료</span>
-                                    <div class="panel-price">
-                                        <span class="price-big">{selectedSpace.priceNumber}</span>
-                                        <span class="price-won">원</span>
-                                    </div>
+                                    <div class="panel-price"><span class="price-big">{selectedSpace.priceNumber}</span>원</div>
                                 </div>
                                 <div class="panel-price-item">
                                     <span class="price-label-small">수용 인원</span>
-                                    <div class="panel-capacity">
-                                        <span class="capacity-number">{selectedSpace.capacityNumber}</span>
-                                        <span class="capacity-unit">인</span>
-                                    </div>
+                                    <div class="panel-capacity"><span class="capacity-number">{selectedSpace.capacityNumber}</span>인</div>
                                 </div>
                             </div>
-                            
                             <div class="panel-section">
                                 <h3 class="section-title">공간 소개</h3>
                                 <p class="section-desc">{selectedSpace.description}</p>
                             </div>
-                            
                             <div class="panel-section">
-                                <h3 class="section-title">편의 시설 및 혜택</h3>
+                                <h3 class="section-title">편의 시설</h3>
                                 <div class="amenity-grid">
                                     <template for:each={selectedSpace.amenities} for:item="amenity">
-                                        <div key={amenity.name} class="amenity-item">
-                                            <span class="amenity-check">✓</span>
-                                            <span>{amenity.name}</span>
-                                        </div>
+                                        <div key={amenity.name} class="amenity-item"><span class="amenity-check">✓</span><span>{amenity.name}</span></div>
                                     </template>
                                 </div>
                             </div>
-                            
                             <button class="btn-cta" onclick={goToStep5}>
-                                <span>투어 예약 및 견적 신청</span>
-                                <span class="cta-arrow">→</span>
+                                <span>투어 예약 및 견적 신청</span><span class="cta-arrow">→</span>
                             </button>
                         </div>
                     </div>
                 </div>
-
-                <!-- [STEP 5] 맞춤 견적 및 투어 신청 모달 -->
-                <template if:true={isStep5}>
-                    <div class="modal-overlay fade-in" onclick={goToStep4}>
-                        <div class="form-modal slide-up" onclick={stopPropagation}>
-                            <div class="form-modal-header">
-                                <div class="form-icon">
-                                    <span>📋</span>
-                                </div>
-                                <h2 class="form-title">맞춤 견적 및 투어 신청</h2>
-                                <p class="form-subtitle">남겨주신 정보로 담당자가 24시간 내에 연락드립니다.</p>
-                            </div>
-                            
-                            <div class="selected-space-badge">
-                                <span class="badge-building-icon">🏢</span>
-                                <span>{selectedSpace.name}</span>
-                            </div>
-                            
-                            <div class="form-group full-width">
-                                <label>이름</label>
-                                <input type="text" class="form-input" placeholder="홍길동" 
-                                       value={customerInfo.name} data-field="name" onchange={handleInputChange}>
-                            </div>
-                            
-                            <div class="form-group full-width">
-                                <label>연락처</label>
-                                <input type="tel" class="form-input" placeholder="010-1234-5678" 
-                                       value={customerInfo.phone} data-field="phone" onchange={handleInputChange}>
-                            </div>
-                            
-                            <div class="form-group full-width">
-                                <label>회사명</label>
-                                <input type="text" class="form-input" placeholder="주식회사 위그로우" 
-                                       value={customerInfo.company} data-field="company" onchange={handleInputChange}>
-                            </div>
-                            
-                            <div class="form-group full-width">
-                                <label>이메일</label>
-                                <input type="email" class="form-input" placeholder="example@company.com" 
-                                       value={customerInfo.email} data-field="email" onchange={handleInputChange}>
-                            </div>
-                            
-                            <button class="btn-submit" onclick={goToStep6}>
-                                <span>다음 단계로</span>
-                                <span class="submit-arrow">→</span>
-                            </button>
-                        </div>
-                    </div>
-                </template>
-
-                <!-- [STEP 6] 상담 정보 전송 모달 -->
-                <template if:true={isStep6}>
-                    <div class="modal-overlay fade-in" onclick={goToStep5}>
-                        <div class="choice-modal slide-up" onclick={stopPropagation}>
-                            <h2 class="choice-title">상담 정보 전송</h2>
-                            <p class="choice-subtitle">원하시는 진행 방식을 선택해 주세요.</p>
-                            
-                            <div class="radio-group">
-                                <label class="radio-item" onclick={selectEmailOption}>
-                                    <div class="radio-circle">
-                                        <template if:true={isEmailSelected}>
-                                            <span class="radio-dot"></span>
-                                        </template>
-                                    </div>
-                                    <div class="radio-content">
-                                        <h4>상세 제안서 이메일 수신</h4>
-                                        <p>평면도, 상세 옵션, 견적서 포함</p>
-                                    </div>
-                                    <span class="radio-icon">✉️</span>
-                                </label>
-                                
-                                <label class="radio-item" onclick={selectMeetingOption}>
-                                    <div class="radio-circle">
-                                        <template if:true={isMeetingSelected}>
-                                            <span class="radio-dot"></span>
-                                        </template>
-                                    </div>
-                                    <div class="radio-content">
-                                        <h4>담당자와 Zoom 미팅 예약</h4>
-                                        <p>매니저와 15분 화상 상담</p>
-                                    </div>
-                                    <span class="radio-icon">🎥</span>
-                                </label>
-                            </div>
-                            
-                            <div class="choice-buttons">
-                                <button class="btn-cancel" onclick={goToStep5}>취소</button>
-                                <button class="btn-confirm" onclick={submitForm}>신청하기</button>
-                            </div>
-                        </div>
-                    </div>
-                </template>
-
-                <!-- [STEP 7] 접수 완료 모달 -->
-                <template if:true={isStep7}>
-                    <div class="modal-overlay fade-in">
-                        <div class="success-modal slide-up">
-                            <div class="success-check">
-                                <span>✓</span>
-                            </div>
-                            <h2 class="success-title">접수가 완료되었습니다!</h2>
-                            <p class="success-desc">
-                                전담 매니저가 배정되었습니다.<br/>
-                                <span class="highlight-text">3일 이내(영업일 기준)</span>로 안내 연락을<br/>
-                                드리겠습니다.
-                            </p>
-                            <button class="btn-home" onclick={resetProcess}>
-                                처음으로 돌아가기
-                            </button>
-                        </div>
-                    </div>
-                </template>
             </div>
         </template>
 
+        <template if:true={isStep5}>
+            <div class="modal-overlay fade-in">
+                <div class="form-modal slide-up" style="background: white; padding: 2rem; border-radius: 16px; max-width: 600px; width: 90%;">
+                    <div class="form-modal-header">
+                        <button class="panel-close" onclick={goToStep4} style="float:right; font-size:1.5rem; background:none; border:none; cursor:pointer;">×</button>
+                        <div class="form-icon"><span>📋</span></div>
+                        <h2 class="form-title" style="color:#111; margin-top:10px;">맞춤 견적 및 투어 신청</h2>
+                        <p class="form-subtitle" style="color:#666;">선택하신 공간: <span style="font-weight:bold; color:#5A4FCF;">{selectedSpace.name}</span></p>
+                    </div>
+                    
+                    <div style="margin-top: 20px;">
+                        <lightning-flow
+                            flow-api-name="Create_Lead_with_Screen_Flow"
+                            flow-input-variables={flowInputVariables}
+                            onstatuschange={handleFlowStatusChange}>
+                        </lightning-flow>
+                    </div>
+                </div>
+            </div>
+        </template>
+
+        <template if:true={isStep7}>
+            <div class="modal-overlay fade-in">
+                <div class="success-modal slide-up">
+                    <div class="success-check"><span>✓</span></div>
+                    <h2 class="success-title">접수가 완료되었습니다!</h2>
+                    <p class="success-desc">
+                        위그로우 전담 매니저가 배정되었습니다.<br/>
+                        <span class="highlight-text">3일 이내</span>로 안내 연락을 드리겠습니다.
+                    </p>
+                    <button class="btn-home" onclick={resetProcess}>처음으로 돌아가기</button>
+                </div>
+            </div>
+        </template>
+        
     </div>
 </template>
