@@ -49,10 +49,19 @@ export default class WeGrowCustomerLanding extends NavigationMixin(LightningElem
             });
             this.dispatchEvent(evt);
 
-            // Dashboard로 리다이렉트
+            // Dashboard로 리다이렉트 (NavigationMixin 사용)
             // eslint-disable-next-line @lwc/lwc/no-async-operation
             setTimeout(() => {
-                window.location.href = '/members/dashboard';
+                // Experience Cloud 기본 URL을 사용하여 네비게이션
+                const baseUrl = window.location.origin;
+                const communityPath = '/members'; // Experience Cloud 사이트 경로
+                
+                this[NavigationMixin.Navigate]({
+                    type: 'standard__webPage',
+                    attributes: {
+                        url: `${baseUrl}${communityPath}/customer-portal`
+                    }
+                });
             }, 500);
         } else {
             // 로그인 실패
