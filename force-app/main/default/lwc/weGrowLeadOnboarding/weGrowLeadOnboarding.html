@@ -40,7 +40,7 @@
                         <span class="search-icon">○</span>
                         <input type="text" class="prompt-input" 
                                placeholder="예: 강남역 채광 좋은 4인실 찾아줘" 
-                               value={userPrompt} onchange={handlePromptInput}>
+                               value={userPrompt} onchange={handlePromptInput} onkeyup={handleKeyPress}>
                         <button class="btn-search" onclick={goToStep2}><span class="arrow-icon">→</span></button>
                     </div>
                     <div class="suggestion-tags">

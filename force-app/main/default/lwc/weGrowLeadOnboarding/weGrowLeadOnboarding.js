@@ -52,6 +52,35 @@ export default class WeGrowOnboarding extends LightningElement {
         this.userPrompt = event.target.value;
     }
 
+    // [STEP 1] Enter 키 입력 핸들러
+    handleKeyPress(event) {
+        if (event.key === 'Enter' || event.keyCode === 13) {
+            this.goToStep2();
+        }
+    }
+
+    // [HELPER] 인원수 추출 - Capacity__c 필드 또는 이름에서 파싱
+    // 예: "강남본점 301호 (4인실 오피스)" → 4
+    // 예: "1001호 (14인실 중형)" → 14
+    extractCapacity(capacityField, assetName) {
+        // 1. Capacity__c 필드가 있으면 사용
+        if (capacityField) {
+            return capacityField;
+        }
+        
+        // 2. 이름에서 (n인실) 패턴 추출
+        if (assetName) {
+            const match = assetName.match(/\((\d+)인실/);
+            if (match && match[1]) {
+                return parseInt(match[1], 10);
+            }
+        }
+        
+        // 3. 못 찾으면 랜덤하게 6 또는 8 할당
+        const fallbackOptions = [6, 8];
+        return fallbackOptions[Math.floor(Math.random() * fallbackOptions.length)];
+    }
+
     // [STEP 1 -> 2 -> 3] 검색 실행 (Apex 연결)
     goToStep2() {
         // 검색어가 비어있으면 기본값으로 '강남' 설정 (테스트 편의성)
@@ -82,8 +111,9 @@ export default class WeGrowOnboarding extends LightningElement {
                         // 가격: Asset의 Price 필드 (3자리 콤마 포맷팅)
                         priceNumber: asset.Price ? asset.Price.toLocaleString() : '문의',
                         
-                        // 인원: 커스텀 필드 Capacity__c 사용
-                        capacityNumber: asset.Capacity__c ? asset.Capacity__c : '-',
+                        // 인원: Capacity__c 또는 이름에서 추출
+                        // 예: "강남본점 301호 (4인실 오피스)" → 4 추출
+                        capacityNumber: this.extractCapacity(asset.Capacity__c, asset.Name),
                         
                         // 매칭률: 데모용으로 순서대로 조금씩 낮춤
                         matchRate: 99 - index,
