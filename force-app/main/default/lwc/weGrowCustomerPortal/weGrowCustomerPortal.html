@@ -30,10 +30,11 @@
                 <div class="user-profile">
                     <div class="user-avatar">👤</div>
                     <div class="user-info">
-                        <p class="user-name">박재정 매니저</p>
-                        <p class="user-role">김재웅님의 파트너</p>
+                        <p class="user-name">{userName}</p>
+                        <p class="user-role">{companyName}</p>
                     </div>
                 </div>
+                <button class="btn-logout" onclick={handleLogout}>로그아웃</button>
             </div>
         </div>
 
@@ -49,7 +50,7 @@
                             <span class="emoji">👋</span>
                             <span>입주 준비가 진행 중입니다</span>
                         </div>
-                        <p class="contract-date">목표 입주일: 2024년 10월 25일 (D-12)</p>
+                        <p class="contract-date">입주일: {moveInDate} (D{daysUntilMoveIn})</p>
                     </div>
                     <button class="btn-action">시설팀 문의하기</button>
                 </div>
@@ -90,8 +91,8 @@
                             <span class="badge-success">계약 완료</span>
                         </div>
                         <div class="card-body">
-                            <h2 class="location-title">강남 1호점</h2>
-                            <p class="location-detail">3층 301호 (20인실)</p>
+                            <h2 class="location-title">{branchName}</h2>
+                            <p class="location-detail">{officeName} ({capacity}인실)</p>
                             
                             <div class="info-list">
                                 <div class="info-row">
@@ -115,7 +116,7 @@
                             <h3>이번 달 청구 예정액</h3>
                         </div>
                         <div class="card-body">
-                            <h2 class="billing-amount">5,500,000 원</h2>
+                            <h2 class="billing-amount">{monthlyPayment}</h2>
                             <p class="billing-note">(부가세 포함 VAT Included)</p>
                             
                             <div class="billing-breakdown">
@@ -174,8 +175,8 @@
 
                 <div class="office-banner" style={bannerStyle}>
                     <div class="banner-overlay">
-                        <h2 class="office-name">강남 1호점 - 301호</h2>
-                        <p class="office-type">20인실 전용 오피스 (Private Office)</p>
+                        <h2 class="office-name">{officeFullName}</h2>
+                        <p class="office-type">{capacity}인실 {productName}</p>
                     </div>
                 </div>
 
@@ -186,7 +187,7 @@
                     </div>
                     <div class="stat-item">
                         <p class="stat-label">수용 인원</p>
-                        <p class="stat-value">20 개</p>
+                        <p class="stat-value">{capacity} 명</p>
                     </div>
                     <div class="stat-item">
                         <p class="stat-label">창문 뷰</p>
@@ -207,7 +208,7 @@
                                     <span class="info-icon">🔐</span>
                                     <div class="info-content">
                                         <p class="info-title">도어락 비밀번호</p>
-                                        <p class="info-value-large">123456*</p>
+                                        <p class="info-value-large">{doorLockPw}</p>
                                         <p class="info-note">* 초기 비밀번호입니다. 입주 후 변경해주세요.</p>
                                     </div>
                                     <button class="btn-small">보기</button>
@@ -216,8 +217,8 @@
                                     <span class="info-icon">📶</span>
                                     <div class="info-content">
                                         <p class="info-title">전용 Wi-Fi</p>
-                                        <p class="info-value-wifi">WEGROW_301_5G</p>
-                                        <p class="info-note">PW: blue12824</p>
+                                        <p class="info-value-wifi">{wifiSsid}</p>
+                                        <p class="info-note">PW: {wifiPassword}</p>
                                     </div>
                                 </div>
                             </div>
@@ -245,20 +246,20 @@
                             <div class="contract-info">
                                 <div class="contract-row">
                                     <span class="contract-label">계약 기간</span>
-                                    <span class="contract-value">2024.10.25</span>
-                                    <span class="contract-sub">~ 2025.10.24 (1년)</span>
+                                    <span class="contract-value">{contractStartDate}</span>
+                                    <span class="contract-sub">~ {contractEndDate}</span>
                                 </div>
                                 <div class="contract-row">
                                     <span class="contract-label">보증금</span>
-                                    <span class="contract-value">100,000,000 원</span>
+                                    <span class="contract-value">{depositAmount}</span>
                                 </div>
                                 <div class="contract-row">
                                     <span class="contract-label">월 이용료</span>
-                                    <span class="contract-value">5,500,000 원</span>
+                                    <span class="contract-value">{monthlyPayment}</span>
                                 </div>
                                 <div class="contract-row highlight">
                                     <span class="contract-label">재계약 알림</span>
-                                    <span class="contract-value warning">D-365</span>
+                                    <span class="contract-value warning">D-{daysUntilContractEnd}</span>
                                 </div>
                             </div>
                         </div>
@@ -429,33 +430,33 @@
                         <div class="form-row">
                             <div class="form-group half">
                                 <label class="form-label required">문의 유형</label>
-                                <select class="form-select">
-                                    <option>유형을 선택해주세요</option>
-                                    <option>시설 수리</option>
-                                    <option>청소 요청</option>
-                                    <option>출입카드 발급</option>
-                                    <option>네트워크/IT</option>
-                                    <option>기타 문의</option>
+                                <select class="form-select" onchange={handleCaseTypeChange}>
+                                    <option value="">유형을 선택해주세요</option>
+                                    <option value="Facility">시설 수리</option>
+                                    <option value="MoveIn">청소 요청</option>
+                                    <option value="General">출입카드 발급</option>
+                                    <option value="General">네트워크/IT</option>
+                                    <option value="General">기타 문의</option>
                                 </select>
                             </div>
                             <div class="form-group half">
                                 <label class="form-label">위치 (호실)</label>
-                                <input type="text" class="form-input" placeholder="강남 1호점 - 301호 (현재 입주 중)" disabled/>
+                                <input type="text" class="form-input" value={officeFullName} disabled/>
                             </div>
                         </div>
 
                         <div class="form-group">
                             <label class="form-label required">제목</label>
-                            <input type="text" class="form-input" placeholder="예: 화의실 에어컨 작동이 안 됩니다."/>
+                            <input type="text" class="form-input" placeholder="예: 화의실 에어컨 작동이 안 됩니다." onchange={handleSubjectChange}/>
                         </div>
 
                         <div class="form-group">
                             <label class="form-label required">상세 내용</label>
-                            <textarea class="form-textarea" rows="6" placeholder="구체적인 증상이나 요청 사항을 작성해주세요. (날짜, 시간, 위치, 특이사항 등)"></textarea>
+                            <textarea class="form-textarea" rows="6" placeholder="구체적인 증상이나 요청 사항을 작성해주세요. (날짜, 시간, 위치, 특이사항 등)" onchange={handleDescriptionChange}></textarea>
                         </div>
 
                         <div class="urgent-notice">
-                            <input type="checkbox" id="urgent" class="checkbox-input"/>
+                            <input type="checkbox" id="urgent" class="checkbox-input" onchange={handleUrgentChange}/>
                             <label for="urgent" class="checkbox-label urgent-label">긴급 처리 요청</label>
                             <p class="urgent-note">당일에 긴급한 처리가 필요하나 안전과 관련된 사항에 있는 경우 체크해주세요.</p>
                         </div>
@@ -470,8 +471,8 @@
                         </div>
 
                         <div class="form-actions">
-                            <button class="btn-cancel">취소하고 돌아가기</button>
-                            <button class="btn-submit">민원 접수하기</button>
+                            <button class="btn-cancel" onclick={handleCancelCase}>취소하고 돌아가기</button>
+                            <button class="btn-submit" onclick={handleSubmitCase}>민원 접수하기</button>
                         </div>
                     </div>
                 </div>
