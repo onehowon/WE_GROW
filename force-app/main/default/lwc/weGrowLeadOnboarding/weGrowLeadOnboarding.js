@@ -1,24 +1,43 @@
 import { LightningElement, track } from 'lwc';
 // Apex 메서드 import (클래스명: WeGrowController, 메서드명: findOffices)
 import findOffices from '@salesforce/apex/WeGrowController.findOffices';
+// 한국 지도 Static Resource
+import KOREA_MAP from '@salesforce/resourceUrl/koreaMap';
 
 export default class WeGrowOnboarding extends LightningElement {
     @track step = 1;
+    @track currentPage = 'home'; // home, locations, products, about
     @track userPrompt = '';
     @track selectedSpace = {};
     @track recommendations = [];
 
-    // [Getter] 단계별 화면 표시 여부
-    get isStep1() { return this.step === 1; } // 검색어 입력
-    get isStep2() { return this.step === 2; } // 로딩 중
-    get isStep3() { return this.step === 3; } // 결과 목록
-    get isStep4() { return this.step === 4; } // 상세 보기
-    get isStep5() { return this.step === 5; } // Flow(신청) 모달
+    // 한국 지도 이미지 URL
+    get koreaMapUrl() { return KOREA_MAP; }
+
+    // ============================================
+    // 페이지 표시 Getters
+    // ============================================
+    get isHomePage() { return this.currentPage === 'home'; }
+    get isLocationsPage() { return this.currentPage === 'locations'; }
+    get isProductsPage() { return this.currentPage === 'products'; }
+    get isAboutPage() { return this.currentPage === 'about'; }
+
+    // [Getter] 단계별 화면 표시 여부 (홈 페이지 내에서만)
+    get isStep1() { return this.isHomePage && this.step === 1; } // 검색어 입력
+    get isStep2() { return this.isHomePage && this.step === 2; } // 로딩 중
+    get isStep3() { return this.isHomePage && this.step === 3; } // 결과 목록
+    get isStep4() { return this.isHomePage && this.step === 4; } // 상세 보기
+    get isStep5() { return this.isHomePage && this.step === 5; } // Flow(신청) 모달
     // Step 6는 건너뜀 (Flow 내부 처리)
-    get isStep7() { return this.step === 7; } // 완료 화면
+    get isStep7() { return this.isHomePage && this.step === 7; } // 완료 화면
     
-    get isDetailView() { return this.step === 4; }
-    get showHeader() { return this.step >= 1 && this.step <= 3; }
+    get isDetailView() { return this.isHomePage && this.step === 4; }
+    get showAIStatus() { return this.isHomePage && this.step >= 1 && this.step <= 3; }
+    
+    // 네비게이션 활성화 클래스
+    get locationsNavClass() { return `nav-btn ${this.currentPage === 'locations' ? 'active' : ''}`; }
+    get productsNavClass() { return `nav-btn ${this.currentPage === 'products' ? 'active' : ''}`; }
+    get aboutNavClass() { return `nav-btn ${this.currentPage === 'about' ? 'active' : ''}`; }
     
     // 결과가 있는지 확인 (결과 없으면 안내 문구 표시용)
     get hasResults() { return this.recommendations && this.recommendations.length > 0; }
@@ -33,6 +52,35 @@ export default class WeGrowOnboarding extends LightningElement {
         this.userPrompt = event.target.value;
     }
 
+    // [STEP 1] Enter 키 입력 핸들러
+    handleKeyPress(event) {
+        if (event.key === 'Enter' || event.keyCode === 13) {
+            this.goToStep2();
+        }
+    }
+
+    // [HELPER] 인원수 추출 - Capacity__c 필드 또는 이름에서 파싱
+    // 예: "강남본점 301호 (4인실 오피스)" → 4
+    // 예: "1001호 (14인실 중형)" → 14
+    extractCapacity(capacityField, assetName) {
+        // 1. Capacity__c 필드가 있으면 사용
+        if (capacityField) {
+            return capacityField;
+        }
+        
+        // 2. 이름에서 (n인실) 패턴 추출
+        if (assetName) {
+            const match = assetName.match(/\((\d+)인실/);
+            if (match && match[1]) {
+                return parseInt(match[1], 10);
+            }
+        }
+        
+        // 3. 못 찾으면 랜덤하게 6 또는 8 할당
+        const fallbackOptions = [6, 8];
+        return fallbackOptions[Math.floor(Math.random() * fallbackOptions.length)];
+    }
+
     // [STEP 1 -> 2 -> 3] 검색 실행 (Apex 연결)
     goToStep2() {
         // 검색어가 비어있으면 기본값으로 '강남' 설정 (테스트 편의성)
@@ -43,7 +91,7 @@ export default class WeGrowOnboarding extends LightningElement {
         const OFFICE_IMAGES = [
             'https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=800&q=80',
             'https://images.unsplash.com/photo-1524758631624-e2822e304c36?auto=format&fit=crop&w=800&q=80',
-            'https://images.unsplash.com/photo-1504384308090-c54be3852f33?auto=format&fit=crop&w=800&q=80',
+            'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=800&q=80',
             'https://images.unsplash.com/photo-1497215728101-856f4ea42174?auto=format&fit=crop&w=800&q=80',
             'https://images.unsplash.com/photo-1556761175-5973dc0f32e7?auto=format&fit=crop&w=800&q=80'
         ];
@@ -63,8 +111,9 @@ export default class WeGrowOnboarding extends LightningElement {
                         // 가격: Asset의 Price 필드 (3자리 콤마 포맷팅)
                         priceNumber: asset.Price ? asset.Price.toLocaleString() : '문의',
                         
-                        // 인원: 커스텀 필드 Capacity__c 사용
-                        capacityNumber: asset.Capacity__c ? asset.Capacity__c : '-',
+                        // 인원: Capacity__c 또는 이름에서 추출
+                        // 예: "강남본점 301호 (4인실 오피스)" → 4 추출
+                        capacityNumber: this.extractCapacity(asset.Capacity__c, asset.Name),
                         
                         // 매칭률: 데모용으로 순서대로 조금씩 낮춤
                         matchRate: 99 - index,
@@ -133,8 +182,89 @@ export default class WeGrowOnboarding extends LightningElement {
     // [초기화] 처음으로 돌아가기
     resetProcess() {
         this.step = 1;
+        this.currentPage = 'home';
         this.userPrompt = '';
         this.recommendations = [];
         this.selectedSpace = {};
+    }
+
+    // ============================================
+    // 페이지 네비게이션 메서드
+    // ============================================
+    goToHome() {
+        this.currentPage = 'home';
+        this.step = 1;
+    }
+
+    goToLocations() {
+        this.currentPage = 'locations';
+    }
+
+    goToProducts() {
+        this.currentPage = 'products';
+    }
+
+    goToAbout() {
+        this.currentPage = 'about';
+    }
+
+    // ============================================
+    // 지점 위치 페이지 핸들러
+    // ============================================
+    handleBranchClick(event) {
+        const branchId = event.currentTarget.dataset.branch;
+        console.log('Branch selected:', branchId);
+        
+        // 해당 지점으로 검색 실행
+        const branchMapping = {
+            'gangnam': '강남',
+            'euljiro': '을지로',
+            'pangyo': '판교'
+        };
+        
+        this.userPrompt = branchMapping[branchId] || branchId;
+        this.currentPage = 'home';
+        this.goToStep2();
+    }
+
+    // ============================================
+    // 상품 안내 페이지 핸들러
+    // ============================================
+    handleProductClick(event) {
+        const productType = event.currentTarget.dataset.product;
+        console.log('Product selected:', productType);
+        
+        // 해당 상품 유형으로 검색 실행
+        const productMapping = {
+            '1person': '1인실',
+            '4person': '4인실',
+            '8person': '8인실',
+            'enterprise': '10인실'
+        };
+        
+        this.userPrompt = productMapping[productType] || productType;
+        this.currentPage = 'home';
+        this.goToStep2();
+    }
+
+    // ============================================
+    // 지도 마커 클릭 핸들러
+    // ============================================
+    goToGangnam() {
+        this.userPrompt = '강남';
+        this.currentPage = 'home';
+        this.goToStep2();
+    }
+
+    goToEuljiro() {
+        this.userPrompt = '을지로';
+        this.currentPage = 'home';
+        this.goToStep2();
+    }
+
+    goToPangyo() {
+        this.userPrompt = '판교';
+        this.currentPage = 'home';
+        this.goToStep2();
     }
 }

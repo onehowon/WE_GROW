@@ -537,7 +537,7 @@
 
 .card-footer {
     display: flex;
-    justify-content: space-between;
+    justify-content: flex-end;
     align-items: flex-end;
     padding-top: 16px;
     border-top: 1px solid #f0f4f8;
@@ -1287,5 +1287,807 @@
     
     .amenity-grid {
         grid-template-columns: 1fr;
+    }
+}
+
+/* ============================================
+   Header Navigation Enhancement
+   ============================================ */
+.header-nav {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-left: 40px;
+}
+
+.nav-btn {
+    background: none;
+    border: none;
+    padding: 8px 16px;
+    font-size: 0.9rem;
+    color: #666;
+    cursor: pointer;
+    border-radius: 20px;
+    transition: all 0.2s;
+    font-weight: 500;
+}
+
+.nav-btn:hover {
+    background: #f0f4f8;
+    color: #1a2634;
+}
+
+.nav-btn.active {
+    background: #f0f0ff;
+    color: #6366f1;
+    font-weight: 600;
+}
+
+.btn-ai-search {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+    border: none;
+    padding: 10px 20px;
+    border-radius: 25px;
+    font-size: 0.85rem;
+    color: white;
+    cursor: pointer;
+    transition: all 0.3s;
+    font-weight: 600;
+}
+
+.btn-ai-search:hover {
+    transform: scale(1.02);
+    box-shadow: 0 4px 20px rgba(99, 102, 241, 0.4);
+}
+
+.ai-icon {
+    font-size: 0.9rem;
+}
+
+.logo-container {
+    cursor: pointer;
+}
+
+/* ============================================
+   공통 페이지 컨테이너
+   ============================================ */
+.page-container {
+    width: 100%;
+    min-height: 100vh;
+    padding-top: 60px;
+}
+
+/* ============================================
+   [LOCATIONS PAGE] 지점 위치 페이지
+   ============================================ */
+.locations-page {
+    background: #f5f7fa;
+}
+
+.locations-layout {
+    display: grid;
+    grid-template-columns: 1fr 500px;
+    min-height: calc(100vh - 60px);
+}
+
+.map-section {
+    background: #e8ecf0;
+    position: relative;
+}
+
+/* Static Map Image Styles */
+.map-container {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    overflow: hidden;
+}
+
+.map-background {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.map-markers {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+}
+
+.map-marker {
+    position: absolute;
+    cursor: pointer;
+    transition: transform 0.2s;
+    z-index: 5;
+}
+
+.map-marker:hover {
+    transform: scale(1.15);
+    z-index: 10;
+}
+
+/* 
+한국 지도 기준 마커 배치:
+- 서울/경기는 지도 상단 중앙에 위치
+- 을지로 (서울 중구): 서울 중심부
+- 강남점 (강남구): 서울 남쪽
+- 판교점 (성남시): 서울 남동쪽 경기도
+*/
+.map-marker.euljiro {
+    top: 18%;
+    left: 36%;
+}
+
+.map-marker.gangnam {
+    top: 22%;
+    left: 38%;
+}
+
+.map-marker.pangyo {
+    top: 26%;
+    left: 42%;
+}
+
+.marker-pin {
+    width: 36px;
+    height: 36px;
+    background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+    border-radius: 50% 50% 50% 0;
+    transform: rotate(-45deg);
+    border: 3px solid white;
+    box-shadow: 0 4px 15px rgba(99, 102, 241, 0.5);
+    position: relative;
+}
+
+.marker-pin::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) rotate(45deg);
+    width: 10px;
+    height: 10px;
+    background: white;
+    border-radius: 50%;
+}
+
+.marker-label {
+    position: absolute;
+    top: 45px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: white;
+    padding: 8px 14px;
+    border-radius: 12px;
+    font-size: 0.8rem;
+    color: #1a2634;
+    white-space: nowrap;
+    box-shadow: 0 3px 12px rgba(0,0,0,0.2);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+}
+
+.marker-label strong {
+    font-weight: 700;
+    color: #1a2634;
+}
+
+.marker-address {
+    font-size: 0.7rem;
+    color: #888;
+}
+
+.map-controls {
+    position: absolute;
+    bottom: 100px;
+    right: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    z-index: 20;
+}
+
+.map-control-btn {
+    width: 36px;
+    height: 36px;
+    background: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 1.2rem;
+    color: #555;
+    cursor: pointer;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    transition: all 0.2s;
+}
+
+.map-control-btn:hover {
+    background: #f0f4f8;
+}
+
+.map-legend {
+    position: absolute;
+    bottom: 20px;
+    left: 20px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: white;
+    padding: 10px 16px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: #555;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    z-index: 20;
+}
+
+.legend-dot {
+    width: 12px;
+    height: 12px;
+    background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+    border-radius: 50%;
+}
+
+.branches-section {
+    background: white;
+    padding: 40px;
+    overflow-y: auto;
+}
+
+.branches-header {
+    margin-bottom: 30px;
+}
+
+.page-title {
+    font-size: 1.8rem;
+    font-weight: 800;
+    color: #1a2634;
+    margin-bottom: 8px;
+}
+
+.highlight-purple {
+    color: #6366f1;
+}
+
+.page-subtitle {
+    font-size: 0.95rem;
+    color: #666;
+    line-height: 1.6;
+}
+
+.branches-list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.branch-card {
+    background: #f8fafc;
+    border: 1px solid #e8ecf0;
+    border-radius: 16px;
+    padding: 24px;
+    cursor: pointer;
+    transition: all 0.3s;
+    position: relative;
+}
+
+.branch-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 30px rgba(0,0,0,0.1);
+    border-color: #6366f1;
+}
+
+.branch-badge {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    background: linear-gradient(135deg, #ff6b6b, #ff8e53);
+    color: white;
+    padding: 4px 12px;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    font-weight: 700;
+}
+
+.branch-badge.new {
+    background: linear-gradient(135deg, #6366f1, #8b5cf6);
+}
+
+.branch-name {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: #1a2634;
+    margin-bottom: 8px;
+}
+
+.branch-address {
+    font-size: 0.9rem;
+    color: #666;
+    margin-bottom: 12px;
+}
+
+.branch-tags {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-bottom: 16px;
+}
+
+.branch-tag {
+    background: white;
+    border: 1px solid #e0e5eb;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    color: #555;
+}
+
+.branch-stats {
+    display: flex;
+    gap: 24px;
+    padding-top: 16px;
+    border-top: 1px solid #e8ecf0;
+}
+
+.branch-stats .stat-item {
+    text-align: center;
+}
+
+.branch-stats .stat-value {
+    display: block;
+    font-size: 1.3rem;
+    font-weight: 800;
+    color: #1a2634;
+}
+
+.branch-stats .stat-label {
+    font-size: 0.75rem;
+    color: #888;
+}
+
+.branch-stats .stat-item.available .stat-value {
+    color: #10b981;
+}
+
+.btn-branch-detail {
+    display: none;
+    margin-top: 16px;
+    background: #1a2634;
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 25px;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.branch-card:hover .btn-branch-detail {
+    display: inline-block;
+}
+
+.btn-branch-detail:hover {
+    background: #2d3a4a;
+}
+
+/* ============================================
+   [PRODUCTS PAGE] 상품 안내 페이지
+   ============================================ */
+.products-page {
+    background: #f5f7fa;
+}
+
+.products-hero {
+    height: 300px;
+    background: linear-gradient(135deg, #1a2634 0%, #2d3a4a 100%);
+    background-image: url('https://images.unsplash.com/photo-1497366216548-37526070297c?w=1920&q=80');
+    background-size: cover;
+    background-position: center;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.products-hero .hero-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, rgba(26, 38, 52, 0.9) 0%, rgba(45, 58, 74, 0.85) 100%);
+}
+
+.products-hero .hero-content {
+    position: relative;
+    z-index: 2;
+    text-align: center;
+    color: white;
+}
+
+.hero-badge {
+    display: inline-block;
+    background: rgba(255,255,255,0.2);
+    padding: 8px 20px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    margin-bottom: 20px;
+    letter-spacing: 1px;
+}
+
+.hero-title {
+    font-size: 2.5rem;
+    font-weight: 800;
+    margin-bottom: 16px;
+}
+
+.hero-desc {
+    font-size: 1.1rem;
+    opacity: 0.9;
+}
+
+.products-section {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 60px 40px;
+}
+
+.products-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 24px;
+    margin-bottom: 60px;
+}
+
+.product-card {
+    background: white;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+    cursor: pointer;
+    transition: all 0.3s;
+    position: relative;
+}
+
+.product-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 12px 40px rgba(0,0,0,0.12);
+}
+
+.product-card.popular {
+    border: 2px solid #6366f1;
+}
+
+.popular-badge {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    background: linear-gradient(135deg, #6366f1, #8b5cf6);
+    color: white;
+    padding: 6px 14px;
+    border-radius: 15px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    z-index: 10;
+}
+
+.product-image {
+    height: 180px;
+    background-size: cover;
+    background-position: center;
+    position: relative;
+}
+
+.product-image .product-overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 20px;
+    background: linear-gradient(transparent, rgba(0,0,0,0.7));
+}
+
+.product-capacity {
+    color: white;
+    font-size: 1.3rem;
+    font-weight: 800;
+}
+
+.product-info {
+    padding: 24px;
+}
+
+.product-name {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #1a2634;
+    margin-bottom: 8px;
+}
+
+.product-desc {
+    font-size: 0.85rem;
+    color: #666;
+    margin-bottom: 16px;
+    line-height: 1.5;
+}
+
+.product-features {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-bottom: 16px;
+    font-size: 0.8rem;
+    color: #555;
+}
+
+.product-price {
+    padding-top: 16px;
+    border-top: 1px solid #f0f4f8;
+    display: flex;
+    align-items: baseline;
+    gap: 4px;
+}
+
+.price-from {
+    font-size: 0.85rem;
+    color: #888;
+}
+
+.price-amount {
+    font-size: 1.3rem;
+    font-weight: 800;
+    color: #1a2634;
+}
+
+.price-suffix {
+    font-size: 0.85rem;
+    color: #888;
+}
+
+.price-consult {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #6366f1;
+}
+
+.products-cta {
+    text-align: center;
+    padding: 40px;
+    background: white;
+    border-radius: 20px;
+    box-shadow: 0 4px 30px rgba(0,0,0,0.06);
+}
+
+.cta-text {
+    font-size: 1.1rem;
+    color: #666;
+    margin-bottom: 20px;
+}
+
+.btn-cta-primary {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+    border: none;
+    padding: 16px 32px;
+    border-radius: 30px;
+    font-size: 1rem;
+    color: white;
+    cursor: pointer;
+    transition: all 0.3s;
+    font-weight: 600;
+}
+
+.btn-cta-primary:hover {
+    transform: scale(1.02);
+    box-shadow: 0 8px 30px rgba(99, 102, 241, 0.4);
+}
+
+/* ============================================
+   [ABOUT PAGE] 기업 소개 페이지
+   ============================================ */
+.about-page {
+    background: linear-gradient(180deg, #f8fafc 0%, #f0f4f8 100%);
+}
+
+.about-content {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 80px 40px;
+    text-align: center;
+}
+
+.about-hero-section {
+    margin-bottom: 60px;
+}
+
+.about-badge {
+    display: inline-block;
+    background: #f0f0ff;
+    color: #6366f1;
+    padding: 10px 24px;
+    border-radius: 25px;
+    font-size: 0.85rem;
+    font-weight: 700;
+    margin-bottom: 30px;
+    letter-spacing: 1px;
+}
+
+.about-title {
+    font-size: 2.8rem;
+    font-weight: 800;
+    color: #1a2634;
+    line-height: 1.3;
+    margin-bottom: 24px;
+}
+
+.about-subtitle {
+    font-size: 1.1rem;
+    color: #666;
+    line-height: 1.8;
+}
+
+.about-cards {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+    margin-bottom: 60px;
+}
+
+.about-card {
+    background: white;
+    border-radius: 20px;
+    padding: 40px 30px;
+    box-shadow: 0 4px 30px rgba(0,0,0,0.06);
+    transition: all 0.3s;
+}
+
+.about-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 40px rgba(0,0,0,0.1);
+}
+
+.about-card .card-icon {
+    font-size: 2.5rem;
+    margin-bottom: 20px;
+}
+
+.about-card .card-title {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #6366f1;
+    margin-bottom: 12px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.about-card .card-desc {
+    font-size: 0.95rem;
+    color: #555;
+    line-height: 1.6;
+}
+
+.about-stats {
+    display: flex;
+    justify-content: center;
+    gap: 60px;
+    padding: 50px;
+    background: white;
+    border-radius: 20px;
+    margin-bottom: 60px;
+    box-shadow: 0 4px 30px rgba(0,0,0,0.06);
+}
+
+.stat-box {
+    text-align: center;
+}
+
+.stat-number {
+    font-size: 3rem;
+    font-weight: 800;
+    background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.stat-unit {
+    font-size: 1.2rem;
+    color: #888;
+    font-weight: 600;
+}
+
+.stat-desc {
+    font-size: 0.9rem;
+    color: #666;
+    margin-top: 8px;
+}
+
+.about-contact {
+    padding: 40px;
+    background: linear-gradient(135deg, #1a2634 0%, #2d3a4a 100%);
+    border-radius: 20px;
+    color: white;
+}
+
+.contact-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: 24px;
+}
+
+.contact-info {
+    display: flex;
+    justify-content: center;
+    gap: 40px;
+}
+
+.contact-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 1rem;
+}
+
+.contact-icon {
+    font-size: 1.2rem;
+}
+
+/* ============================================
+   Responsive: New Pages
+   ============================================ */
+@media (max-width: 1024px) {
+    .locations-layout {
+        grid-template-columns: 1fr;
+    }
+    
+    .map-section {
+        height: 300px;
+    }
+    
+    .products-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .about-cards {
+        grid-template-columns: 1fr;
+    }
+    
+    .about-stats {
+        flex-wrap: wrap;
+        gap: 30px;
+    }
+}
+
+@media (max-width: 768px) {
+    .header-nav {
+        display: none;
+    }
+    
+    .products-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .hero-title {
+        font-size: 1.8rem;
+    }
+    
+    .about-title {
+        font-size: 2rem;
+    }
+    
+    .contact-info {
+        flex-direction: column;
+        gap: 16px;
     }
 }

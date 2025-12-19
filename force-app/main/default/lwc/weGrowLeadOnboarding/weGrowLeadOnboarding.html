@@ -1,28 +1,34 @@
 <template>
     <div class="main-container">
         
-        <template if:true={showHeader}>
-            <header class="top-header">
-                <div class="header-left">
-                    <div class="logo-container">
-                        <span class="logo-icon">○</span><span class="logo-text">WE-GROW</span>
-                    </div>
+        <!-- 글로벌 헤더 with 네비게이션 -->
+        <header class="top-header">
+            <div class="header-left">
+                <div class="logo-container" onclick={goToHome}>
+                    <span class="logo-icon">○</span><span class="logo-text">WE-GROW</span>
                 </div>
-                <div class="header-right">
+                <nav class="header-nav">
+                    <button class={locationsNavClass} onclick={goToLocations}>지점 위치</button>
+                    <button class={productsNavClass} onclick={goToProducts}>상품 안내</button>
+                    <button class={aboutNavClass} onclick={goToAbout}>기업 소개</button>
+                </nav>
+            </div>
+            <div class="header-right">
+                <template if:true={showAIStatus}>
                     <div class="agent-status">
                         <span class="status-dot"></span><span>AI Agent 대기중</span>
                     </div>
-                </div>
-            </header>
-        </template>
+                </template>
+                <button class="btn-ai-search" onclick={goToHome}>
+                    <span class="ai-icon">🔍</span><span>AI 공간 찾기</span>
+                </button>
+            </div>
+        </header>
 
         <template if:true={isStep1}>
             <div class="step-container fade-in step1-container">
                 <div class="bg-overlay"></div>
                 <div class="landing-content">
-                    <div class="finder-badge">
-                        <span class="badge-icon">○</span><span>Agentforce based Workspace Finder</span>
-                    </div>
                     <h1 class="landing-title">
                         AI의 속도로 찾는<br/><span class="gradient-text">당신만의 완벽한 오피스</span>
                     </h1>
@@ -34,7 +40,7 @@
                         <span class="search-icon">○</span>
                         <input type="text" class="prompt-input" 
                                placeholder="예: 강남역 채광 좋은 4인실 찾아줘" 
-                               value={userPrompt} onchange={handlePromptInput}>
+                               value={userPrompt} onchange={handlePromptInput} onkeyup={handleKeyPress}>
                         <button class="btn-search" onclick={goToStep2}><span class="arrow-icon">→</span></button>
                     </div>
                     <div class="suggestion-tags">
@@ -42,7 +48,7 @@
                             <span class="tag-icon building">🏢</span><span>강남역 4인실 오피스</span>
                         </button>
                         <button class="tag-btn" onclick={handleTagClick} data-tag="을지로 채광 좋은 오피스">
-                            <span class="tag-icon studio">🏯</span><span>을지로 채광 좋은 오피</span>
+                            <span class="tag-icon studio">🏯</span><span>을지로 채광 좋은 오피스</span>
                         </button>
                         <button class="tag-btn" onclick={handleTagClick} data-tag="판교 10인실">
                             <span>💻 판교 10인실</span>
@@ -95,12 +101,6 @@
                                     <span class="card-tag">{space.capacityNumber}인실</span>
                                 </div>
                                 <div class="card-footer">
-                                    <div class="price-info">
-                                        <span class="price-label">월 이용료</span>
-                                        <div class="price-value">
-                                            <span class="price-number">{space.priceNumber}</span><span class="price-unit">원</span>
-                                        </div>
-                                    </div>
                                     <button class="btn-arrow"><span>→</span></button>
                                 </div>
                             </div>
@@ -126,10 +126,6 @@
                         <div class="detail-info-panel">
                             <button class="panel-close" onclick={goBackToStep3}>×</button>
                             <div class="panel-price-row">
-                                <div class="panel-price-item">
-                                    <span class="price-label-small">월 이용료</span>
-                                    <div class="panel-price"><span class="price-big">{selectedSpace.priceNumber}</span>원</div>
-                                </div>
                                 <div class="panel-price-item">
                                     <span class="price-label-small">수용 인원</span>
                                     <div class="panel-capacity"><span class="capacity-number">{selectedSpace.capacityNumber}</span>인</div>
@@ -187,6 +183,364 @@
                         <span class="highlight-text">3일 이내</span>로 안내 연락을 드리겠습니다.
                     </p>
                     <button class="btn-home" onclick={resetProcess}>처음으로 돌아가기</button>
+                </div>
+            </div>
+        </template>
+
+        <!-- ============================================
+             지점 위치 페이지 (LOCATIONS)
+             ============================================ -->
+        <template if:true={isLocationsPage}>
+            <div class="page-container fade-in locations-page">
+                <div class="locations-layout">
+                    <!-- 좌측: 지도 영역 -->
+                    <div class="map-section">
+                        <div class="map-container">
+                            <!-- 서울/경기 지도 목업 이미지 (Static Resource) -->
+                            <img src={koreaMapUrl}
+                                 alt="대한민국 지도" 
+                                 class="map-background" />
+                            
+                            <!-- 지점 마커들 - 실제 위치 기준 -->
+                            <div class="map-markers">
+                                <!-- 강남점: 서울 강남구 테헤란로 (127.028, 37.498) -->
+                                <div class="map-marker gangnam" onclick={goToGangnam}>
+                                    <div class="marker-pin"></div>
+                                    <div class="marker-label">
+                                        <strong>강남점</strong>
+                                        <span class="marker-address">테헤란로 123</span>
+                                    </div>
+                                </div>
+                                
+                                <!-- 을지로점: 서울 중구 을지로 (126.982, 37.566) -->
+                                <div class="map-marker euljiro" onclick={goToEuljiro}>
+                                    <div class="marker-pin"></div>
+                                    <div class="marker-label">
+                                        <strong>을지로점</strong>
+                                        <span class="marker-address">을지로 45</span>
+                                    </div>
+                                </div>
+                                
+                                <!-- 판교점: 경기 성남시 판교 (127.111, 37.394) -->
+                                <div class="map-marker pangyo" onclick={goToPangyo}>
+                                    <div class="marker-pin"></div>
+                                    <div class="marker-label">
+                                        <strong>판교점</strong>
+                                        <span class="marker-address">판교로 256</span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- 지도 컨트롤 UI -->
+                            <div class="map-controls">
+                                <button class="map-control-btn">+</button>
+                                <button class="map-control-btn">−</button>
+                            </div>
+                            
+                            <!-- 지도 범례 -->
+                            <div class="map-legend">
+                                <span class="legend-dot"></span>
+                                <span>WE-GROW 지점</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 우측: 지점 카드 목록 -->
+                    <div class="branches-section">
+                        <div class="branches-header">
+                            <h1 class="page-title">WE-GROW <span class="highlight-purple">지점 안내</span></h1>
+                            <p class="page-subtitle">최적의 입지와 프리미엄 시설을 갖춘 WE-GROW 오피스를 만나보세요.</p>
+                        </div>
+                        
+                        <div class="branches-list">
+                            <!-- 강남점 -->
+                            <div class="branch-card" onclick={handleBranchClick} data-branch="gangnam">
+                                <div class="branch-badge">HOT</div>
+                                <div class="branch-info">
+                                    <h3 class="branch-name">강남점</h3>
+                                    <p class="branch-address">📍 서울 강남구 테헤란로 123</p>
+                                    <div class="branch-tags">
+                                        <span class="branch-tag">지하철 2분</span>
+                                        <span class="branch-tag">24시간</span>
+                                        <span class="branch-tag">주차가능</span>
+                                    </div>
+                                    <div class="branch-stats">
+                                        <div class="stat-item">
+                                            <span class="stat-value">120</span>
+                                            <span class="stat-label">총 좌석</span>
+                                        </div>
+                                        <div class="stat-item">
+                                            <span class="stat-value">15</span>
+                                            <span class="stat-label">오피스</span>
+                                        </div>
+                                        <div class="stat-item available">
+                                            <span class="stat-value">3</span>
+                                            <span class="stat-label">공실</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <button class="btn-branch-detail">상세보기 →</button>
+                            </div>
+                            
+                            <!-- 을지로점 -->
+                            <div class="branch-card" onclick={handleBranchClick} data-branch="euljiro">
+                                <div class="branch-badge new">NEW</div>
+                                <div class="branch-info">
+                                    <h3 class="branch-name">을지로점</h3>
+                                    <p class="branch-address">📍 서울 중구 을지로 45</p>
+                                    <div class="branch-tags">
+                                        <span class="branch-tag">힙한 분위기</span>
+                                        <span class="branch-tag">루프탑</span>
+                                        <span class="branch-tag">카페</span>
+                                    </div>
+                                    <div class="branch-stats">
+                                        <div class="stat-item">
+                                            <span class="stat-value">80</span>
+                                            <span class="stat-label">총 좌석</span>
+                                        </div>
+                                        <div class="stat-item">
+                                            <span class="stat-value">10</span>
+                                            <span class="stat-label">오피스</span>
+                                        </div>
+                                        <div class="stat-item available">
+                                            <span class="stat-value">5</span>
+                                            <span class="stat-label">공실</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <button class="btn-branch-detail">상세보기 →</button>
+                            </div>
+                            
+                            <!-- 판교점 -->
+                            <div class="branch-card" onclick={handleBranchClick} data-branch="pangyo">
+                                <div class="branch-info">
+                                    <h3 class="branch-name">판교점</h3>
+                                    <p class="branch-address">📍 경기 성남시 판교로 256</p>
+                                    <div class="branch-tags">
+                                        <span class="branch-tag">IT 밸리</span>
+                                        <span class="branch-tag">넓은 공간</span>
+                                        <span class="branch-tag">회의실 多</span>
+                                    </div>
+                                    <div class="branch-stats">
+                                        <div class="stat-item">
+                                            <span class="stat-value">200</span>
+                                            <span class="stat-label">총 좌석</span>
+                                        </div>
+                                        <div class="stat-item">
+                                            <span class="stat-value">25</span>
+                                            <span class="stat-label">오피스</span>
+                                        </div>
+                                        <div class="stat-item available">
+                                            <span class="stat-value">8</span>
+                                            <span class="stat-label">공실</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <button class="btn-branch-detail">상세보기 →</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </template>
+
+        <!-- ============================================
+             상품 안내 페이지 (PRODUCTS)
+             ============================================ -->
+        <template if:true={isProductsPage}>
+            <div class="page-container fade-in products-page">
+                <!-- 히어로 섹션 -->
+                <div class="products-hero">
+                    <div class="hero-overlay"></div>
+                    <div class="hero-content">
+                        <span class="hero-badge">PREMIUM OFFICE</span>
+                        <h1 class="hero-title">팀에 맞는 <span class="gradient-text">완벽한 공간</span></h1>
+                        <p class="hero-desc">1인부터 대규모 팀까지, 모든 성장 단계에 맞춘 오피스 솔루션</p>
+                    </div>
+                </div>
+                
+                <!-- 상품 카드 그리드 -->
+                <div class="products-section">
+                    <div class="products-grid">
+                        <!-- 1인실 -->
+                        <div class="product-card" onclick={handleProductClick} data-product="1person">
+                            <div class="product-image" style="background-image: url('https://images.unsplash.com/photo-1497366216548-37526070297c?w=400&q=80')">
+                                <div class="product-overlay">
+                                    <span class="product-capacity">1인실</span>
+                                </div>
+                            </div>
+                            <div class="product-info">
+                                <h3 class="product-name">Solo Office</h3>
+                                <p class="product-desc">혼자 집중하기 좋은 1인 전용 공간</p>
+                                <div class="product-features">
+                                    <span>✓ 개인 데스크</span>
+                                    <span>✓ 무료 WiFi</span>
+                                    <span>✓ 락커</span>
+                                </div>
+                                <div class="product-price">
+                                    <span class="price-from">월</span>
+                                    <span class="price-amount">50만원</span>
+                                    <span class="price-suffix">부터</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- 4인실 -->
+                        <div class="product-card popular" onclick={handleProductClick} data-product="4person">
+                            <div class="popular-badge">BEST</div>
+                            <div class="product-image" style="background-image: url('https://images.unsplash.com/photo-1524758631624-e2822e304c36?w=400&q=80')">
+                                <div class="product-overlay">
+                                    <span class="product-capacity">4인실</span>
+                                </div>
+                            </div>
+                            <div class="product-info">
+                                <h3 class="product-name">Team Office</h3>
+                                <p class="product-desc">소규모 팀에 최적화된 협업 공간</p>
+                                <div class="product-features">
+                                    <span>✓ 개별 책상 4개</span>
+                                    <span>✓ 미팅 테이블</span>
+                                    <span>✓ 화이트보드</span>
+                                </div>
+                                <div class="product-price">
+                                    <span class="price-from">월</span>
+                                    <span class="price-amount">180만원</span>
+                                    <span class="price-suffix">부터</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- 8인실 -->
+                        <div class="product-card" onclick={handleProductClick} data-product="8person">
+                            <div class="product-image" style="background-image: url('https://images.unsplash.com/photo-1556761175-5973dc0f32e7?w=400&q=80')">
+                                <div class="product-overlay">
+                                    <span class="product-capacity">8인실</span>
+                                </div>
+                            </div>
+                            <div class="product-info">
+                                <h3 class="product-name">Growth Office</h3>
+                                <p class="product-desc">성장하는 팀을 위한 넓은 공간</p>
+                                <div class="product-features">
+                                    <span>✓ 개별 책상 8개</span>
+                                    <span>✓ 프라이빗 미팅룸</span>
+                                    <span>✓ 폰부스 이용</span>
+                                </div>
+                                <div class="product-price">
+                                    <span class="price-from">월</span>
+                                    <span class="price-amount">320만원</span>
+                                    <span class="price-suffix">부터</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- 10인실+ -->
+                        <div class="product-card enterprise" onclick={handleProductClick} data-product="enterprise">
+                            <div class="product-image" style="background-image: url('https://images.unsplash.com/photo-1497215728101-856f4ea42174?w=400&q=80')">
+                                <div class="product-overlay">
+                                    <span class="product-capacity">10인+</span>
+                                </div>
+                            </div>
+                            <div class="product-info">
+                                <h3 class="product-name">Enterprise Office</h3>
+                                <p class="product-desc">대규모 팀을 위한 맞춤형 공간</p>
+                                <div class="product-features">
+                                    <span>✓ 맞춤 레이아웃</span>
+                                    <span>✓ 전용 회의실</span>
+                                    <span>✓ 브랜딩 가능</span>
+                                </div>
+                                <div class="product-price">
+                                    <span class="price-consult">별도 상담</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- CTA 섹션 -->
+                    <div class="products-cta">
+                        <p class="cta-text">어떤 공간이 맞을지 고민되시나요?</p>
+                        <button class="btn-cta-primary" onclick={goToHome}>
+                            <span>🤖 AI가 추천해드릴게요</span><span class="cta-arrow">→</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </template>
+
+        <!-- ============================================
+             기업 소개 페이지 (ABOUT)
+             ============================================ -->
+        <template if:true={isAboutPage}>
+            <div class="page-container fade-in about-page">
+                <div class="about-content">
+                    <!-- 메인 비전 -->
+                    <div class="about-hero-section">
+                        <span class="about-badge">ABOUT WE-GROW</span>
+                        <h1 class="about-title">
+                            일하는 방식의<br/>
+                            <span class="gradient-text">새로운 기준</span>을 만듭니다
+                        </h1>
+                        <p class="about-subtitle">
+                            WE-GROW는 혁신적인 공유 오피스 경험을 통해<br/>
+                            비즈니스 성장을 돕는 프리미엄 워크스페이스입니다.
+                        </p>
+                    </div>
+                    
+                    <!-- 미션/비전 카드 -->
+                    <div class="about-cards">
+                        <div class="about-card">
+                            <div class="card-icon">🎯</div>
+                            <h3 class="card-title">Mission</h3>
+                            <p class="card-desc">모든 팀이 최고의 환경에서<br/>최고의 성과를 낼 수 있도록</p>
+                        </div>
+                        <div class="about-card">
+                            <div class="card-icon">🚀</div>
+                            <h3 class="card-title">Vision</h3>
+                            <p class="card-desc">대한민국 No.1<br/>프리미엄 공유 오피스</p>
+                        </div>
+                        <div class="about-card">
+                            <div class="card-icon">💡</div>
+                            <h3 class="card-title">Value</h3>
+                            <p class="card-desc">혁신, 연결, 성장<br/>Innovation · Connection · Growth</p>
+                        </div>
+                    </div>
+                    
+                    <!-- 주요 통계 -->
+                    <div class="about-stats">
+                        <div class="stat-box">
+                            <span class="stat-number">3</span>
+                            <span class="stat-unit">개</span>
+                            <p class="stat-desc">프리미엄 지점</p>
+                        </div>
+                        <div class="stat-box">
+                            <span class="stat-number">400+</span>
+                            <span class="stat-unit">석</span>
+                            <p class="stat-desc">총 좌석 수</p>
+                        </div>
+                        <div class="stat-box">
+                            <span class="stat-number">150+</span>
+                            <span class="stat-unit">팀</span>
+                            <p class="stat-desc">입주 기업</p>
+                        </div>
+                        <div class="stat-box">
+                            <span class="stat-number">98</span>
+                            <span class="stat-unit">%</span>
+                            <p class="stat-desc">고객 만족도</p>
+                        </div>
+                    </div>
+                    
+                    <!-- 연락처 -->
+                    <div class="about-contact">
+                        <h2 class="contact-title">문의하기</h2>
+                        <div class="contact-info">
+                            <div class="contact-item">
+                                <span class="contact-icon">📧</span>
+                                <span>contact@wegrow.co.kr</span>
+                            </div>
+                            <div class="contact-item">
+                                <span class="contact-icon">📞</span>
+                                <span>02-1234-5678</span>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </template>
