@@ -19,7 +19,8 @@ public without sharing class CustomerPortalController {
         try {
             // 1. Contact 정보 조회
             Contact contact = [
-                SELECT Id, Name, FirstName, LastName, Email, AccountId, Account.Name
+                SELECT Id, Name, FirstName, LastName, Email, AccountId, 
+                       Account.Name, Account.Biz_Registration_No__c
                 FROM Contact 
                 WHERE Id = :contactId 
                 LIMIT 1
@@ -29,8 +30,11 @@ public without sharing class CustomerPortalController {
             result.contactName = contact.Name;
             result.accountId = contact.AccountId;
             result.accountName = contact.Account?.Name;
+            result.bizRegistrationNo = contact.Account?.Biz_Registration_No__c;
             
             // 2. Asset (입주 공간) 조회 - Contact의 Account에 연결된 Asset
+            System.debug('Searching Assets for AccountId: ' + contact.AccountId);
+            
             List<Asset> assets = [
                 SELECT Id, Name, Status, Capacity__c, Door_Lock_PW__c,
                        InstallDate, UsageEndDate,
@@ -39,11 +43,13 @@ public without sharing class CustomerPortalController {
                        ContractId__c, Product2Id, Product2.Name
                 FROM Asset 
                 WHERE AccountId = :contact.AccountId
-                AND Status = 'Occupied'
                 LIMIT 1
             ];
             
             System.debug('Assets found: ' + assets.size());
+            if (!assets.isEmpty()) {
+                System.debug('Asset found: ' + assets[0].Name + ' Status: ' + assets[0].Status);
+            }
             
             if (!assets.isEmpty()) {
                 Asset asset = assets[0];
@@ -198,6 +204,7 @@ public without sharing class CustomerPortalController {
         @AuraEnabled public String contactName;
         @AuraEnabled public Id accountId;
         @AuraEnabled public String accountName;
+        @AuraEnabled public String bizRegistrationNo;
         
         // Asset Info
         @AuraEnabled public Id assetId;

@@ -73,6 +73,11 @@ export default class WeGrowCustomerPortal extends NavigationMixin(LightningEleme
     get monthlyPayment() { return this.formatCurrency(this.portalData.monthlyPayment); }
     get depositAmount() { return this.formatCurrency(this.portalData.depositAmount); }
     get moveInDate() { return this.formatDate(this.portalData.moveInDate); }
+    get billingCycle() { return this.portalData.billingCycle || '월납 (Monthly)'; }
+    
+    // 사업자 정보 Getters
+    get bizRegistrationNo() { return this.portalData.bizRegistrationNo || '-'; }
+    get companyFullName() { return this.portalData.accountName || '-'; }
     
     // D-Day 계산
     get daysUntilMoveIn() {

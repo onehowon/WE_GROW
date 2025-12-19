@@ -121,12 +121,8 @@
                             
                             <div class="billing-breakdown">
                                 <div class="breakdown-row">
-                                    <span class="breakdown-label">월 임대료</span>
-                                    <span class="breakdown-value">5,000,000 원</span>
-                                </div>
-                                <div class="breakdown-row">
-                                    <span class="breakdown-label">관리비</span>
-                                    <span class="breakdown-value">500,000 원</span>
+                                    <span class="breakdown-label">월 이용료 (임대료+관리비)</span>
+                                    <span class="breakdown-value">{monthlyPayment}</span>
                                 </div>
                                 <div class="breakdown-row highlight">
                                     <span class="breakdown-label">🎉 입주 청소비 (특별)</span>
@@ -291,29 +287,29 @@
 
                 <div class="contract-header-card">
                     <div class="contract-info-section">
-                        <h2 class="contract-main-title">강남 1호점 20인실 임대 계약</h2>
+                        <h2 class="contract-main-title">{branchName} {capacity}인실 임대 계약</h2>
                         <span class="status-badge active">Active (계약 중)</span>
-                        <p class="contract-subtitle">계약 번호: CTR-2024-0315 • 계약일: 2024.10.12</p>
+                        <p class="contract-subtitle">계약 번호: {contractNumber}</p>
                     </div>
                     <div class="contract-details-grid">
                         <div class="detail-box">
                             <p class="detail-label">계약 기간</p>
-                            <p class="detail-value">2024.10.25 ~ 2025.10.24</p>
-                            <p class="detail-link highlight">재계약 협상 가능 (D-330)</p>
+                            <p class="detail-value">{contractStartDate} ~ {contractEndDate}</p>
+                            <p class="detail-link highlight">재계약 협상 가능 (D-{daysUntilContractEnd})</p>
                         </div>
                         <div class="detail-box">
                             <p class="detail-label">보증금 (Deposit)</p>
-                            <p class="detail-value">100,000,000 원</p>
+                            <p class="detail-value">{depositAmount}</p>
                             <p class="detail-link success">납부 완료 (Paid)</p>
                         </div>
                         <div class="detail-box">
                             <p class="detail-label">월 이용료 (Monthly)</p>
-                            <p class="detail-value">5,500,000 원</p>
+                            <p class="detail-value">{monthlyPayment}</p>
                             <p class="detail-note">(부가세 포함)</p>
                         </div>
                         <div class="detail-box">
                             <p class="detail-label">납부일</p>
-                            <p class="detail-value">매월 25일</p>
+                            <p class="detail-value">{billingCycle}</p>
                             <p class="detail-note">(익월 결제)</p>
                         </div>
                     </div>
@@ -389,19 +385,11 @@
                             <div class="tax-info">
                                 <div class="tax-row">
                                     <span class="tax-label">사업자 번호</span>
-                                    <span class="tax-value">120-81-12345</span>
+                                    <span class="tax-value">{bizRegistrationNo}</span>
                                 </div>
                                 <div class="tax-row">
                                     <span class="tax-label">상호명</span>
-                                    <span class="tax-value">(주)블루테크</span>
-                                </div>
-                                <div class="tax-row">
-                                    <span class="tax-label">대표자</span>
-                                    <span class="tax-value">김대표</span>
-                                </div>
-                                <div class="tax-row">
-                                    <span class="tax-label">수신 이메일</span>
-                                    <span class="tax-value">finance@bluetech.com</span>
+                                    <span class="tax-value">{companyName}</span>
                                 </div>
                             </div>
                         </div>
