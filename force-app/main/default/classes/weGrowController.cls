@@ -25,17 +25,19 @@ public with sharing class WeGrowController {
 
         System.debug('최종 검색어: ' + searchTerm); // 디버그 로그 확인용
 
-        // 3. 검색 (이름 OR 지점명)
+        // 3. 검색 (이름 OR 지점명) + Status 필터 (Lookup Filter와 일치)
         String searchKey = '%' + searchTerm + '%';
+        List<String> validStatuses = new List<String>{'Available', 'Pre_Available', 'Maintenance'};
         
         return [
             SELECT Id, Name, Price, Description, Status,
-                   Capacity__c, Branch_Account__r.Name   
+                   Capacity__c, Branch_Account__r.Id, Branch_Account__r.Name   
             FROM Asset
             WHERE (
                 Name LIKE :searchKey 
                 OR Branch_Account__r.Name LIKE :searchKey
             )
+            AND Status IN :validStatuses
             LIMIT 3
         ];
     }

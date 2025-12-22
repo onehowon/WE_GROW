@@ -89,7 +89,11 @@
                     </template>
 
                     <template for:each={recommendations} for:item="space">
-                        <div key={space.id} class="space-card" onclick={handleCardClick} data-id={space.id}>
+                        <div key={space.id} class={space.cardClass} onclick={handleCardClick} data-id={space.id}>
+                            <!-- 선택 표시 -->
+                            <template if:true={space.isSelected}>
+                                <div class="selection-badge">✓</div>
+                            </template>
                             <div class="card-img-wrapper">
                                 <img src={space.imageUrl} alt={space.name} class="card-img" />
                                 <span class="badge-match"><span class="match-dot"></span>적합도 {space.matchRate}%</span>
@@ -100,13 +104,21 @@
                                 <div class="card-tags">
                                     <span class="card-tag">{space.capacityNumber}인실</span>
                                 </div>
-                                <div class="card-footer">
-                                    <button class="btn-arrow"><span>→</span></button>
-                                </div>
                             </div>
                         </div>
                     </template>
                 </div>
+                
+                <!-- 신청하기 버튼 (선택이 있을 때만 표시) -->
+                <template if:true={hasSelection}>
+                    <div class="floating-apply-btn">
+                        <button class="btn-apply" onclick={goToStep5}>
+                            <span class="apply-icon">📝</span>
+                            <span>{applyButtonText}</span>
+                            <span class="apply-arrow">→</span>
+                        </button>
+                    </div>
+                </template>
             </div>
         </template>
 
@@ -156,10 +168,15 @@
             <div class="modal-overlay fade-in">
                 <div class="form-modal slide-up" style="background: white; padding: 2rem; border-radius: 16px; max-width: 600px; width: 90%;">
                     <div class="form-modal-header">
-                        <button class="panel-close" onclick={goToStep4} style="float:right; font-size:1.5rem; background:none; border:none; cursor:pointer;">×</button>
+                        <button class="panel-close" onclick={goBackToStep3} style="float:right; font-size:1.5rem; background:none; border:none; cursor:pointer;">×</button>
                         <div class="form-icon"><span>📋</span></div>
                         <h2 class="form-title" style="color:#111; margin-top:10px;">맞춤 견적 및 투어 신청</h2>
-                        <p class="form-subtitle" style="color:#666;">선택하신 공간: <span style="font-weight:bold; color:#5A4FCF;">{selectedSpace.name}</span></p>
+                        <div class="selected-offices-list" style="margin-top:12px;">
+                            <p style="color:#666; font-size:0.9rem; margin-bottom:8px;">선택하신 공간:</p>
+                            <template for:each={selectedSpaces} for:item="space">
+                                <span key={space.id} class="selected-office-tag">{space.name}</span>
+                            </template>
+                        </div>
                     </div>
                     
                     <div style="margin-top: 20px;">
