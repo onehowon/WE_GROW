@@ -179,13 +179,10 @@ export default class WeGrowOnboarding extends LightningElement {
         }
     }
 
-    // [초기화] 처음으로 돌아가기
+    // [초기화] 메인 페이지로 이동
     resetProcess() {
-        this.step = 1;
-        this.currentPage = 'home';
-        this.userPrompt = '';
-        this.recommendations = [];
-        this.selectedSpace = {};
+        // 메인 페이지로 리다이렉트
+        window.location.href = '/Lead/s/';
     }
 
     // ============================================
