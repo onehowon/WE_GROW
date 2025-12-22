@@ -8,7 +8,7 @@ export default class WeGrowOnboarding extends LightningElement {
     @track step = 1;
     @track currentPage = 'home'; // home, locations, products, about
     @track userPrompt = '';
-    @track selectedSpace = {};
+    @track selectedSpaces = [];  // 선택된 오피스들 (최대 3개)
     @track recommendations = [];
 
     // 한국 지도 이미지 URL
@@ -41,6 +41,23 @@ export default class WeGrowOnboarding extends LightningElement {
     
     // 결과가 있는지 확인 (결과 없으면 안내 문구 표시용)
     get hasResults() { return this.recommendations && this.recommendations.length > 0; }
+    
+    // 선택된 오피스 개수
+    get selectedCount() { return this.selectedSpaces.length; }
+    
+    // 선택된 오피스가 있는지
+    get hasSelection() { return this.selectedSpaces.length > 0; }
+    
+    // 신청하기 버튼 텍스트
+    get applyButtonText() {
+        if (this.selectedSpaces.length === 0) return '오피스를 선택해주세요';
+        return `선택한 ${this.selectedSpaces.length}개 오피스 신청하기`;
+    }
+
+    // 오피스가 선택되었는지 확인 (카드 UI용)
+    isSpaceSelected(spaceId) {
+        return this.selectedSpaces.some(s => s.id === spaceId);
+    }
 
     // [STEP 1] 태그 클릭 핸들러
     handleTagClick(event) {
@@ -124,8 +141,17 @@ export default class WeGrowOnboarding extends LightningElement {
                         // 설명
                         description: asset.Description || '상세 설명이 준비되지 않았습니다.',
                         
+                        // 지점 Account ID (Flow 전달용)
+                        branchAccountId: asset.Branch_Account__r ? asset.Branch_Account__r.Id : null,
+                        
                         // 편의시설 (현재는 하드코딩, 필요시 Product 옵션과 연동 가능)
-                        amenities: [{name:'24시간 보안'}, {name:'초고속 인터넷'}, {name:'라운지 이용'}]
+                        amenities: [{name:'24시간 보안'}, {name:'초고속 인터넷'}, {name:'라운지 이용'}],
+                        
+                        // 선택 여부 (UI 바인딩용)
+                        isSelected: false,
+                        
+                        // CSS 클래스 (선택 상태에 따라 변경)
+                        cardClass: 'space-card'
                     };
                 });
                 
@@ -142,12 +168,29 @@ export default class WeGrowOnboarding extends LightningElement {
             });
     }
 
-    // [STEP 3 -> 4] 카드 클릭 시 상세 보기
+    // [STEP 3] 카드 클릭 시 선택/해제 토글 (최대 3개)
     handleCardClick(event) {
         const spaceId = event.currentTarget.dataset.id;
-        // 클릭한 ID에 해당하는 오피스 정보를 찾아서 selectedSpace에 저장
-        this.selectedSpace = this.recommendations.find(s => s.id === spaceId);
-        this.step = 4;
+        const index = this.selectedSpaces.findIndex(s => s.id === spaceId);
+        
+        if (index > -1) {
+            // 이미 선택된 경우 → 해제
+            this.selectedSpaces = this.selectedSpaces.filter(s => s.id !== spaceId);
+        } else if (this.selectedSpaces.length < 3) {
+            // 선택되지 않았고, 3개 미만인 경우 → 추가
+            const space = this.recommendations.find(s => s.id === spaceId);
+            this.selectedSpaces = [...this.selectedSpaces, space];
+        }
+        
+        // recommendations의 isSelected 및 cardClass 상태 업데이트 (UI 반영용)
+        this.recommendations = this.recommendations.map(rec => {
+            const selected = this.selectedSpaces.some(s => s.id === rec.id);
+            return {
+                ...rec,
+                isSelected: selected,
+                cardClass: selected ? 'space-card selected' : 'space-card'
+            };
+        });
     }
 
     // 이벤트 전파 방지 (모달 배경 클릭 시 닫기 방지 등)
@@ -160,16 +203,26 @@ export default class WeGrowOnboarding extends LightningElement {
     // [STEP 4 -> 5] 신청하기 버튼 (Flow 모달 열기)
     goToStep5() { this.step = 5; }
 
-    // [Flow 연동] Flow에 넘겨줄 변수 설정
+    // [Flow 연동] Flow에 넘겨줄 변수 설정 (선택된 오피스의 Asset ID, Branch ID 전달)
     get flowInputVariables() {
-        return [
-            {
-                // Flow 내부에 'InterestAsset'이라는 '입력 전용 텍스트 변수'가 있어야 함
-                name: 'InterestAsset', 
+        const variables = [];
+        
+        // 선택된 오피스들의 ID를 Flow 변수로 전달
+        for (let i = 0; i < 3; i++) {
+            const space = this.selectedSpaces[i];
+            variables.push({
+                name: `AssetId${i + 1}`,
                 type: 'String',
-                value: this.selectedSpace.name // 예: "강남점 101호"
-            }
-        ];
+                value: space ? space.id : ''
+            });
+            variables.push({
+                name: `BranchId${i + 1}`,
+                type: 'String',
+                value: space ? space.branchAccountId : ''
+            });
+        }
+        
+        return variables;
     }
 
     // [Flow 상태 감지] Flow가 완료(FINISHED)되면 완료 화면(Step 7)으로 이동

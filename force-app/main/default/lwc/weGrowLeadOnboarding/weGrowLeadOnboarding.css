@@ -2091,3 +2091,110 @@
         gap: 16px;
     }
 }
+
+/* ============================================
+   [MULTI-SELECT] 오피스 복수 선택 UI
+   ============================================ */
+
+/* 선택된 카드 스타일 */
+.space-card.selected {
+    border: 3px solid #6366f1;
+    box-shadow: 0 8px 30px rgba(99, 102, 241, 0.25);
+    transform: translateY(-4px);
+}
+
+.space-card.selected::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(99, 102, 241, 0.05);
+    pointer-events: none;
+    z-index: 1;
+}
+
+/* 선택 배지 */
+.selection-badge {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    width: 32px;
+    height: 32px;
+    background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem;
+    font-weight: 700;
+    z-index: 10;
+    box-shadow: 0 4px 12px rgba(99, 102, 241, 0.4);
+    animation: pop 0.3s ease-out;
+}
+
+@keyframes pop {
+    0% { transform: scale(0); }
+    80% { transform: scale(1.2); }
+    100% { transform: scale(1); }
+}
+
+/* 플로팅 신청 버튼 */
+.floating-apply-btn {
+    position: fixed;
+    bottom: 40px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 100;
+    animation: slideUp 0.4s ease-out;
+}
+
+.btn-apply {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+    color: white;
+    border: none;
+    padding: 18px 36px;
+    border-radius: 60px;
+    font-size: 1.1rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s;
+    box-shadow: 0 8px 30px rgba(99, 102, 241, 0.4);
+}
+
+.btn-apply:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 12px 40px rgba(99, 102, 241, 0.5);
+}
+
+.apply-icon {
+    font-size: 1.2rem;
+}
+
+.apply-arrow {
+    font-size: 1.3rem;
+    transition: transform 0.3s;
+}
+
+.btn-apply:hover .apply-arrow {
+    transform: translateX(4px);
+}
+
+/* 선택된 오피스 태그 (Step 5 모달) */
+.selected-office-tag {
+    display: inline-block;
+    background: linear-gradient(135deg, #f0f4ff 0%, #e8ecff 100%);
+    color: #5A4FCF;
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    margin-right: 8px;
+    margin-bottom: 8px;
+    border: 1px solid #d0d5ff;
+}
