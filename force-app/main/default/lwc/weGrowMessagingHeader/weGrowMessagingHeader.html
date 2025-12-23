@@ -1,0 +1,28 @@
+<template>
+    <div class="header-container">
+        <div class="header-left">
+            <div class="agent-avatar">
+                <img src={logoUrl} alt="WE:GROW" class="avatar-logo" />
+            </div>
+            <div class="agent-info">
+                <h2 class="agent-name">위글로우 어시스턴트</h2>
+                <span class="agent-status">
+                    <span class="status-dot"></span>
+                    온라인
+                </span>
+            </div>
+        </div>
+        <div class="header-right">
+            <button class="minimize-btn" onclick={handleMinimize} aria-label="최소화">
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+                    <path d="M2 8h12v1H2z"/>
+                </svg>
+            </button>
+            <button class="close-btn" onclick={handleClose} aria-label="닫기">
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+                    <path d="M3.5 3.5l9 9m0-9l-9 9" stroke="currentColor" stroke-width="1.5" fill="none"/>
+                </svg>
+            </button>
+        </div>
+    </div>
+</template>

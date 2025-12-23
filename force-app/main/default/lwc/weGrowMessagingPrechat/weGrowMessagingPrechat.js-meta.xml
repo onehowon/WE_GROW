@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LightningComponentBundle xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>62.0</apiVersion>
+    <isExposed>true</isExposed>
+    <targets>
+        <target>lightningSnapin__MessagingPreChat</target>
+    </targets>
+    <masterLabel>WeGrow Pre-Chat Form</masterLabel>
+    <description>WeGrow 브랜드 맞춤형 사전 채팅 양식</description>
+</LightningComponentBundle>

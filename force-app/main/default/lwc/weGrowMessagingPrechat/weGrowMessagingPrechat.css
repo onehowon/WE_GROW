@@ -1,0 +1,154 @@
+/* ==============================================
+   WE:GROW Pre-Chat Form Styles
+   WeGrow 브랜드 맞춤형 사전 채팅 양식
+   ============================================== */
+
+.prechat-container {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    background: linear-gradient(180deg, #f8fbff 0%, #ffffff 100%);
+    font-family: 'Salesforce Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+/* 헤더 */
+.prechat-header {
+    padding: 24px 20px;
+    text-align: center;
+    background: linear-gradient(135deg, #1a2634 0%, #2d3e50 100%);
+    color: white;
+}
+
+.prechat-logo {
+    width: 100px;
+    height: auto;
+    margin-bottom: 12px;
+    filter: brightness(0) invert(1);
+}
+
+.prechat-title {
+    font-size: 1.3rem;
+    font-weight: 700;
+    margin: 0 0 6px 0;
+}
+
+.prechat-subtitle {
+    font-size: 0.9rem;
+    color: rgba(255, 255, 255, 0.8);
+    margin: 0;
+}
+
+/* 폼 영역 */
+.prechat-form {
+    flex: 1;
+    padding: 24px 20px;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-label {
+    display: block;
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: #1a2634;
+    margin-bottom: 16px;
+    text-align: center;
+}
+
+/* 문의 유형 버튼 */
+.type-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.type-btn {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 16px 20px;
+    background: white;
+    border: 2px solid #e0e7ee;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    text-align: left;
+}
+
+.type-btn:hover {
+    border-color: #0070d2;
+    background: #f8fbff;
+    transform: translateY(-1px);
+}
+
+.type-btn.selected {
+    border-color: #0070d2;
+    background: linear-gradient(135deg, #e6f2ff 0%, #f0f7ff 100%);
+    box-shadow: 0 4px 12px rgba(0, 112, 210, 0.15);
+}
+
+.type-icon {
+    font-size: 1.5rem;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #f0f4f8;
+    border-radius: 10px;
+}
+
+.type-btn.selected .type-icon {
+    background: #0070d2;
+}
+
+.type-label {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #1a2634;
+}
+
+/* 푸터 */
+.prechat-footer {
+    padding: 20px;
+    border-top: 1px solid #e0e7ee;
+    background: white;
+}
+
+.start-chat-btn {
+    width: 100%;
+    padding: 16px;
+    background: linear-gradient(135deg, #0070d2 0%, #0058a8 100%);
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-size: 1rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 12px rgba(0, 112, 210, 0.3);
+}
+
+.start-chat-btn:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(0, 112, 210, 0.4);
+}
+
+.start-chat-btn:disabled {
+    background: #c9d4de;
+    cursor: not-allowed;
+    box-shadow: none;
+}
+
+.notice {
+    font-size: 0.8rem;
+    color: #6b7c8e;
+    text-align: center;
+    margin: 14px 0 0 0;
+}
+
+.notice strong {
+    color: #0070d2;
+}

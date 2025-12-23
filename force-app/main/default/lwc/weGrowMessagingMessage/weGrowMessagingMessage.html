@@ -1,0 +1,18 @@
+<template>
+    <div class={messageContainerClass}>
+        <template if:true={isAgentMessage}>
+            <div class="agent-avatar-small">
+                <span class="avatar-icon">🤖</span>
+            </div>
+        </template>
+        
+        <div class={bubbleClass}>
+            <div class="message-content">
+                <slot></slot>
+            </div>
+            <div class="message-metadata">
+                <span class="message-time">{formattedTime}</span>
+            </div>
+        </div>
+    </div>
+</template>

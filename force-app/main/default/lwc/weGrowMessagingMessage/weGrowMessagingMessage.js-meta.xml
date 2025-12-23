@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LightningComponentBundle xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>62.0</apiVersion>
+    <isExposed>true</isExposed>
+    <targets>
+        <target>lightningSnapin__MessagingTextMessageBubble</target>
+    </targets>
+    <masterLabel>WeGrow Chat Message</masterLabel>
+    <description>WeGrow 브랜드 맞춤형 채팅 메시지 말풍선</description>
+</LightningComponentBundle>
