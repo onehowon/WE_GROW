@@ -33,7 +33,6 @@ export default class WeGrowCustomerPortal extends NavigationMixin(LightningEleme
     get isDashboardTab() { return this.currentTab === 'dashboard'; }
     get isMyOfficeTab() { return this.currentTab === 'myoffice'; }
     get isChargeTab() { return this.currentTab === 'charge'; }
-    get isServiceTab() { return this.currentTab === 'service'; }
     
     // 사이드바 네비게이션 CSS 클래스
     get dashboardNavClass() {
@@ -45,9 +44,7 @@ export default class WeGrowCustomerPortal extends NavigationMixin(LightningEleme
     get chargeNavClass() {
         return `nav-item ${this.currentTab === 'charge' ? 'active' : ''}`;
     }
-    get serviceNavClass() {
-        return `nav-item ${this.currentTab === 'service' ? 'active' : ''}`;
-    }
+
     
     // 오피스 배너 스타일
     get bannerStyle() {
@@ -104,20 +101,68 @@ export default class WeGrowCustomerPortal extends NavigationMixin(LightningEleme
     
     connectedCallback() {
         console.log('[CustomerPortal] connectedCallback started');
+        console.log('[CustomerPortal] Current URL:', window.location.href);
+        
+        // 실제 Experience Cloud 사이트 경로에서만 리다이렉트 (/members/ 경로)
+        // 그 외 (Experience Builder, Lightning 등)에서는 리다이렉트 안 함
+        const isOnExperienceCloudSite = window.location.href.includes('/members/') && 
+                                         !window.location.href.includes('sitepreview') && 
+                                         !window.location.href.includes('livepreview') &&
+                                         !window.location.href.includes('live-preview') &&  // 하이픈 포함 버전
+                                         !window.location.href.includes('salesforce-experience.com') && // Experience Builder 도메인
+                                         !window.location.href.includes('lwr/');
+        console.log('[CustomerPortal] isOnExperienceCloudSite:', isOnExperienceCloudSite);
         
         // sessionStorage에서 로그인 정보 확인
         this.contactId = sessionStorage.getItem('contactId');
         this.accountId = sessionStorage.getItem('accountId');
         const isLoggedIn = sessionStorage.getItem('isLoggedIn');
         
+        // Prechat 컴포넌트에서도 사용할 수 있도록 portal_ prefix로도 저장
+        if (this.contactId) {
+            sessionStorage.setItem('portal_contactId', this.contactId);
+            sessionStorage.setItem('portal_accountId', this.accountId);
+        }
+        
         console.log('[CustomerPortal] contactId:', this.contactId);
         console.log('[CustomerPortal] accountId:', this.accountId);
         console.log('[CustomerPortal] isLoggedIn:', isLoggedIn);
         
+        // 로그인 안 된 경우 처리
         if (!isLoggedIn || !this.contactId) {
-            console.log('[CustomerPortal] Not logged in, redirecting to login...');
-            // 로그인 페이지로 리다이렉트
-            window.location.href = '/members/home';
+            // 실제 Experience Cloud 사이트에서만 리다이렉트
+            if (isOnExperienceCloudSite) {
+                console.log('[CustomerPortal] Not logged in, redirecting to login...');
+                window.location.href = '/members/login';
+                return;
+            }
+            
+            // Experience Builder 또는 기타 환경 -> 더미 데이터로 미리보기
+            console.log('[CustomerPortal] Preview mode detected, using dummy data');
+            this.contactId = 'PREVIEW_MODE';
+            this.accountId = 'PREVIEW_MODE';
+            this.isLoading = false;
+            this.dataLoaded = true;
+            this.portalData = {
+                contactName: '미리보기 사용자',
+                accountName: '미리보기 회사',
+                branchName: '강남본점',
+                assetName: '301호',
+                capacity: 10,
+                productName: '프리미엄 오피스',
+                doorLockPw: '******',
+                wifiSsid: 'WE-GROW-WiFi',
+                wifiPassword: '******',
+                contractNumber: 'PREVIEW-001',
+                contractStartDate: '2024-01-01',
+                contractEndDate: '2024-12-31',
+                monthlyPayment: 5000000,
+                depositAmount: 100000000,
+                moveInDate: '2024-01-15',
+                billingCycle: '월납 (Monthly)',
+                bizRegistrationNo: '123-45-67890',
+                recentCases: []
+            };
             return;
         }
         
@@ -207,7 +252,7 @@ export default class WeGrowCustomerPortal extends NavigationMixin(LightningEleme
             this.loadInvoices();
         }
     }
-    navigateToService() { this.currentTab = 'service'; }
+
     
     // 민원 폼 핸들러
     handleCaseTypeChange(event) { this.caseType = event.target.value; }
@@ -274,7 +319,7 @@ export default class WeGrowCustomerPortal extends NavigationMixin(LightningEleme
     // 로그아웃
     handleLogout() {
         sessionStorage.clear();
-        window.location.href = '/members/home';
+        window.location.href = '/members/login';
     }
     
     // 유틸리티 메서드

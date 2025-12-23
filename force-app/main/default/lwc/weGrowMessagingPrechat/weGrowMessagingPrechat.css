@@ -152,3 +152,37 @@
 .notice strong {
     color: #0070d2;
 }
+
+/* 사용자 정보 카드 */
+.user-info-card {
+    margin: 16px 20px 0;
+    padding: 16px;
+    background: linear-gradient(135deg, #f0f7ff 0%, #e6f2ff 100%);
+    border-radius: 12px;
+    border: 1px solid #d0e3f7;
+}
+
+.user-info-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 0;
+    border-bottom: 1px solid rgba(0, 112, 210, 0.1);
+}
+
+.user-info-row:last-child {
+    border-bottom: none;
+}
+
+.user-info-label {
+    font-size: 0.85rem;
+    color: #6b7c8e;
+    font-weight: 500;
+}
+
+.user-info-value {
+    font-size: 0.9rem;
+    color: #1a2634;
+    font-weight: 600;
+}
+

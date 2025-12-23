@@ -20,10 +20,7 @@
                     <span class="nav-icon">💰</span>
                     <span>계약 및 청구</span>
                 </div>
-                <div class={serviceNavClass} onclick={navigateToService}>
-                    <span class="nav-icon">🔧</span>
-                    <span>시설 및 민원</span>
-                </div>
+
             </nav>
 
             <div class="sidebar-footer">
@@ -402,69 +399,7 @@
                 </div>
             </template>
 
-            <!-- [TAB 4] 시설 및 민원 -->
-            <template if:true={isServiceTab}>
-                <div class="page-header">
-                    <h1 class="page-title">새로운 민원 접수</h1>
-                </div>
 
-                <div class="service-form-container">
-                    <div class="form-header">
-                        <h2 class="form-title">무엇을 도와드릴까요?</h2>
-                        <p class="form-subtitle">시설 수리, 청소 요청, 출입카드 발급 등 필요한 사항을 남겨주시면 담당자가 신속히 처리해 드립니다.</p>
-                    </div>
-
-                    <div class="form-content">
-                        <div class="form-row">
-                            <div class="form-group half">
-                                <label class="form-label required">문의 유형</label>
-                                <select class="form-select" onchange={handleCaseTypeChange}>
-                                    <option value="">유형을 선택해주세요</option>
-                                    <option value="Facility">시설 수리</option>
-                                    <option value="MoveIn">청소 요청</option>
-                                    <option value="General">출입카드 발급</option>
-                                    <option value="General">네트워크/IT</option>
-                                    <option value="General">기타 문의</option>
-                                </select>
-                            </div>
-                            <div class="form-group half">
-                                <label class="form-label">위치 (호실)</label>
-                                <input type="text" class="form-input" value={officeFullName} disabled/>
-                            </div>
-                        </div>
-
-                        <div class="form-group">
-                            <label class="form-label required">제목</label>
-                            <input type="text" class="form-input" placeholder="예: 화의실 에어컨 작동이 안 됩니다." onchange={handleSubjectChange}/>
-                        </div>
-
-                        <div class="form-group">
-                            <label class="form-label required">상세 내용</label>
-                            <textarea class="form-textarea" rows="6" placeholder="구체적인 증상이나 요청 사항을 작성해주세요. (날짜, 시간, 위치, 특이사항 등)" onchange={handleDescriptionChange}></textarea>
-                        </div>
-
-                        <div class="urgent-notice">
-                            <input type="checkbox" id="urgent" class="checkbox-input" onchange={handleUrgentChange}/>
-                            <label for="urgent" class="checkbox-label urgent-label">긴급 처리 요청</label>
-                            <p class="urgent-note">당일에 긴급한 처리가 필요하나 안전과 관련된 사항에 있는 경우 체크해주세요.</p>
-                        </div>
-
-                        <div class="form-group">
-                            <label class="form-label">첨부 파일</label>
-                            <div class="file-upload-area">
-                                <div class="upload-icon">📎</div>
-                                <p class="upload-text">클릭하여 업로드하거나 파일을 드래그하세요</p>
-                                <p class="upload-note">PNG, JPG, PDF (최대 10MB)</p>
-                            </div>
-                        </div>
-
-                        <div class="form-actions">
-                            <button class="btn-cancel" onclick={handleCancelCase}>취소하고 돌아가기</button>
-                            <button class="btn-submit" onclick={handleSubmitCase}>민원 접수하기</button>
-                        </div>
-                    </div>
-                </div>
-            </template>
 
         </div>
     </div>

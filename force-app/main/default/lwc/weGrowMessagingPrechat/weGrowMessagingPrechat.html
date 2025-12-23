@@ -7,6 +7,24 @@
             <p class="prechat-subtitle">무엇을 도와드릴까요?</p>
         </div>
 
+        <!-- 로그인 사용자 정보 표시 -->
+        <template if:true={hasSessionInfo}>
+            <div class="user-info-card">
+                <div class="user-info-row">
+                    <span class="user-info-label">👤 고객명</span>
+                    <span class="user-info-value">{userName}</span>
+                </div>
+                <div class="user-info-row">
+                    <span class="user-info-label">🏢 지점</span>
+                    <span class="user-info-value">{branchName}</span>
+                </div>
+                <div class="user-info-row">
+                    <span class="user-info-label">🚪 호실</span>
+                    <span class="user-info-value">{locationName}</span>
+                </div>
+            </div>
+        </template>
+
         <!-- 문의 유형 선택 -->
         <div class="prechat-form">
             <div class="form-group">

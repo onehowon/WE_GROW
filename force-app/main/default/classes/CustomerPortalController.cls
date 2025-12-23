@@ -251,4 +251,97 @@ public without sharing class CustomerPortalController {
         @AuraEnabled public String status;
         @AuraEnabled public Date paidDate;
     }
+    
+    // ========================
+    // Agent Session Info
+    // ========================
+    
+    /**
+     * Contact 기반 Agent Session 정보 조회
+     * Messaging에서 로그인한 사용자 정보를 Agent에 전달하기 위한 메서드
+     * @param contactId 로그인한 Contact ID
+     * @return AgentSessionInfo 에이전트에 필요한 사용자 정보
+     */
+    @AuraEnabled
+    public static AgentSessionInfo getAgentSessionInfo(String contactId) {
+        System.debug('=== getAgentSessionInfo START ===');
+        System.debug('Input contactId: ' + contactId);
+        
+        AgentSessionInfo result = new AgentSessionInfo();
+        
+        try {
+            // 1. Contact 정보 조회
+            Contact contact = [
+                SELECT Id, Name, Email, Phone, AccountId, 
+                       Account.Name, Account.Id
+                FROM Contact 
+                WHERE Id = :contactId 
+                LIMIT 1
+            ];
+            
+            result.contactId = contact.Id;
+            result.contactName = contact.Name;
+            result.contactEmail = contact.Email;
+            result.contactPhone = contact.Phone;
+            result.accountId = contact.AccountId;
+            result.accountName = contact.Account?.Name;
+            
+            System.debug('Contact found: ' + contact.Name);
+            
+            // 2. Asset (호실) 정보 조회 - Contact의 Account에 연결된 Asset
+            List<Asset> assets = [
+                SELECT Id, Name, Home_Branch__c, Home_Branch__r.Name
+                FROM Asset 
+                WHERE AccountId = :contact.AccountId 
+                LIMIT 1
+            ];
+            
+            if (!assets.isEmpty()) {
+                Asset asset = assets[0];
+                result.assetId = asset.Id;
+                result.assetName = asset.Name;                    // "1502호 (폰부스 1)"
+                result.branchId = asset.Home_Branch__c;
+                result.branchName = asset.Home_Branch__r?.Name;   // "WE-GROW 성전분점"
+                
+                System.debug('Asset found: ' + asset.Name);
+                System.debug('Branch found: ' + asset.Home_Branch__r?.Name);
+            }
+            
+            result.success = true;
+            
+        } catch (Exception e) {
+            System.debug('EXCEPTION: ' + e.getMessage());
+            result.success = false;
+            result.errorMessage = e.getMessage();
+        }
+        
+        System.debug('=== getAgentSessionInfo END ===');
+        return result;
+    }
+    
+    /**
+     * Agent Session 정보 Wrapper Class
+     */
+    public class AgentSessionInfo {
+        @AuraEnabled public Boolean success;
+        @AuraEnabled public String errorMessage;
+        
+        // Contact 정보
+        @AuraEnabled public Id contactId;
+        @AuraEnabled public String contactName;
+        @AuraEnabled public String contactEmail;
+        @AuraEnabled public String contactPhone;
+        
+        // Account 정보
+        @AuraEnabled public Id accountId;
+        @AuraEnabled public String accountName;
+        
+        // Asset 정보
+        @AuraEnabled public Id assetId;
+        @AuraEnabled public String assetName;
+        
+        // Branch 정보
+        @AuraEnabled public Id branchId;
+        @AuraEnabled public String branchName;
+    }
 }
