@@ -1,49 +1,66 @@
 public class ContractAuditDataProvider {
+    
+    public class Request {
+        @InvocableVariable(label='Contract Record')
+        public Contract Contract;
+        
+        @InvocableVariable(label='Contract Id')
+        public Id contractId;
+    }
+    
+    public class Response {
+        @InvocableVariable(label='Prompt')
+        public String Prompt;
+    }
+    
     @InvocableMethod(label='Get Comparison Data' category='Prompt Templates')
-    public static List<String> getComparisonData(List<Id> contractIds) {
-        if (contractIds == null || contractIds.isEmpty()) {
-            return new List<String>{'Error: No contract ID provided'};
-        }
+    public static List<Response> getComparisonData(List<Request> requests) {
+        List<Response> responses = new List<Response>();
         
-        List<Contract> contracts = [
-            SELECT Id, Biz_Name__c, Biz_Reg_No__c, Total_Payment_Amount__c, 
-                   Total_Deposit_Amount__c, Billing_Cycle__c, OpportunityId__c 
-            FROM Contract 
-            WHERE Id = :contractIds[0] 
-            LIMIT 1
-        ];
-        
-        if (contracts.isEmpty()) {
-            return new List<String>{'Error: Contract not found'};
-        }
-        
-        Contract con = contracts[0];
-        
-        if (con.OpportunityId__c == null) {
-            return new List<String>{'Error: Contract has no associated Opportunity'};
-        }
-        
-        List<Quote> quotes = [
-            SELECT GrandTotal, Total_Deposit__c, Main_Billing_Cycle__c, Biz_Name__c, 
-                   Biz_Reg_No__c, Special_Terms__c 
-            FROM Quote 
-            WHERE OpportunityId = :con.OpportunityId__c AND IsSyncing = true 
-            LIMIT 1
-        ];
-        
-        if (quotes.isEmpty()) {
-            return new List<String>{'Error: No syncing quote found for the opportunity'};
-        }
-        
-        Quote qto = quotes[0];
+        for (Request req : requests) {
+            Response res = new Response();
+            try {
+                Id targetId = (req.Contract != null && req.Contract.Id != null) ? req.Contract.Id : req.contractId;
+                
+                if (targetId == null) {
+                    res.Prompt = 'Error: No contract provided';
+                    responses.add(res);
+                    continue;
+                }
+                
+                // 1. 새 필드 Biz_Reg_No__c 포함 쿼리
+                Contract con = [SELECT Id, Biz_Name__c, Biz_Reg_No__c, Total_Payment_Amount__c, 
+                                       Total_Deposit_Amount__c, Billing_Cycle__c, OpportunityId__c 
+                                FROM Contract WHERE Id = :targetId LIMIT 1];
+                
+                if (con.OpportunityId__c == null) {
+                    res.Prompt = 'Error: Contract has no associated Opportunity';
+                    responses.add(res);
+                    continue;
+                }
+                
+                // 2. 견적서 쿼리
+                Quote qto = [SELECT GrandTotal, Total_Deposit__c, Main_Billing_Cycle__c, Biz_Name__c, 
+                                    Biz_Reg_No__c, Special_Terms__c 
+                             FROM Quote WHERE OpportunityId = :con.OpportunityId__c AND IsSyncing = true LIMIT 1];
 
-        String result = 'Quote: ' + String.valueOf(qto.Biz_Name__c) + 
-                        ', Amount: ' + String.valueOf(qto.GrandTotal) + 
-                        ', Cycle: ' + String.valueOf(qto.Main_Billing_Cycle__c) + 
-                        '\nContract: ' + String.valueOf(con.Biz_Name__c) + 
-                        ', Amount: ' + String.valueOf(con.Total_Payment_Amount__c) + 
-                        ', Cycle: ' + String.valueOf(con.Billing_Cycle__c);
-        
-        return new List<String>{result};
+                // 3. AI가 읽기 좋게 구조화 (Null 처리 포함)
+                res.Prompt = '### [Quote Data] ###\n' +
+                             '- Company: ' + (qto.Biz_Name__c == null ? '미입력' : qto.Biz_Name__c) + '\n' +
+                             '- Biz No: ' + (qto.Biz_Reg_No__c == null ? '미입력' : qto.Biz_Reg_No__c) + '\n' +
+                             '- Amount: ' + qto.GrandTotal + '\n' +
+                             '- Cycle: ' + qto.Main_Billing_Cycle__c + '\n\n' +
+                             '### [Contract Data] ###\n' +
+                             '- Company: ' + (con.Biz_Name__c == null ? '미입력' : con.Biz_Name__c) + '\n' +
+                             '- Biz No: ' + (con.Biz_Reg_No__c == null ? '미입력' : con.Biz_Reg_No__c) + '\n' +
+                             '- Amount: ' + con.Total_Payment_Amount__c + '\n' +
+                             '- Cycle: ' + con.Billing_Cycle__c;
+                
+            } catch (Exception e) {
+                res.Prompt = 'Exception: ' + e.getMessage();
+            }
+            responses.add(res);
+        }
+        return responses;
     }
 }
