@@ -10,7 +10,7 @@ public without sharing class CustomerPortalController {
         try {
             Contact contact = [
                 SELECT Id, Name, FirstName, LastName, Email, AccountId, 
-                       Account.Name, Account.Biz_Registration_No__c
+                       Account.Name, Account.Biz_Reg_No__c
                 FROM Contact 
                 WHERE Id = :contactId 
                 LIMIT 1
@@ -20,7 +20,7 @@ public without sharing class CustomerPortalController {
             result.contactName = contact.Name;
             result.accountId = contact.AccountId;
             result.accountName = contact.Account?.Name;
-            result.bizRegistrationNo = contact.Account?.Biz_Registration_No__c;
+            result.bizRegistrationNo = contact.Account?.Biz_Reg_No__c;
             
             System.debug('Searching Assets for AccountId: ' + contact.AccountId);
             
