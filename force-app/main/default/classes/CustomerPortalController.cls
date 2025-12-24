@@ -1,14 +1,5 @@
-/**
- * Customer Portal 데이터 컨트롤러
- * 로그인한 Contact 기반으로 포털 데이터 조회
- */
 public without sharing class CustomerPortalController {
     
-    /**
-     * 포털 전체 데이터 조회 (대시보드 + 나의 오피스)
-     * @param contactId 로그인한 Contact ID
-     * @return PortalData 포털에 필요한 모든 데이터
-     */
     @AuraEnabled(cacheable=true)
     public static PortalData getPortalData(String contactId) {
         System.debug('=== CustomerPortalController.getPortalData START ===');
@@ -17,10 +8,9 @@ public without sharing class CustomerPortalController {
         PortalData result = new PortalData();
         
         try {
-            // 1. Contact 정보 조회
             Contact contact = [
                 SELECT Id, Name, FirstName, LastName, Email, AccountId, 
-                       Account.Name, Account.Biz_Registration_No__c
+                       Account.Name, Account.Biz_Reg_No__c
                 FROM Contact 
                 WHERE Id = :contactId 
                 LIMIT 1
@@ -30,9 +20,8 @@ public without sharing class CustomerPortalController {
             result.contactName = contact.Name;
             result.accountId = contact.AccountId;
             result.accountName = contact.Account?.Name;
-            result.bizRegistrationNo = contact.Account?.Biz_Registration_No__c;
+            result.bizRegistrationNo = contact.Account?.Biz_Reg_No__c;
             
-            // 2. Asset (입주 공간) 조회 - Contact의 Account에 연결된 Asset
             System.debug('Searching Assets for AccountId: ' + contact.AccountId);
             
             List<Asset> assets = [
@@ -64,7 +53,6 @@ public without sharing class CustomerPortalController {
                 result.moveOutDate = asset.UsageEndDate;
                 result.productName = asset.Product2?.Name;
                 
-                // 3. Contract 조회
                 if (asset.ContractId__c != null) {
                     Contract contract = [
                         SELECT Id, ContractNumber, Status, StartDate, EndDate,
@@ -86,7 +74,6 @@ public without sharing class CustomerPortalController {
                 }
             }
             
-            // 4. 최근 Case (민원) 조회
             List<Case> cases = [
                 SELECT Id, CaseNumber, Subject, Status, Priority, Type, CreatedDate
                 FROM Case 
@@ -122,11 +109,6 @@ public without sharing class CustomerPortalController {
         return result;
     }
     
-    /**
-     * 청구 내역 조회
-     * @param accountId Account ID
-     * @return List<InvoiceInfo> 청구 내역 리스트
-     */
     @AuraEnabled(cacheable=true)
     public static List<InvoiceInfo> getInvoices(String accountId) {
         System.debug('=== getInvoices for Account: ' + accountId);
@@ -157,16 +139,6 @@ public without sharing class CustomerPortalController {
         return result;
     }
     
-    /**
-     * 새 민원(Case) 생성
-     * @param accountId Account ID
-     * @param assetId Asset ID (호실)
-     * @param subject 제목
-     * @param description 상세 내용
-     * @param caseType 유형
-     * @param priority 우선순위
-     * @return Case ID
-     */
     @AuraEnabled
     public static String createCase(String accountId, String assetId, 
                                      String subject, String description, 
@@ -192,21 +164,15 @@ public without sharing class CustomerPortalController {
         return newCase.Id;
     }
     
-    // ========================
-    // Wrapper Classes
-    // ========================
-    
     public class PortalData {
         @AuraEnabled public Boolean success;
         @AuraEnabled public String errorMessage;
         
-        // Contact/Account Info
         @AuraEnabled public String contactName;
         @AuraEnabled public Id accountId;
         @AuraEnabled public String accountName;
         @AuraEnabled public String bizRegistrationNo;
         
-        // Asset Info
         @AuraEnabled public Id assetId;
         @AuraEnabled public String assetName;
         @AuraEnabled public String branchName;
@@ -218,7 +184,6 @@ public without sharing class CustomerPortalController {
         @AuraEnabled public Date moveOutDate;
         @AuraEnabled public String productName;
         
-        // Contract Info
         @AuraEnabled public Id contractId;
         @AuraEnabled public String contractNumber;
         @AuraEnabled public String contractStatus;
@@ -228,7 +193,6 @@ public without sharing class CustomerPortalController {
         @AuraEnabled public Decimal depositAmount;
         @AuraEnabled public String billingCycle;
         
-        // Cases
         @AuraEnabled public List<CaseInfo> recentCases;
     }
     
@@ -252,16 +216,6 @@ public without sharing class CustomerPortalController {
         @AuraEnabled public Date paidDate;
     }
     
-    // ========================
-    // Agent Session Info
-    // ========================
-    
-    /**
-     * Contact 기반 Agent Session 정보 조회
-     * Messaging에서 로그인한 사용자 정보를 Agent에 전달하기 위한 메서드
-     * @param contactId 로그인한 Contact ID
-     * @return AgentSessionInfo 에이전트에 필요한 사용자 정보
-     */
     @AuraEnabled
     public static AgentSessionInfo getAgentSessionInfo(String contactId) {
         System.debug('=== getAgentSessionInfo START ===');
@@ -270,7 +224,6 @@ public without sharing class CustomerPortalController {
         AgentSessionInfo result = new AgentSessionInfo();
         
         try {
-            // 1. Contact 정보 조회
             Contact contact = [
                 SELECT Id, Name, Email, Phone, AccountId, 
                        Account.Name, Account.Id
@@ -288,7 +241,6 @@ public without sharing class CustomerPortalController {
             
             System.debug('Contact found: ' + contact.Name);
             
-            // 2. Asset (호실) 정보 조회 - Contact의 Account에 연결된 Asset
             List<Asset> assets = [
                 SELECT Id, Name, Home_Branch__c, Home_Branch__r.Name
                 FROM Asset 
@@ -299,9 +251,9 @@ public without sharing class CustomerPortalController {
             if (!assets.isEmpty()) {
                 Asset asset = assets[0];
                 result.assetId = asset.Id;
-                result.assetName = asset.Name;                    // "1502호 (폰부스 1)"
+                result.assetName = asset.Name;
                 result.branchId = asset.Home_Branch__c;
-                result.branchName = asset.Home_Branch__r?.Name;   // "WE-GROW 성전분점"
+                result.branchName = asset.Home_Branch__r?.Name;
                 
                 System.debug('Asset found: ' + asset.Name);
                 System.debug('Branch found: ' + asset.Home_Branch__r?.Name);
@@ -319,28 +271,21 @@ public without sharing class CustomerPortalController {
         return result;
     }
     
-    /**
-     * Agent Session 정보 Wrapper Class
-     */
     public class AgentSessionInfo {
         @AuraEnabled public Boolean success;
         @AuraEnabled public String errorMessage;
         
-        // Contact 정보
         @AuraEnabled public Id contactId;
         @AuraEnabled public String contactName;
         @AuraEnabled public String contactEmail;
         @AuraEnabled public String contactPhone;
         
-        // Account 정보
         @AuraEnabled public Id accountId;
         @AuraEnabled public String accountName;
         
-        // Asset 정보
         @AuraEnabled public Id assetId;
         @AuraEnabled public String assetName;
         
-        // Branch 정보
         @AuraEnabled public Id branchId;
         @AuraEnabled public String branchName;
     }

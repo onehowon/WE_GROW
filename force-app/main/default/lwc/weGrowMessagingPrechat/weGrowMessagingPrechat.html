@@ -1,13 +1,11 @@
 <template>
     <div class="prechat-container">
-        <!-- 헤더 -->
         <div class="prechat-header">
             <img src={logoUrl} alt="WE:GROW" class="prechat-logo" />
             <h1 class="prechat-title">WE:GROW 고객 상담</h1>
             <p class="prechat-subtitle">무엇을 도와드릴까요?</p>
         </div>
 
-        <!-- 로그인 사용자 정보 표시 -->
         <template if:true={hasSessionInfo}>
             <div class="user-info-card">
                 <div class="user-info-row">
@@ -25,7 +23,6 @@
             </div>
         </template>
 
-        <!-- 문의 유형 선택 -->
         <div class="prechat-form">
             <div class="form-group">
                 <label class="form-label">문의 유형을 선택해주세요</label>
@@ -46,7 +43,6 @@
             </div>
         </div>
 
-        <!-- 시작 버튼 -->
         <div class="prechat-footer">
             <button class="start-chat-btn" onclick={handleStartChat} disabled={isStartDisabled}>
                 상담 시작하기

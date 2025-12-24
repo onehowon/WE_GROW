@@ -1,7 +1,6 @@
 <template>
     <div class="main-container">
         
-        <!-- 글로벌 헤더 with 네비게이션 -->
         <header class="top-header">
             <div class="header-left">
                 <div class="logo-container" onclick={goToHome}>
@@ -90,7 +89,6 @@
 
                     <template for:each={recommendations} for:item="space">
                         <div key={space.id} class={space.cardClass} onclick={handleCardClick} data-id={space.id}>
-                            <!-- 선택 표시 -->
                             <template if:true={space.isSelected}>
                                 <div class="selection-badge">✓</div>
                             </template>
@@ -109,7 +107,6 @@
                     </template>
                 </div>
                 
-                <!-- 신청하기 버튼 (선택이 있을 때만 표시) -->
                 <template if:true={hasSelection}>
                     <div class="floating-apply-btn">
                         <button class="btn-apply" onclick={goToStep5}>
@@ -196,31 +193,23 @@
                     <div class="success-check"><span>✓</span></div>
                     <h2 class="success-title">접수가 완료되었습니다!</h2>
                     <p class="success-desc">
-                        위그로우 전담 매니저가 배정되었습니다.<br/>
-                        <span class="highlight-text">3일 이내</span>로 안내 연락을 드리겠습니다.
+                        위그로우 전담 매니저가 배정되었습니다.
                     </p>
                     <button class="btn-home" onclick={resetProcess}>처음으로 돌아가기</button>
                 </div>
             </div>
         </template>
 
-        <!-- ============================================
-             지점 위치 페이지 (LOCATIONS)
-             ============================================ -->
         <template if:true={isLocationsPage}>
             <div class="page-container fade-in locations-page">
                 <div class="locations-layout">
-                    <!-- 좌측: 지도 영역 -->
                     <div class="map-section">
                         <div class="map-container">
-                            <!-- 서울/경기 지도 목업 이미지 (Static Resource) -->
                             <img src={koreaMapUrl}
                                  alt="대한민국 지도" 
                                  class="map-background" />
                             
-                            <!-- 지점 마커들 - 실제 위치 기준 -->
                             <div class="map-markers">
-                                <!-- 강남점: 서울 강남구 테헤란로 (127.028, 37.498) -->
                                 <div class="map-marker gangnam" onclick={goToGangnam}>
                                     <div class="marker-pin"></div>
                                     <div class="marker-label">
@@ -229,7 +218,6 @@
                                     </div>
                                 </div>
                                 
-                                <!-- 을지로점: 서울 중구 을지로 (126.982, 37.566) -->
                                 <div class="map-marker euljiro" onclick={goToEuljiro}>
                                     <div class="marker-pin"></div>
                                     <div class="marker-label">
@@ -238,7 +226,6 @@
                                     </div>
                                 </div>
                                 
-                                <!-- 판교점: 경기 성남시 판교 (127.111, 37.394) -->
                                 <div class="map-marker pangyo" onclick={goToPangyo}>
                                     <div class="marker-pin"></div>
                                     <div class="marker-label">
@@ -248,13 +235,11 @@
                                 </div>
                             </div>
                             
-                            <!-- 지도 컨트롤 UI -->
                             <div class="map-controls">
                                 <button class="map-control-btn">+</button>
                                 <button class="map-control-btn">−</button>
                             </div>
                             
-                            <!-- 지도 범례 -->
                             <div class="map-legend">
                                 <span class="legend-dot"></span>
                                 <span>WE-GROW 지점</span>
@@ -262,7 +247,6 @@
                         </div>
                     </div>
                     
-                    <!-- 우측: 지점 카드 목록 -->
                     <div class="branches-section">
                         <div class="branches-header">
                             <h1 class="page-title">WE-GROW <span class="highlight-purple">지점 안내</span></h1>
@@ -270,7 +254,6 @@
                         </div>
                         
                         <div class="branches-list">
-                            <!-- 강남점 -->
                             <div class="branch-card" onclick={handleBranchClick} data-branch="gangnam">
                                 <div class="branch-badge">HOT</div>
                                 <div class="branch-info">
@@ -299,7 +282,6 @@
                                 <button class="btn-branch-detail">상세보기 →</button>
                             </div>
                             
-                            <!-- 을지로점 -->
                             <div class="branch-card" onclick={handleBranchClick} data-branch="euljiro">
                                 <div class="branch-badge new">NEW</div>
                                 <div class="branch-info">
@@ -328,7 +310,6 @@
                                 <button class="btn-branch-detail">상세보기 →</button>
                             </div>
                             
-                            <!-- 판교점 -->
                             <div class="branch-card" onclick={handleBranchClick} data-branch="pangyo">
                                 <div class="branch-info">
                                     <h3 class="branch-name">판교점</h3>
@@ -361,12 +342,8 @@
             </div>
         </template>
 
-        <!-- ============================================
-             상품 안내 페이지 (PRODUCTS)
-             ============================================ -->
         <template if:true={isProductsPage}>
             <div class="page-container fade-in products-page">
-                <!-- 히어로 섹션 -->
                 <div class="products-hero">
                     <div class="hero-overlay"></div>
                     <div class="hero-content">
@@ -376,10 +353,8 @@
                     </div>
                 </div>
                 
-                <!-- 상품 카드 그리드 -->
                 <div class="products-section">
                     <div class="products-grid">
-                        <!-- 1인실 -->
                         <div class="product-card" onclick={handleProductClick} data-product="1person">
                             <div class="product-image" style="background-image: url('https://images.unsplash.com/photo-1497366216548-37526070297c?w=400&q=80')">
                                 <div class="product-overlay">
@@ -402,7 +377,6 @@
                             </div>
                         </div>
                         
-                        <!-- 4인실 -->
                         <div class="product-card popular" onclick={handleProductClick} data-product="4person">
                             <div class="popular-badge">BEST</div>
                             <div class="product-image" style="background-image: url('https://images.unsplash.com/photo-1524758631624-e2822e304c36?w=400&q=80')">
@@ -426,7 +400,6 @@
                             </div>
                         </div>
                         
-                        <!-- 8인실 -->
                         <div class="product-card" onclick={handleProductClick} data-product="8person">
                             <div class="product-image" style="background-image: url('https://images.unsplash.com/photo-1556761175-5973dc0f32e7?w=400&q=80')">
                                 <div class="product-overlay">
@@ -449,7 +422,6 @@
                             </div>
                         </div>
                         
-                        <!-- 10인실+ -->
                         <div class="product-card enterprise" onclick={handleProductClick} data-product="enterprise">
                             <div class="product-image" style="background-image: url('https://images.unsplash.com/photo-1497215728101-856f4ea42174?w=400&q=80')">
                                 <div class="product-overlay">
@@ -471,7 +443,6 @@
                         </div>
                     </div>
                     
-                    <!-- CTA 섹션 -->
                     <div class="products-cta">
                         <p class="cta-text">어떤 공간이 맞을지 고민되시나요?</p>
                         <button class="btn-cta-primary" onclick={goToHome}>
@@ -482,13 +453,9 @@
             </div>
         </template>
 
-        <!-- ============================================
-             기업 소개 페이지 (ABOUT)
-             ============================================ -->
         <template if:true={isAboutPage}>
             <div class="page-container fade-in about-page">
                 <div class="about-content">
-                    <!-- 메인 비전 -->
                     <div class="about-hero-section">
                         <span class="about-badge">ABOUT WE-GROW</span>
                         <h1 class="about-title">
@@ -501,7 +468,6 @@
                         </p>
                     </div>
                     
-                    <!-- 미션/비전 카드 -->
                     <div class="about-cards">
                         <div class="about-card">
                             <div class="card-icon">🎯</div>
@@ -520,7 +486,6 @@
                         </div>
                     </div>
                     
-                    <!-- 주요 통계 -->
                     <div class="about-stats">
                         <div class="stat-box">
                             <span class="stat-number">3</span>
@@ -544,7 +509,6 @@
                         </div>
                     </div>
                     
-                    <!-- 연락처 -->
                     <div class="about-contact">
                         <h2 class="contact-title">문의하기</h2>
                         <div class="contact-info">

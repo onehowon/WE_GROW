@@ -9,32 +9,26 @@ import createCase from '@salesforce/apex/CustomerPortalController.createCase';
 export default class WeGrowCustomerPortal extends NavigationMixin(LightningElement) {
     logoUrl = WEGROW_LOGO;
     
-    // 현재 활성 탭
     @track currentTab = 'dashboard';
     @track isLoading = true;
     @track dataLoaded = false;
     
-    // 사용자 정보 (sessionStorage에서 로드)
     contactId = '';
     accountId = '';
     
-    // 포털 데이터
     @track portalData = {};
     @track invoices = [];
     
-    // 민원 접수 폼
     @track caseSubject = '';
     @track caseDescription = '';
     @track caseType = '';
     @track casePriority = 'Low';
     @track isUrgent = false;
     
-    // 탭별 Getter
     get isDashboardTab() { return this.currentTab === 'dashboard'; }
     get isMyOfficeTab() { return this.currentTab === 'myoffice'; }
     get isChargeTab() { return this.currentTab === 'charge'; }
     
-    // 사이드바 네비게이션 CSS 클래스
     get dashboardNavClass() {
         return `nav-item ${this.currentTab === 'dashboard' ? 'active' : ''}`;
     }
@@ -45,13 +39,10 @@ export default class WeGrowCustomerPortal extends NavigationMixin(LightningEleme
         return `nav-item ${this.currentTab === 'charge' ? 'active' : ''}`;
     }
 
-    
-    // 오피스 배너 스타일
     get bannerStyle() {
         return "background-image: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('https://images.unsplash.com/photo-1497366216548-37526070297c?w=1200&q=80'); background-size: cover; background-position: center;";
     }
     
-    // 포털 데이터 Getters
     get userName() { return this.portalData.contactName || '사용자'; }
     get companyName() { return this.portalData.accountName || '회사명'; }
     get branchName() { return this.portalData.branchName || '지점명'; }
@@ -63,7 +54,6 @@ export default class WeGrowCustomerPortal extends NavigationMixin(LightningEleme
     get wifiSsid() { return this.portalData.wifiSsid || 'WiFi 정보 없음'; }
     get wifiPassword() { return this.portalData.wifiPassword || '******'; }
     
-    // 계약 정보 Getters
     get contractNumber() { return this.portalData.contractNumber || '-'; }
     get contractStartDate() { return this.formatDate(this.portalData.contractStartDate); }
     get contractEndDate() { return this.formatDate(this.portalData.contractEndDate); }
@@ -72,11 +62,9 @@ export default class WeGrowCustomerPortal extends NavigationMixin(LightningEleme
     get moveInDate() { return this.formatDate(this.portalData.moveInDate); }
     get billingCycle() { return this.portalData.billingCycle || '월납 (Monthly)'; }
     
-    // 사업자 정보 Getters
     get bizRegistrationNo() { return this.portalData.bizRegistrationNo || '-'; }
     get companyFullName() { return this.portalData.accountName || '-'; }
     
-    // D-Day 계산
     get daysUntilMoveIn() {
         if (!this.portalData.moveInDate) return 0;
         const moveIn = new Date(this.portalData.moveInDate);
@@ -95,7 +83,6 @@ export default class WeGrowCustomerPortal extends NavigationMixin(LightningEleme
         return diffDays;
     }
     
-    // 케이스 목록
     get recentCases() { return this.portalData.recentCases || []; }
     get hasCases() { return this.recentCases.length > 0; }
     
@@ -103,22 +90,18 @@ export default class WeGrowCustomerPortal extends NavigationMixin(LightningEleme
         console.log('[CustomerPortal] connectedCallback started');
         console.log('[CustomerPortal] Current URL:', window.location.href);
         
-        // 실제 Experience Cloud 사이트 경로에서만 리다이렉트 (/members/ 경로)
-        // 그 외 (Experience Builder, Lightning 등)에서는 리다이렉트 안 함
         const isOnExperienceCloudSite = window.location.href.includes('/members/') && 
                                          !window.location.href.includes('sitepreview') && 
                                          !window.location.href.includes('livepreview') &&
-                                         !window.location.href.includes('live-preview') &&  // 하이픈 포함 버전
-                                         !window.location.href.includes('salesforce-experience.com') && // Experience Builder 도메인
+                                         !window.location.href.includes('live-preview') &&
+                                         !window.location.href.includes('salesforce-experience.com') &&
                                          !window.location.href.includes('lwr/');
         console.log('[CustomerPortal] isOnExperienceCloudSite:', isOnExperienceCloudSite);
         
-        // sessionStorage에서 로그인 정보 확인
         this.contactId = sessionStorage.getItem('contactId');
         this.accountId = sessionStorage.getItem('accountId');
         const isLoggedIn = sessionStorage.getItem('isLoggedIn');
         
-        // Prechat 컴포넌트에서도 사용할 수 있도록 portal_ prefix로도 저장
         if (this.contactId) {
             sessionStorage.setItem('portal_contactId', this.contactId);
             sessionStorage.setItem('portal_accountId', this.accountId);
@@ -128,16 +111,13 @@ export default class WeGrowCustomerPortal extends NavigationMixin(LightningEleme
         console.log('[CustomerPortal] accountId:', this.accountId);
         console.log('[CustomerPortal] isLoggedIn:', isLoggedIn);
         
-        // 로그인 안 된 경우 처리
         if (!isLoggedIn || !this.contactId) {
-            // 실제 Experience Cloud 사이트에서만 리다이렉트
             if (isOnExperienceCloudSite) {
                 console.log('[CustomerPortal] Not logged in, redirecting to login...');
                 window.location.href = '/members/login';
                 return;
             }
             
-            // Experience Builder 또는 기타 환경 -> 더미 데이터로 미리보기
             console.log('[CustomerPortal] Preview mode detected, using dummy data');
             this.contactId = 'PREVIEW_MODE';
             this.accountId = 'PREVIEW_MODE';
@@ -166,14 +146,12 @@ export default class WeGrowCustomerPortal extends NavigationMixin(LightningEleme
             return;
         }
         
-        // URL에서 탭 파라미터 확인
         const urlParams = new URLSearchParams(window.location.search);
         const tabParam = urlParams.get('tab');
         if (tabParam && ['dashboard', 'myoffice', 'charge', 'service'].includes(tabParam)) {
             this.currentTab = tabParam;
         }
         
-        // 데이터 로드
         this.loadPortalData();
     }
     
@@ -192,7 +170,6 @@ export default class WeGrowCustomerPortal extends NavigationMixin(LightningEleme
                 this.portalData = result;
                 this.dataLoaded = true;
                 
-                // 상세 데이터 로그
                 console.log('[CustomerPortal] === DATA CHECK ===');
                 console.log('[CustomerPortal] contactName:', result.contactName || '(null)');
                 console.log('[CustomerPortal] accountName:', result.accountName || '(null)');
@@ -208,7 +185,6 @@ export default class WeGrowCustomerPortal extends NavigationMixin(LightningEleme
                 console.log('[CustomerPortal] recentCases count:', result.recentCases?.length || 0);
                 console.log('[CustomerPortal] === END DATA CHECK ===');
                 
-                // 청구 내역도 로드
                 if (this.accountId) {
                     this.loadInvoices();
                 }
@@ -236,14 +212,12 @@ export default class WeGrowCustomerPortal extends NavigationMixin(LightningEleme
             this.invoices = await getInvoices({ accountId: this.accountId });
             console.log('[CustomerPortal] Invoices loaded:', this.invoices?.length || 0);
         } catch (error) {
-            // Invoice__c 오브젝트가 없으면 에러 발생 - graceful하게 처리
             console.warn('[CustomerPortal] Failed to load invoices (Invoice__c may not exist yet)');
             console.warn('[CustomerPortal] Invoice error:', error?.body?.message || error?.message);
-            this.invoices = []; // 빈 배열로 fallback
+            this.invoices = [];
         }
     }
     
-    // 탭 전환 메서드
     navigateToDashboard() { this.currentTab = 'dashboard'; }
     navigateToMyOffice() { this.currentTab = 'myoffice'; }
     navigateToCharge() { 
@@ -253,8 +227,6 @@ export default class WeGrowCustomerPortal extends NavigationMixin(LightningEleme
         }
     }
 
-    
-    // 민원 폼 핸들러
     handleCaseTypeChange(event) { this.caseType = event.target.value; }
     handleSubjectChange(event) { this.caseSubject = event.target.value; }
     handleDescriptionChange(event) { this.caseDescription = event.target.value; }
@@ -286,17 +258,14 @@ export default class WeGrowCustomerPortal extends NavigationMixin(LightningEleme
             console.log('[CustomerPortal] Case created:', result);
             this.showToast('성공', '민원이 성공적으로 접수되었습니다.', 'success');
             
-            // 폼 초기화
             this.caseSubject = '';
             this.caseDescription = '';
             this.caseType = '';
             this.isUrgent = false;
             this.casePriority = 'Low';
             
-            // 데이터 새로고침
             this.loadPortalData();
             
-            // 대시보드로 이동
             this.currentTab = 'dashboard';
             
         } catch (error) {
@@ -316,13 +285,11 @@ export default class WeGrowCustomerPortal extends NavigationMixin(LightningEleme
         this.currentTab = 'dashboard';
     }
     
-    // 로그아웃
     handleLogout() {
         sessionStorage.clear();
         window.location.href = '/members/login';
     }
     
-    // 유틸리티 메서드
     formatDate(dateValue) {
         if (!dateValue) return '-';
         const date = new Date(dateValue);
