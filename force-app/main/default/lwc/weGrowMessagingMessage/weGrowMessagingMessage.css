@@ -1,8 +1,3 @@
-/* ==============================================
-   WE:GROW Chat Message Bubble Styles
-   WeGrow 브랜드 맞춤형 채팅 메시지 말풍선
-   ============================================== */
-
 .message-container {
     display: flex;
     gap: 10px;
@@ -22,20 +17,17 @@
     }
 }
 
-/* 에이전트/봇 메시지 - 왼쪽 정렬 */
 .message-container.agent {
     align-self: flex-start;
     margin-right: auto;
 }
 
-/* 사용자 메시지 - 오른쪽 정렬 */
 .message-container.user {
     align-self: flex-end;
     margin-left: auto;
     flex-direction: row-reverse;
 }
 
-/* 에이전트 아바타 */
 .agent-avatar-small {
     width: 32px;
     height: 32px;
@@ -51,7 +43,6 @@
     font-size: 1rem;
 }
 
-/* 말풍선 공통 스타일 */
 .message-bubble {
     padding: 12px 16px;
     border-radius: 16px;
@@ -59,21 +50,18 @@
     word-wrap: break-word;
 }
 
-/* 에이전트/봇 말풍선 */
 .agent-bubble {
     background: #f0f4f8;
     color: #1a2634;
     border-bottom-left-radius: 4px;
 }
 
-/* 사용자 말풍선 */
 .user-bubble {
     background: linear-gradient(135deg, #0070d2 0%, #0058a8 100%);
     color: white;
     border-bottom-right-radius: 4px;
 }
 
-/* 메시지 내용 */
 .message-content {
     font-size: 0.95rem;
     line-height: 1.5;
@@ -87,7 +75,6 @@
     margin-bottom: 0;
 }
 
-/* 링크 스타일 */
 .agent-bubble .message-content a {
     color: #0070d2;
     text-decoration: none;
@@ -99,7 +86,6 @@
     text-decoration: underline;
 }
 
-/* 메타데이터 (시간) */
 .message-metadata {
     display: flex;
     justify-content: flex-end;

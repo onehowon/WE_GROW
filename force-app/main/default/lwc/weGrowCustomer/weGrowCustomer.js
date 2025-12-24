@@ -29,7 +29,6 @@ export default class WeGrowCustomerLanding extends NavigationMixin(LightningElem
         console.log('[WeGrowCustomer] Input email:', this.email);
         console.log('[WeGrowCustomer] Input password length:', this.password.length);
         
-        // 입력 검증
         if (!this.email) {
             console.log('[WeGrowCustomer] ERROR: Email is empty');
             this.loginError = '이메일 주소를 입력해주세요.';
@@ -47,7 +46,6 @@ export default class WeGrowCustomerLanding extends NavigationMixin(LightningElem
         console.log('[WeGrowCustomer] Calling Apex authenticateContact...');
 
         try {
-            // Apex 메서드 호출하여 Contact 인증
             const result = await authenticateContact({
                 email: this.email,
                 password: this.password
@@ -64,7 +62,6 @@ export default class WeGrowCustomerLanding extends NavigationMixin(LightningElem
             if (result.success) {
                 console.log('[WeGrowCustomer] Login SUCCESS - Saving to sessionStorage...');
                 
-                // 로그인 성공 - 세션 스토리지에 사용자 정보 저장
                 sessionStorage.setItem('contactId', result.contactId);
                 sessionStorage.setItem('contactName', result.contactName);
                 sessionStorage.setItem('accountId', result.accountId || '');
@@ -84,7 +81,6 @@ export default class WeGrowCustomerLanding extends NavigationMixin(LightningElem
                 });
                 this.dispatchEvent(evt);
 
-                // Dashboard로 리다이렉트
                 console.log('[WeGrowCustomer] Preparing navigation...');
                 const baseUrl = window.location.origin;
                 const communityPath = '/members';
@@ -102,7 +98,6 @@ export default class WeGrowCustomerLanding extends NavigationMixin(LightningElem
                     });
                 }, 500);
             } else {
-                // 로그인 실패
                 console.log('[WeGrowCustomer] Login FAILED:', result.message);
                 this.loginError = result.message;
                 

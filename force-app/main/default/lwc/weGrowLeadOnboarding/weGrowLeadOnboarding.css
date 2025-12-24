@@ -1,8 +1,4 @@
-/* ==============================================
-   WE-GROW Lead Onboarding - Modern UI Design
-   ============================================== */
 
-/* 공통 스타일 */
 .main-container {
     width: 100%;
     min-height: 100vh;
@@ -13,7 +9,7 @@
     overflow-x: hidden;
 }
 
-/* 헤더 */
+
 .top-header {
     position: fixed;
     top: 0;
@@ -78,7 +74,7 @@
     50% { opacity: 0.5; }
 }
 
-/* Step Container */
+
 .step-container {
     max-width: 1200px;
     margin: 0 auto;
@@ -91,7 +87,7 @@
     z-index: 2;
 }
 
-/* 애니메이션 */
+
 .fade-in { animation: fadeIn 0.6s ease-out forwards; }
 .slide-up { animation: slideUp 0.4s ease-out forwards; }
 @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }

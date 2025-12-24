@@ -1,17 +1,15 @@
-/* 전체 레이아웃: 좌우 50:50 분할 */
 .landing-container {
     display: flex;
     width: 100%;
-    height: 100vh; /* 전체 화면 높이 */
+    height: 100vh;
     background: #ffffff;
     font-family: 'Salesforce Sans', sans-serif;
     overflow: hidden;
 }
 
-/* 왼쪽: 브랜드 섹션 (네이비 배경) */
 .brand-section {
     flex: 1;
-    background: linear-gradient(135deg, #1a2634 0%, #0d1219 100%); /* WeGrow Dark Navy */
+    background: linear-gradient(135deg, #1a2634 0%, #0d1219 100%);
     color: white;
     display: flex;
     flex-direction: column;
@@ -30,7 +28,7 @@
 .brand-logo {
     width: 140px;
     margin-bottom: 50px;
-    filter: brightness(0) invert(1); /* 로고를 흰색으로 변경 */
+    filter: brightness(0) invert(1);
 }
 
 .main-title {
@@ -49,7 +47,7 @@
 }
 
 .sub-text strong {
-    color: #4b9fe1; /* 포인트 블루 */
+    color: #4b9fe1;
 }
 
 .feature-list {
@@ -77,7 +75,6 @@
     border-radius: 50%;
 }
 
-/* 배경 원형 데코 */
 .circle-bg {
     position: absolute;
     width: 800px;
@@ -89,7 +86,6 @@
     z-index: 1;
 }
 
-/* 오른쪽: 액션 섹션 (흰색 배경) */
 .action-section {
     flex: 0.8;
     background: #ffffff;
@@ -215,7 +211,6 @@
     line-height: 1.5;
 }
 
-/* 애니메이션 */
 @keyframes fadeIn {
     from { opacity: 0; transform: translateX(-20px); }
     to { opacity: 1; transform: translateX(0); }
@@ -229,7 +224,6 @@
 .animate-fade-in { animation: fadeIn 1s ease forwards; }
 .animate-fade-up { animation: fadeUp 0.8s ease 0.3s forwards; opacity: 0; }
 
-/* 모바일 반응형 */
 @media (max-width: 1024px) {
     .landing-container {
         flex-direction: column;
@@ -243,7 +237,6 @@
     }
 }
 
-/* 에러 메시지 스타일 */
 .error-message {
     display: flex;
     align-items: center;
