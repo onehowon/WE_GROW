@@ -28,7 +28,7 @@ export default class WeGrowMessagingPrechat extends LightningElement {
     
     async loadSessionInfo() {
         try {
-            const storedContactId = sessionStorage.getItem('portal_contactId');
+            const storedContactId = sessionStorage.getItem('contactId');
             console.log('Stored contactId:', storedContactId);
             
             if (storedContactId) {
