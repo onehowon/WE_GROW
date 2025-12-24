@@ -1,8 +1,7 @@
 import { LightningElement, api } from 'lwc';
 
 export default class WeGrowMessagingMessage extends LightningElement {
-    // Embedded Messaging에서 제공하는 속성들
-    @api messageType; // 'agent' or 'enduser'
+    @api messageType;
     @api timestamp;
     @api messageContent;
     
