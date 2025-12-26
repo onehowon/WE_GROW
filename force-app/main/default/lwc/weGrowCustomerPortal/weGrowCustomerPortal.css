@@ -258,6 +258,19 @@
 /* ===========================================
    [TAB 1] 대시보드 스타일
    =========================================== */
+.dashboard-header {
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.header-title-row {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    flex-wrap: wrap;
+    margin-bottom: 8px;
+}
+
 .header-left {
     flex: 1;
 }
@@ -266,17 +279,17 @@
     display: inline-flex;
     align-items: center;
     gap: 8px;
-    background: white;
-    padding: 12px 20px;
-    border-radius: 12px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+    padding: 10px 18px;
+    border-radius: 25px;
     font-weight: 600;
-    color: #1a2634;
-    margin-bottom: 12px;
+    font-size: 0.9rem;
+    color: #1565c0;
+    border: 1px solid rgba(21, 101, 192, 0.2);
 }
 
 .emoji {
-    font-size: 1.3rem;
+    font-size: 1.2rem;
 }
 
 .contract-date {
@@ -287,71 +300,116 @@
 
 .progress-section {
     background: white;
-    padding: 30px;
+    padding: 40px 30px;
     border-radius: 16px;
     box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
     margin-bottom: 30px;
 }
 
-.progress-bar-wrapper {
+.progress-tracker {
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     justify-content: center;
     gap: 0;
-    padding: 20px 0;
 }
 
 .progress-step {
     display: flex;
     flex-direction: column;
     align-items: center;
-    position: relative;
+    min-width: 100px;
 }
 
-.step-indicator {
-    width: 16px;
-    height: 16px;
+.step-dot {
+    width: 20px;
+    height: 20px;
     background: #e0e0e0;
     border-radius: 50%;
     position: relative;
     z-index: 2;
+    transition: all 0.3s ease;
 }
 
-.progress-step.completed .step-indicator {
-    background: #0070d2;
+.progress-step.completed .step-dot {
+    background: linear-gradient(135deg, #0070d2 0%, #005bb5 100%);
+    box-shadow: 0 2px 8px rgba(0, 112, 210, 0.4);
 }
 
-.progress-step.active .step-indicator {
-    background: #0070d2;
-    box-shadow: 0 0 0 4px rgba(0, 112, 210, 0.2);
+.progress-step.active .step-dot {
+    background: linear-gradient(135deg, #0070d2 0%, #005bb5 100%);
+    box-shadow: 0 0 0 4px rgba(0, 112, 210, 0.25);
+}
+
+.pulse-ring {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: transparent;
+    border: 3px solid #0070d2;
+    animation: pulse 2s ease-out infinite;
+}
+
+@keyframes pulse {
+    0% {
+        width: 20px;
+        height: 20px;
+        opacity: 1;
+    }
+    100% {
+        width: 50px;
+        height: 50px;
+        opacity: 0;
+    }
 }
 
 .step-label {
     margin-top: 12px;
     font-size: 0.85rem;
-    color: #666;
+    color: #888;
+    text-align: center;
     white-space: nowrap;
+    font-weight: 500;
 }
 
-.progress-step.completed .step-label,
-.progress-step.active .step-label {
+.progress-step.completed .step-label {
     color: #0070d2;
     font-weight: 600;
 }
 
-.progress-line {
+.progress-step.active .step-label {
+    color: #0070d2;
+    font-weight: 700;
+}
+
+.progress-connector {
     width: 80px;
-    height: 3px;
+    height: 4px;
     background: #e0e0e0;
-    margin: 0 -1px;
+    margin-top: 8px;
+    border-radius: 2px;
+    flex-shrink: 0;
 }
 
-.progress-line.completed {
-    background: #0070d2;
+.progress-connector.completed {
+    background: linear-gradient(90deg, #0070d2 0%, #0070d2 100%);
 }
 
-.progress-line.active {
-    background: linear-gradient(to right, #0070d2 50%, #e0e0e0 50%);
+.progress-connector.active {
+    background: linear-gradient(90deg, #0070d2 0%, #0070d2 50%, #e0e0e0 50%);
+    animation: progressGlow 2s ease-in-out infinite;
+}
+
+@keyframes progressGlow {
+    0%, 100% {
+        box-shadow: 0 0 0 rgba(0, 112, 210, 0);
+    }
+    50% {
+        box-shadow: 0 0 8px rgba(0, 112, 210, 0.5);
+    }
 }
 
 .cards-grid {
@@ -556,6 +614,142 @@
     background: #f0f4f8;
 }
 
+.case-count-badge {
+    background: #0070d2;
+    color: white;
+    padding: 4px 12px;
+    border-radius: 12px;
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+
+.case-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.case-item {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 16px 20px;
+    background: white;
+    border-radius: 12px;
+    border-left: 4px solid #0070d2;
+    transition: all 0.3s ease;
+}
+
+.case-item:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    transform: translateX(4px);
+}
+
+.case-icon {
+    width: 44px;
+    height: 44px;
+    background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.3rem;
+    flex-shrink: 0;
+}
+
+.case-content {
+    flex: 1;
+    min-width: 0;
+}
+
+.case-subject {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: #1a2634;
+    margin: 0 0 6px 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.case-meta {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.case-type {
+    font-size: 0.8rem;
+    color: #0070d2;
+    background: #e3f2fd;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-weight: 500;
+}
+
+.case-date {
+    font-size: 0.8rem;
+    color: #888;
+}
+
+.case-status {
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+.case-status.new {
+    background: #fff3e0;
+    color: #e65100;
+}
+
+.case-status.working {
+    background: #e3f2fd;
+    color: #1565c0;
+}
+
+.case-status.escalated {
+    background: #fce4ec;
+    color: #c62828;
+}
+
+.case-status.closed {
+    background: #e8f5e9;
+    color: #2e7d32;
+}
+
+.empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 20px;
+    text-align: center;
+}
+
+.empty-icon {
+    font-size: 3rem;
+    margin-bottom: 16px;
+    opacity: 0.7;
+}
+
+.empty-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #1a2634;
+    margin: 0 0 8px 0;
+}
+
+.empty-subtitle {
+    font-size: 0.9rem;
+    color: #888;
+    margin: 0;
+}
+
 /* ===========================================
    [TAB 2] 나의 오피스 스타일
    =========================================== */
@@ -726,6 +920,25 @@
 .layout-placeholder p {
     color: #999;
     font-size: 0.95rem;
+}
+
+.layout-image-container {
+    width: 100%;
+    border-radius: 12px;
+    overflow: hidden;
+    background: #f0f4f8;
+}
+
+.layout-image {
+    width: 100%;
+    height: auto;
+    display: block;
+    border-radius: 12px;
+    transition: transform 0.3s ease;
+}
+
+.layout-image:hover {
+    transform: scale(1.02);
 }
 
 .contract-info {
@@ -1349,4 +1562,10 @@
     .btn-submit {
         width: 100%;
     }
+}
+
+.info-section {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
 }
