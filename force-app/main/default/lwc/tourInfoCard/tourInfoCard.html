@@ -1,0 +1,66 @@
+<template>
+    <!-- 
+      [구조 설명]
+      Flow의 기본 패딩을 제거하기 위해 Negative Margin을 사용한 컨테이너입니다.
+    -->
+    <div class="container">
+
+        <!-- Title Section: 고객사명 및 건명 -->
+        <div class="header">
+            <h2 class="title">
+                {accountName}
+                <span class="title-sub"> — {oppName}</span>
+            </h2>
+        </div>
+
+        <!-- Main Info Card: 핵심 정보 요약 -->
+        <div class="card">
+            <!-- 3-Column Grid -->
+            <div class="grid-row">
+                <!-- Group 1: 예산 & 인원 (함께 묶음) -->
+                <div class="info-group border-right">
+                    <div class="sub-col">
+                        <p class="label">예산</p>
+                        <p class="value-large">{formattedBudget}</p>
+                    </div>
+                    <div class="sub-col">
+                        <p class="label">인원</p>
+                        <p class="value-large">{headcount}명</p>
+                    </div>
+                </div>
+
+                <!-- Group 2: 지점/호실 (독립 배치) -->
+                <div class="info-group padding-left">
+                    <p class="label">희망 지점/호실</p>
+                    <p class="value-large highlight">{branchName}</p>
+                    <p class="value-large highlight">/ {assetName}</p>
+                </div>
+            </div>
+
+            <!-- SDR Note Section -->
+            <div class="sdr-section">
+                <div class="sdr-header">
+                    <span class="icon">📢</span>
+                    <span class="sdr-title">SDR 전달사항 (Check Point)</span>
+                </div>
+                <p class="sdr-content">{sdrNote}</p>
+            </div>
+        </div>
+
+        <!-- Footer Chips: 날짜 및 선호사항 -->
+        <div class="footer-chips">
+            <div class="chip green">
+                <span class="chip-icon">📅</span>
+                <span class="chip-label">투어: {tourDate}</span>
+            </div>
+            <div class="chip yellow">
+                <span class="chip-icon">🔑</span>
+                <span class="chip-label">입주: {moveInDate}</span>
+            </div>
+            <div class="chip gray">
+                <span class="chip-icon">❤️</span>
+                <span class="chip-label">선호사항: {formattedPreferences}</span>
+            </div>
+        </div>
+    </div>
+</template>
