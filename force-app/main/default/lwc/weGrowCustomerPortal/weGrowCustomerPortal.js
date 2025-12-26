@@ -2,12 +2,20 @@ import { LightningElement, track } from 'lwc';
 import { NavigationMixin } from 'lightning/navigation';
 import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 import WEGROW_LOGO from '@salesforce/resourceUrl/WeGrowLogo';
+import OFFICE_MOCKUP from '@salesforce/resourceUrl/weGrowOfficeMockup';
+import CONTRACT_IMAGE from '@salesforce/resourceUrl/weGrowContract';
+import RECEIPT_IMAGE from '@salesforce/resourceUrl/weGrowReciept';
+import INVOICE_IMAGE from '@salesforce/resourceUrl/weGrowFirstDocument';
 import getPortalData from '@salesforce/apex/CustomerPortalController.getPortalData';
 import getInvoices from '@salesforce/apex/CustomerPortalController.getInvoices';
 import createCase from '@salesforce/apex/CustomerPortalController.createCase';
 
 export default class WeGrowCustomerPortal extends NavigationMixin(LightningElement) {
     logoUrl = WEGROW_LOGO;
+    officeMockupUrl = OFFICE_MOCKUP;
+    contractImageUrl = CONTRACT_IMAGE;
+    receiptImageUrl = RECEIPT_IMAGE;
+    invoiceImageUrl = INVOICE_IMAGE;
     
     @track currentTab = 'dashboard';
     @track isLoading = true;
@@ -24,6 +32,7 @@ export default class WeGrowCustomerPortal extends NavigationMixin(LightningEleme
     @track caseType = '';
     @track casePriority = 'Low';
     @track isUrgent = false;
+    @track showDoorLockPw = false;
     
     get isDashboardTab() { return this.currentTab === 'dashboard'; }
     get isMyOfficeTab() { return this.currentTab === 'myoffice'; }
@@ -50,7 +59,11 @@ export default class WeGrowCustomerPortal extends NavigationMixin(LightningEleme
     get officeFullName() { return `${this.branchName} - ${this.officeName}`; }
     get capacity() { return this.portalData.capacity || 0; }
     get productName() { return this.portalData.productName || '오피스'; }
-    get doorLockPw() { return this.portalData.doorLockPw || '******'; }
+    get doorLockPwDisplay() { 
+        const pw = this.portalData.doorLockPw || '';
+        return this.showDoorLockPw ? pw : '••••••••';
+    }
+    get doorLockToggleText() { return this.showDoorLockPw ? '숨기기' : '보기'; }
     get wifiSsid() { return this.portalData.wifiSsid || 'WiFi 정보 없음'; }
     get wifiPassword() { return this.portalData.wifiPassword || '******'; }
     
@@ -83,8 +96,45 @@ export default class WeGrowCustomerPortal extends NavigationMixin(LightningEleme
         return diffDays;
     }
     
-    get recentCases() { return this.portalData.recentCases || []; }
+    get recentCases() { 
+        const cases = this.portalData.recentCases || [];
+        return cases.map(c => {
+            const typeIcons = {
+                '시설 문의': '🔧',
+                '계약 문의': '📄',
+                '청구 문의': '💰',
+                '일반 문의': '💬',
+                'default': '📋'
+            };
+            const statusClasses = {
+                'New': 'case-status new',
+                '신규': 'case-status new',
+                'Working': 'case-status working',
+                '진행중': 'case-status working',
+                'Escalated': 'case-status escalated',
+                '에스컬레이션': 'case-status escalated',
+                'Closed': 'case-status closed',
+                '종료': 'case-status closed',
+                'default': 'case-status'
+            };
+            let createdDateFormatted = '-';
+            if (c.CreatedDate) {
+                const date = new Date(c.CreatedDate);
+                createdDateFormatted = `${date.getFullYear()}.${String(date.getMonth() + 1).padStart(2, '0')}.${String(date.getDate()).padStart(2, '0')}`;
+            }
+            return {
+                ...c,
+                icon: typeIcons[c.Type] || typeIcons['default'],
+                statusClass: statusClasses[c.Status] || statusClasses['default'],
+                CreatedDateFormatted: createdDateFormatted
+            };
+        });
+    }
     get hasCases() { return this.recentCases.length > 0; }
+    get caseCountText() { 
+        const count = this.recentCases.length;
+        return count > 0 ? `${count}건` : ''; 
+    }
     
     connectedCallback() {
         console.log('[CustomerPortal] connectedCallback started');
@@ -225,6 +275,22 @@ export default class WeGrowCustomerPortal extends NavigationMixin(LightningEleme
         if (this.accountId && this.invoices.length === 0) {
             this.loadInvoices();
         }
+    }
+
+    toggleDoorLockPw() {
+        this.showDoorLockPw = !this.showDoorLockPw;
+    }
+
+    openContract() {
+        window.open(this.contractImageUrl, '_blank');
+    }
+
+    openReceipt() {
+        window.open(this.receiptImageUrl, '_blank');
+    }
+
+    openInvoice() {
+        window.open(this.invoiceImageUrl, '_blank');
     }
 
     handleCaseTypeChange(event) { this.caseType = event.target.value; }

@@ -37,46 +37,46 @@
 
         <!-- 메인 콘텐츠 영역 -->
         <div class="main-content">
-            
             <!-- [TAB 1] 대시보드 -->
             <template if:true={isDashboardTab}>
-                <div class="page-header">
-                    <div class="header-left">
+                <div class="page-header dashboard-header">
+                    <div class="header-title-row">
                         <h1 class="page-title">입주 현황 대시보드</h1>
                         <div class="welcome-badge">
                             <span class="emoji">👋</span>
                             <span>입주 준비가 진행 중입니다</span>
                         </div>
-                        <p class="contract-date">입주일: {moveInDate} (D{daysUntilMoveIn})</p>
                     </div>
-                    <button class="btn-action">시설팀 문의하기</button>
+                    <p class="contract-date">입주일: {moveInDate} (D{daysUntilMoveIn})</p>
                 </div>
 
                 <div class="progress-section">
-                    <div class="progress-bar-wrapper">
+                    <div class="progress-tracker">
                         <div class="progress-step completed">
-                            <div class="step-indicator"></div>
-                            <p class="step-label">계약 체결 완료</p>
+                            <div class="step-dot"></div>
+                            <span class="step-label">계약 체결 완료</span>
                         </div>
-                        <div class="progress-line completed"></div>
+                        <div class="progress-connector completed"></div>
                         <div class="progress-step completed">
-                            <div class="step-indicator"></div>
-                            <p class="step-label">보증금 확인</p>
+                            <div class="step-dot"></div>
+                            <span class="step-label">보증금 확인</span>
                         </div>
-                        <div class="progress-line active"></div>
+                        <div class="progress-connector active"></div>
                         <div class="progress-step active">
-                            <div class="step-indicator"></div>
-                            <p class="step-label">입주 세팅 중</p>
+                            <div class="step-dot">
+                                <div class="pulse-ring"></div>
+                            </div>
+                            <span class="step-label">입주 세팅 중</span>
                         </div>
-                        <div class="progress-line"></div>
+                        <div class="progress-connector"></div>
                         <div class="progress-step">
-                            <div class="step-indicator"></div>
-                            <p class="step-label">최종 점검</p>
+                            <div class="step-dot"></div>
+                            <span class="step-label">최종 점검</span>
                         </div>
-                        <div class="progress-line"></div>
+                        <div class="progress-connector"></div>
                         <div class="progress-step">
-                            <div class="step-indicator"></div>
-                            <p class="step-label">입주 완료</p>
+                            <div class="step-dot"></div>
+                            <span class="step-label">입주 완료</span>
                         </div>
                     </div>
                 </div>
@@ -126,34 +126,40 @@
                                     <span class="breakdown-value discount">0 원 (면제)</span>
                                 </div>
                             </div>
-                            <a href="#" class="link-text">견적서/청구서 다운로드</a>
+                            <a onclick={openInvoice} class="link-text">견적서/청구서 다운로드</a>
                         </div>
                     </div>
 
                     <div class="card card-wide">
                         <div class="card-header">
-                            <h3>작업 요청 현황</h3>
+                            <h3>민원 접수 현황</h3>
+                            <span class="case-count-badge">{caseCountText}</span>
                         </div>
                         <div class="card-body">
-                            <div class="request-list">
-                                <div class="request-item">
-                                    <div class="request-icon">📝</div>
-                                    <div class="request-content">
-                                        <h4>입주 전 책상 배치 (20EA)</h4>
-                                        <p>마감일: 2024년 10월 24일 (오전 10:00)</p>
-                                    </div>
-                                    <button class="btn-status active">진행중</button>
+                            <template if:true={hasCases}>
+                                <div class="case-list">
+                                    <template for:each={recentCases} for:item="caseItem">
+                                        <div key={caseItem.Id} class="case-item">
+                                            <div class="case-icon">{caseItem.icon}</div>
+                                            <div class="case-content">
+                                                <h4 class="case-subject">{caseItem.Subject}</h4>
+                                                <div class="case-meta">
+                                                    <span class="case-type">{caseItem.Type}</span>
+                                                    <span class="case-date">접수일: {caseItem.CreatedDateFormatted}</span>
+                                                </div>
+                                            </div>
+                                            <div class={caseItem.statusClass}>{caseItem.Status}</div>
+                                        </div>
+                                    </template>
                                 </div>
-                                <div class="request-item">
-                                    <div class="request-icon">🔌</div>
-                                    <div class="request-content">
-                                        <h4>네트워크/IP 세팅</h4>
-                                        <p>마감일: 2024년 10월 24일 (오후 2:00)</p>
-                                    </div>
-                                    <button class="btn-status">대기</button>
+                            </template>
+                            <template if:false={hasCases}>
+                                <div class="empty-state">
+                                    <div class="empty-icon">📋</div>
+                                    <p class="empty-title">현재 접수된 민원이 없습니다</p>
+                                    <p class="empty-subtitle">문의사항이 있으시면 우측 하단 채팅을 이용해주세요</p>
                                 </div>
-                            </div>
-                            <button class="btn-add-request">+ 새 민원 신청하기</button>
+                            </template>
                         </div>
                     </div>
                 </div>
@@ -201,10 +207,10 @@
                                     <span class="info-icon">🔐</span>
                                     <div class="info-content">
                                         <p class="info-title">도어락 비밀번호</p>
-                                        <p class="info-value-large">{doorLockPw}</p>
+                                        <p class="info-value-large">{doorLockPwDisplay}</p>
                                         <p class="info-note">* 초기 비밀번호입니다. 입주 후 변경해주세요.</p>
                                     </div>
-                                    <button class="btn-small">보기</button>
+                                    <button class="btn-small" onclick={toggleDoorLockPw}>{doorLockToggleText}</button>
                                 </div>
                                 <div class="info-row-detail">
                                     <span class="info-icon">📶</span>
@@ -223,12 +229,9 @@
                         </div>
 
                         <div class="info-card">
-                            <div class="card-header-row">
-                                <h3 class="card-title">공간 배치도</h3>
-                                <a href="#" class="link-text">PDF 다운로드</a>
-                            </div>
-                            <div class="layout-placeholder">
-                                <p>301호 평면도 미리보기</p>
+                            <h3 class="card-title">공간 배치도</h3>
+                            <div class="layout-image-container">
+                                <img src={officeMockupUrl} alt="공간 배치도" class="layout-image"/>
                             </div>
                         </div>
                     </div>
@@ -268,7 +271,6 @@
                                     </div>
                                 </div>
                                 <p class="contact-info">📞 02-1234-5678</p>
-                                <button class="btn-primary-full">1:1 문의하기</button>
                             </div>
                         </div>
                     </div>
@@ -279,7 +281,7 @@
             <template if:true={isChargeTab}>
                 <div class="page-header">
                     <h1 class="page-title">계약 및 청구 관리</h1>
-                    <button class="btn-download">전자계약서(PDF) 다운로드</button>
+                    <button class="btn-download" onclick={openContract}>전자계약서(PDF) 다운로드</button>
                 </div>
 
                 <div class="contract-header-card">
@@ -338,21 +340,21 @@
                                     <td>5,500,000 원</td>
                                     <td class="due-date">2024.10.25 (D-1)</td>
                                     <td><span class="status-tag unpaid">미납 (Unpaid)</span></td>
-                                    <td><a href="#" class="link-pdf">PDF 보기</a></td>
+                                    <td><a onclick={openReceipt} class="link-pdf">PDF 보기</a></td>
                                 </tr>
                                 <tr>
                                     <td>2024년 10월분</td>
                                     <td>5,500,000 원</td>
                                     <td>2024.09.25</td>
                                     <td><span class="status-tag paid">납부 완료</span></td>
-                                    <td><a href="#" class="link-pdf">PDF 보기</a></td>
+                                    <td><a onclick={openReceipt} class="link-pdf">PDF 보기</a></td>
                                 </tr>
                                 <tr>
                                     <td>보증금 (Deposit)</td>
                                     <td>100,000,000 원</td>
                                     <td>2024.10.12</td>
                                     <td><span class="status-tag paid">납부 완료</span></td>
-                                    <td><a href="#" class="link-pdf">PDF 보기</a></td>
+                                    <td><a onclick={openReceipt} class="link-pdf">PDF 보기</a></td>
                                 </tr>
                             </tbody>
                         </table>
@@ -375,10 +377,7 @@
                         </div>
 
                         <div class="info-card">
-                            <div class="card-header-row">
-                                <h3 class="card-title">세금계산서 정보</h3>
-                                <a href="#" class="link-edit">수정 요청</a>
-                            </div>
+                            <h3 class="card-title">세금계산서 정보</h3>
                             <div class="tax-info">
                                 <div class="tax-row">
                                     <span class="tax-label">사업자 번호</span>
@@ -389,11 +388,6 @@
                                     <span class="tax-value">{companyName}</span>
                                 </div>
                             </div>
-                        </div>
-
-                        <div class="info-card">
-                            <h3 class="card-title">청산 문의</h3>
-                            <p class="info-note">09:00 - 18:00 (평일)</p>
                         </div>
                     </div>
                 </div>
