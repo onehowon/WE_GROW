@@ -1,0 +1,12 @@
+<template>
+    <div class="container">
+        <label class="label">{label}</label>
+        <div class="button-group">
+            <template for:each={options} for:item="opt">
+                <button key={opt.value} data-value={opt.value} class={opt.className} onclick={handleClick}>
+                    {opt.label}
+                </button>
+            </template>
+        </div>
+    </div>
+</template>
