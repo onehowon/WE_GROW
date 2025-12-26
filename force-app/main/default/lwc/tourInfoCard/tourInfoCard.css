@@ -1,0 +1,159 @@
+:host {
+    /* Flow Screen의 강제 패딩 상쇄 */
+    /* 태블릿/모바일 화면 좌우를 꽉 채우기 위함 */
+    display: block;
+    margin: -0.75rem; 
+    width: calc(100% + 1.5rem);
+}
+
+.container {
+    background-color: #ffffff;
+    font-family: 'Salesforce Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    padding: 1rem; /* 내부 여백 */
+    box-sizing: border-box;
+}
+
+/* Header */
+.header {
+    margin-bottom: 0.75rem;
+    padding-left: 0.25rem; /* 타이틀 시각 보정 */
+}
+
+.title {
+    margin: 0;
+    font-size: 1.25rem;
+    font-weight: 800;
+    color: #080707;
+    line-height: 1.2;
+}
+
+.title-sub {
+    font-weight: 400;
+    color: #706e6b;
+    font-size: 1rem;
+}
+
+/* Card Style */
+.card { background-color: #f3f3f3; border-radius: 0.5rem; padding: 1rem; margin-bottom: 1rem; }
+
+/* Grid Layout System */
+.grid-row { 
+    display: flex; 
+    width: 100%; 
+    margin-bottom: 1.3rem; 
+    align-items: flex-start; /* 상단 정렬 */
+}
+
+/* 정보 그룹 (좌/우 분할) */
+.info-group {
+    display: flex;
+    flex-direction: column; /* 기본적으로 내용물 세로 정렬이 가능하도록 */
+    justify-content: flex-start;
+}
+
+/* 첫 번째 그룹 (예산+인원) */
+.info-group:first-child {
+    flex: 1.4; /* 공간을 좀 더 차지함 */
+    flex-direction: row; /* 내부 요소를 가로로 배치 */
+}
+
+/* 예산 컬럼: 우측 세로줄 및 여백 추가 */
+.info-group:first-child .sub-col:first-child {
+    border-right: 1px solid #d8d8d8; /* 세로줄 */
+    padding-right: 1rem; /* 선 안쪽 여백 */
+}
+
+/* 인원 컬럼: 좌측 여백 추가 */
+.info-group:first-child .sub-col:last-child {
+    padding-left: 1rem; /* 선 바깥쪽 여백 */
+}
+
+/* 두 번째 그룹 (지점/호실) */
+.info-group:last-child {
+    flex: 1; /* 나머지 공간 */
+}
+
+/* 내부 컬럼 (예산, 인원 각각) */
+.sub-col {
+    flex: 1;
+}
+
+/* 기존 유틸리티 클래스 */
+.border-right { border-right: 1px solid #d8d8d8; padding-right: 1rem; }
+.padding-left { padding-left: 1rem; }
+
+.label { font-size: 0.75rem; color: #5c5c5c; margin: 0 0 4px 0; }
+
+/* 사용자 요청 폰트 스타일 유지 */
+.value-large { font-size: 1.6rem; font-weight: 500; color: #080707; margin: 0; line-height: 1.1; letter-spacing: -0.5px; }
+.value-large.highlight { color: #005fb2; font-size: 0.95rem; word-break: keep-all; } /* 호실명 스타일 */
+
+/* SDR Section */
+.sdr-section {
+    background-color: #ffffff;
+    border-left: 4px solid #0176d3;
+    padding: 0.5rem 0.75rem;
+    border-radius: 2px;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+}
+
+.sdr-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 0.25rem;
+}
+
+.sdr-title {
+    font-size: 0.7rem;
+    font-weight: 700;
+    color: #0176d3;
+    margin-left: 0.25rem;
+}
+
+.sdr-content {
+    font-size: 0.8rem;
+    color: #080707;
+    line-height: 1.4;
+    margin: 0;
+}
+
+/* Footer Chips */
+.footer-chips {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr; /* 정확히 3등분 */
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+}
+
+.chip {
+    display: flex;
+    justify-content: center; /* 내용 중앙 정렬 */
+    align-items: center;
+    padding: 8px 4px; /* 높이 확보 */
+    border-radius: 8px;
+    font-size: 0.85rem;
+    width: 100%;
+    box-sizing: border-box;
+    text-align: center;
+}
+
+.chip-icon {
+    margin-right: 4px;
+}
+
+.chip.green {
+    background-color: #c9dcff;
+    color: #2e844a;
+    font-weight: 600;
+}
+
+.chip.yellow {
+    background-color: #fff47b;
+    color: #5e5200;
+    font-weight: 600;
+}
+
+.chip.gray {
+    background-color: #ffcbcb;
+    color: #444;
+}

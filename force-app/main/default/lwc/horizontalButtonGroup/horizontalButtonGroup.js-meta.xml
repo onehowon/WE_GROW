@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LightningComponentBundle xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>60.0</apiVersion>
+    <isExposed>true</isExposed>
+    <masterLabel>Horizontal Button Group</masterLabel>
+    <description>투어 결과 입력용 가로형 버튼 그룹</description>
+    <targets>
+        <target>lightning__FlowScreen</target>
+    </targets>
+    <targetConfigs>
+        <targetConfig targets="lightning__FlowScreen">
+            <property name="value" type="String" label="Selected Value (결과값)"
+                description="Flow 변수와 입출력 매핑" />
+            <property name="label" type="String" label="Label (제목)" description="입력 필드의 제목을 설정하세요." />
+        </targetConfig>
+    </targetConfigs>
+</LightningComponentBundle>

@@ -1,0 +1,41 @@
+:host { 
+    display: block; 
+    width: 100%; 
+    margin-bottom: 1rem; 
+}
+.container { 
+    display: flex; 
+    flex-direction: column; 
+    gap: 8px; 
+}
+.label { 
+    font-size: 0.75rem; 
+    color: #2a2a29; 
+    font-weight: 700; 
+}
+.button-group { 
+    display: flex; 
+    gap: 8px; 
+}
+button {
+    flex: 1; /* 가로 꽉 채우기 (균등 분할) */
+    padding: 12px 0;
+    border: 1px solid #d8d8d8;
+    background: #fff;
+    border-radius: 4px;
+    font-size: 0.9rem;
+    color: #080707;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+button:active { transform: scale(0.98); }
+
+/* 선택되었을 때 스타일 (JS에서 클래스 토글) */
+button.selected {
+    background-color: #0176d3;
+    border-color: #0176d3;
+    color: white;
+    font-weight: 700;
+    box-shadow: 0 2px 4px rgba(1, 118, 211, 0.3);
+}
