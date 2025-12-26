@@ -28,23 +28,34 @@ public class ContractAuditDataProvider {
                     continue;
                 }
                 
-                // 1. 새 필드 Biz_Reg_No__c 포함 쿼리
-                Contract con = [SELECT Id, Biz_Name__c, Biz_Reg_No__c, Total_Payment_Amount__c, 
-                                       Total_Deposit_Amount__c, Billing_Cycle__c, OpportunityId__c 
-                                FROM Contract WHERE Id = :targetId LIMIT 1];
+                List<Contract> contracts = [SELECT Id, Biz_Name__c, Biz_Reg_No__c, Total_Payment_Amount__c, 
+                                                   Total_Deposit_Amount__c, Billing_Cycle__c, OpportunityId__c 
+                                            FROM Contract WHERE Id = :targetId LIMIT 1];
+                
+                if (contracts.isEmpty()) {
+                    res.Prompt = 'Error: 계약서를 찾을 수 없습니다. 계약서 레코드를 확인해주세요.';
+                    responses.add(res);
+                    continue;
+                }
+                Contract con = contracts[0];
                 
                 if (con.OpportunityId__c == null) {
-                    res.Prompt = 'Error: Contract has no associated Opportunity';
+                    res.Prompt = 'Error: 계약서에 연결된 영업기회가 없습니다. 영업기회를 연결해주세요.';
                     responses.add(res);
                     continue;
                 }
                 
-                // 2. 견적서 쿼리
-                Quote qto = [SELECT GrandTotal, Total_Deposit__c, Main_Billing_Cycle__c, Biz_Name__c, 
-                                    Biz_Reg_No__c, Special_Terms__c 
-                             FROM Quote WHERE OpportunityId = :con.OpportunityId__c AND IsSyncing = true LIMIT 1];
+                List<Quote> quotes = [SELECT GrandTotal, Total_Deposit__c, Main_Billing_Cycle__c, Biz_Name__c, 
+                                             Biz_Reg_No__c, Special_Terms__c 
+                                      FROM Quote WHERE OpportunityId = :con.OpportunityId__c AND IsSyncing = true LIMIT 1];
+                
+                if (quotes.isEmpty()) {
+                    res.Prompt = 'Error: 동기화된 견적서가 없습니다. 견적서에서 [동기화 시작]을 눌러주세요.';
+                    responses.add(res);
+                    continue;
+                }
+                Quote qto = quotes[0];
 
-                // 3. AI가 읽기 좋게 구조화 (Null 처리 포함)
                 res.Prompt = '### [Quote Data] ###\n' +
                              '- Company: ' + (qto.Biz_Name__c == null ? '미입력' : qto.Biz_Name__c) + '\n' +
                              '- Biz No: ' + (qto.Biz_Reg_No__c == null ? '미입력' : qto.Biz_Reg_No__c) + '\n' +
