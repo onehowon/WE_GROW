@@ -119,8 +119,8 @@ export default class WeGrowCustomerPortal extends NavigationMixin(LightningEleme
                 'default': 'case-status'
             };
             let createdDateFormatted = '-';
-            if (c.CreatedDate) {
-                const date = new Date(c.CreatedDate);
+            if (c.createdDate) {
+                const date = new Date(c.createdDate);
                 createdDateFormatted = `${date.getFullYear()}.${String(date.getMonth() + 1).padStart(2, '0')}.${String(date.getDate()).padStart(2, '0')}`;
             }
             return {

@@ -139,16 +139,16 @@
                             <template if:true={hasCases}>
                                 <div class="case-list">
                                     <template for:each={recentCases} for:item="caseItem">
-                                        <div key={caseItem.Id} class="case-item">
+                                        <div key={caseItem.caseId} class="case-item">
                                             <div class="case-icon">{caseItem.icon}</div>
                                             <div class="case-content">
-                                                <h4 class="case-subject">{caseItem.Subject}</h4>
+                                                <h4 class="case-subject">{caseItem.subject}</h4>
                                                 <div class="case-meta">
-                                                    <span class="case-type">{caseItem.Type}</span>
+                                                    <span class="case-type">{caseItem.caseType}</span>
                                                     <span class="case-date">접수일: {caseItem.CreatedDateFormatted}</span>
                                                 </div>
                                             </div>
-                                            <div class={caseItem.statusClass}>{caseItem.Status}</div>
+                                            <div class={caseItem.statusClass}>{caseItem.status}</div>
                                         </div>
                                     </template>
                                 </div>
@@ -266,7 +266,7 @@
                                 <div class="team-member">
                                     <div class="member-icon">👤</div>
                                     <div class="member-info">
-                                        <p class="member-name">이민수 주임</p>
+                                        <p class="member-name">성원호 주임</p>
                                         <p class="member-role">Facility Team</p>
                                     </div>
                                 </div>
