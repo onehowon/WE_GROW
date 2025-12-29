@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomObject xmlns="http://soap.sforce.com/2006/04/metadata">
+    <deploymentStatus>Deployed</deploymentStatus>
+    <description>채팅 시작 시 사용자 컨텍스트를 임시 저장하는 객체</description>
+    <label>Chat Context</label>
+    <nameField>
+        <displayFormat>CTX-{0000}</displayFormat>
+        <label>Context Number</label>
+        <type>AutoNumber</type>
+    </nameField>
+    <pluralLabel>Chat Contexts</pluralLabel>
+    <sharingModel>ReadWrite</sharingModel>
+</CustomObject>

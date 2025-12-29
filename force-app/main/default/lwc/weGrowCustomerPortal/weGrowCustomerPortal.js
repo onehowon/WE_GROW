@@ -9,6 +9,7 @@ import INVOICE_IMAGE from '@salesforce/resourceUrl/weGrowFirstDocument';
 import getPortalData from '@salesforce/apex/CustomerPortalController.getPortalData';
 import getInvoices from '@salesforce/apex/CustomerPortalController.getInvoices';
 import createCase from '@salesforce/apex/CustomerPortalController.createCase';
+import saveChatContext from '@salesforce/apex/ChatContextManager.saveContext';
 
 export default class WeGrowCustomerPortal extends NavigationMixin(LightningElement) {
     logoUrl = WEGROW_LOGO;
@@ -158,6 +159,7 @@ export default class WeGrowCustomerPortal extends NavigationMixin(LightningEleme
         }
         
         console.log('[CustomerPortal] contactId:', this.contactId);
+        window.sessionStorage.setItem('agent_contact_id', this.contactId);
         console.log('[CustomerPortal] accountId:', this.accountId);
         console.log('[CustomerPortal] isLoggedIn:', isLoggedIn);
         
@@ -234,6 +236,16 @@ export default class WeGrowCustomerPortal extends NavigationMixin(LightningEleme
                 console.log('[CustomerPortal] monthlyPayment:', result.monthlyPayment || '(null)');
                 console.log('[CustomerPortal] recentCases count:', result.recentCases?.length || 0);
                 console.log('[CustomerPortal] === END DATA CHECK ===');
+                
+                console.log('[CustomerPortal] contactId:', this.contactId);
+                window.sessionStorage.setItem('agent_contact_id', this.contactId);
+                
+                window.dispatchEvent(new CustomEvent('WE_GROW_DATA_READY', { 
+                    detail: { contactId: this.contactId } 
+                }));
+                
+                // 채팅 컨텍스트 저장 (Agentforce용)
+                this.saveChatContextForAgent(result);
                 
                 if (this.accountId) {
                     this.loadInvoices();
@@ -370,5 +382,20 @@ export default class WeGrowCustomerPortal extends NavigationMixin(LightningEleme
     showToast(title, message, variant) {
         const evt = new ShowToastEvent({ title, message, variant });
         this.dispatchEvent(evt);
+    }
+    
+    async saveChatContextForAgent(portalData) {
+        try {
+            console.log('[CustomerPortal] Saving chat context for Agentforce...');
+            const contextId = await saveChatContext({
+                contactId: this.contactId,
+                accountId: this.accountId,
+                assetId: portalData.assetId,
+                branchName: portalData.branchName
+            });
+            console.log('[CustomerPortal] Chat context saved:', contextId);
+        } catch (error) {
+            console.warn('[CustomerPortal] Failed to save chat context:', error?.body?.message || error?.message);
+        }
     }
 }
