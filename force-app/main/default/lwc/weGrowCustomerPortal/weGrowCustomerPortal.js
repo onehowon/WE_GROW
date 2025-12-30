@@ -34,6 +34,8 @@ export default class WeGrowCustomerPortal extends NavigationMixin(LightningEleme
     @track casePriority = 'Low';
     @track isUrgent = false;
     @track showDoorLockPw = false;
+    @track showCaseModal = false;
+    @track selectedCase = null;
     
     get isDashboardTab() { return this.currentTab === 'dashboard'; }
     get isMyOfficeTab() { return this.currentTab === 'myoffice'; }
@@ -88,6 +90,17 @@ export default class WeGrowCustomerPortal extends NavigationMixin(LightningEleme
         return diffDays;
     }
     
+    get moveInDayDisplay() {
+        const days = this.daysUntilMoveIn;
+        if (days > 0) {
+            return `D-${days}`;
+        } else if (days === 0) {
+            return 'D-Day';
+        } else {
+            return `입주 ${Math.abs(days)}일차`;
+        }
+    }
+    
     get daysUntilContractEnd() {
         if (!this.portalData.contractEndDate) return 0;
         const endDate = new Date(this.portalData.contractEndDate);
@@ -95,6 +108,151 @@ export default class WeGrowCustomerPortal extends NavigationMixin(LightningEleme
         const diffTime = endDate - today;
         const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
         return diffDays;
+    }
+    
+    get progressMode() {
+        const assetStatus = this.portalData.assetStatus;
+        const daysToEnd = this.daysUntilContractEnd;
+        
+        const isOccupied = assetStatus === 'Occupied' || assetStatus === '입주';
+        const isRenewalPending = assetStatus === 'Renewal_Pending_Quote' || assetStatus === '재계약 대상 견적';
+        const isRenewalComplete = assetStatus === 'Renewal_Complete' || assetStatus === '재계약 완료';
+        
+        if (isOccupied && daysToEnd > 90) {
+            return 'normal';
+        }
+        if (isRenewalPending || isRenewalComplete || (isOccupied && daysToEnd <= 90 && daysToEnd > 0)) {
+            return 'renewal';
+        }
+        return 'moveIn';
+    }
+    
+    get isMoveInMode() { return this.progressMode === 'moveIn'; }
+    get isNormalMode() { return this.progressMode === 'normal'; }
+    get isRenewalMode() { return this.progressMode === 'renewal'; }
+    
+    get progressSteps() {
+        const mode = this.progressMode;
+        const assetStatus = this.portalData.assetStatus;
+        const contractStatus = this.portalData.contractStatus;
+        const daysToMoveIn = this.daysUntilMoveIn;
+        const daysToEnd = this.daysUntilContractEnd;
+        const hasMoveInWO = this.portalData.hasMoveInWorkOrder;
+        const hasRenewalOpp = this.portalData.hasRenewalOpportunity;
+        const renewalStage = this.portalData.renewalOpportunityStage;
+        
+        const isOccupied = assetStatus === 'Occupied' || assetStatus === '입주';
+        const isRenewalComplete = assetStatus === 'Renewal_Complete' || assetStatus === '재계약 완료';
+        
+        if (mode === 'moveIn') {
+            const step1 = { label: '계약 체결 완료', status: 'completed' };
+            
+            let step2Status = 'pending';
+            if (contractStatus === 'Activated' || contractStatus === 'Closed' || contractStatus === '서명 완료') {
+                step2Status = 'completed';
+            } else if (contractStatus === 'In_Approval_Process' || contractStatus === '서명 요청 발송') {
+                step2Status = 'active';
+            }
+            const step2 = { label: '보증금 확인', status: step2Status };
+            
+            let step3Status = 'pending';
+            if (isOccupied) {
+                step3Status = 'completed';
+            } else if (hasMoveInWO || (daysToMoveIn <= 14 && daysToMoveIn > 3)) {
+                step3Status = 'active';
+            } else if (step2Status === 'completed') {
+                step3Status = 'active';
+            }
+            const step3 = { label: '입주 세팅 중', status: step3Status };
+            
+            let step4Status = 'pending';
+            if (isOccupied) {
+                step4Status = 'completed';
+            } else if (daysToMoveIn <= 3 && daysToMoveIn >= 0) {
+                step4Status = 'active';
+            }
+            const step4 = { label: '최종 점검', status: step4Status };
+            
+            let step5Status = 'pending';
+            if (isOccupied || daysToMoveIn < 0) {
+                step5Status = 'completed';
+            }
+            const step5 = { label: '입주 완료', status: step5Status };
+            
+            return this.formatProgressSteps([step1, step2, step3, step4, step5]);
+        }
+        
+        if (mode === 'renewal') {
+            const step1 = { label: '재계약 안내', status: 'completed' };
+            
+            let step2Status = 'pending';
+            if (hasRenewalOpp) {
+                if (renewalStage === 'Closed Won') {
+                    step2Status = 'completed';
+                } else {
+                    step2Status = 'active';
+                }
+            } else if (daysToEnd <= 90) {
+                step2Status = 'active';
+            }
+            const step2 = { label: '재계약 협의', status: step2Status };
+            
+            let step3Status = 'pending';
+            if (isRenewalComplete) {
+                step3Status = 'completed';
+            } else if (renewalStage === 'Proposal/Price Quote' || renewalStage === 'Negotiation/Review') {
+                step3Status = 'active';
+            }
+            const step3 = { label: '견적 확정', status: step3Status };
+            
+            let step4Status = 'pending';
+            if (isRenewalComplete) {
+                step4Status = 'completed';
+            }
+            const step4 = { label: '재계약 완료', status: step4Status };
+            
+            return this.formatProgressSteps([step1, step2, step3, step4]);
+        }
+        
+        return [];
+    }
+    
+    formatProgressSteps(steps) {
+        return steps.map((step, index) => {
+            const stepClass = `progress-step ${step.status}`;
+            let connectorClass = 'progress-connector';
+            if (index > 0) {
+                const prevStatus = steps[index - 1].status;
+                if (prevStatus === 'completed' && step.status === 'completed') {
+                    connectorClass = 'progress-connector completed';
+                } else if (prevStatus === 'completed' && step.status === 'active') {
+                    connectorClass = 'progress-connector active';
+                }
+            }
+            return {
+                ...step,
+                stepClass,
+                connectorClass,
+                isActive: step.status === 'active',
+                isCompleted: step.status === 'completed'
+            };
+        });
+    }
+    
+    get progressTitle() {
+        if (this.progressMode === 'moveIn') return '입주 진행 현황';
+        if (this.progressMode === 'renewal') return '재계약 진행 현황';
+        return '';
+    }
+    
+    get progressSubtitle() {
+        if (this.progressMode === 'moveIn') {
+            return `입주일: ${this.moveInDate} (${this.moveInDayDisplay})`;
+        }
+        if (this.progressMode === 'renewal') {
+            return `계약 만료: ${this.contractEndDate} (D-${this.daysUntilContractEnd})`;
+        }
+        return '';
     }
     
     get recentCases() { 
@@ -135,6 +293,23 @@ export default class WeGrowCustomerPortal extends NavigationMixin(LightningEleme
     get caseCountText() { 
         const count = this.recentCases.length;
         return count > 0 ? `${count}건` : ''; 
+    }
+    get selectedCaseDescription() {
+        return this.selectedCase?.description || '상세 내용이 없습니다.';
+    }
+    
+    handleCaseClick(event) {
+        const caseId = event.currentTarget.dataset.id;
+        const caseItem = this.recentCases.find(c => c.caseId === caseId);
+        if (caseItem) {
+            this.selectedCase = caseItem;
+            this.showCaseModal = true;
+        }
+    }
+    
+    closeCaseModal() {
+        this.showCaseModal = false;
+        this.selectedCase = null;
     }
     
     connectedCallback() {
@@ -278,6 +453,60 @@ export default class WeGrowCustomerPortal extends NavigationMixin(LightningEleme
             console.warn('[CustomerPortal] Invoice error:', error?.body?.message || error?.message);
             this.invoices = [];
         }
+    }
+    
+    get formattedInvoices() {
+        if (!this.invoices || this.invoices.length === 0) return [];
+        
+        return this.invoices.map(inv => {
+            const today = new Date();
+            let billingMonthDisplay = '-';
+            if (inv.billingMonth) {
+                const bDate = new Date(inv.billingMonth);
+                billingMonthDisplay = `${bDate.getFullYear()}년 ${bDate.getMonth() + 1}월분`;
+            }
+            
+            let dueDateDisplay = '-';
+            let dDayText = '';
+            let isUrgent = false;
+            if (inv.dueDate) {
+                const dDate = new Date(inv.dueDate);
+                dueDateDisplay = `${dDate.getFullYear()}.${String(dDate.getMonth() + 1).padStart(2, '0')}.${String(dDate.getDate()).padStart(2, '0')}`;
+                
+                const diffTime = dDate - today;
+                const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+                if (inv.status !== '납부 완료' && inv.status !== 'Paid') {
+                    if (diffDays > 0) {
+                        dDayText = ` (D-${diffDays})`;
+                    } else if (diffDays === 0) {
+                        dDayText = ' (오늘)';
+                        isUrgent = true;
+                    } else {
+                        dDayText = ` (${Math.abs(diffDays)}일 경과)`;
+                        isUrgent = true;
+                    }
+                }
+            }
+            
+            const isPaid = inv.status === '납부 완료' || inv.status === 'Paid';
+            const statusClass = isPaid ? 'status-tag paid' : 'status-tag unpaid';
+            const statusDisplay = isPaid ? '납부 완료' : '미납 (Unpaid)';
+            const rowClass = isUrgent ? 'urgent' : '';
+            
+            return {
+                invoiceId: inv.invoiceId,
+                billingMonthDisplay,
+                amountDisplay: this.formatCurrency(inv.amount),
+                dueDateDisplay: dueDateDisplay + dDayText,
+                statusClass,
+                statusDisplay,
+                rowClass
+            };
+        });
+    }
+    
+    get hasInvoices() {
+        return this.formattedInvoices.length > 0;
     }
     
     navigateToDashboard() { this.currentTab = 'dashboard'; }

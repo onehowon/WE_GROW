@@ -220,6 +220,17 @@
 
 .link-text:hover {
     text-decoration: underline;
+    cursor: pointer;
+}
+
+.info-note-link {
+    font-size: 0.9rem;
+    color: #666;
+    margin: 0;
+    padding: 12px;
+    background: white;
+    border-radius: 8px;
+    text-align: center;
 }
 
 /* 상태 배지 */
@@ -304,6 +315,61 @@
     border-radius: 16px;
     box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
     margin-bottom: 30px;
+}
+
+.progress-header {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.progress-title {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: #1a2634;
+    margin: 0 0 8px 0;
+}
+
+.progress-subtitle {
+    font-size: 0.9rem;
+    color: #0070d2;
+    margin: 0;
+    font-weight: 600;
+}
+
+.normal-status-card {
+    background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
+    padding: 40px 30px;
+    border-radius: 16px;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+    margin-bottom: 30px;
+    display: flex;
+    align-items: center;
+    gap: 24px;
+}
+
+.normal-status-icon {
+    font-size: 3rem;
+}
+
+.normal-status-content h3 {
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: #2e7d32;
+    margin: 0 0 8px 0;
+}
+
+.normal-status-content p {
+    font-size: 0.95rem;
+    color: #1b5e20;
+    margin: 0;
+}
+
+.progress-step.pending .step-dot {
+    background: #e0e0e0;
+}
+
+.progress-step.pending .step-label {
+    color: #888;
 }
 
 .progress-tracker {
@@ -1202,6 +1268,14 @@
 
 .link-pdf:hover {
     text-decoration: underline;
+    cursor: pointer;
+}
+
+.empty-cell {
+    text-align: center;
+    color: #888;
+    padding: 40px 16px !important;
+    font-style: italic;
 }
 
 .link-edit {
@@ -1568,4 +1642,167 @@
     display: flex;
     flex-direction: column;
     gap: 20px;
+}
+
+/* Case Item Clickable */
+.case-item.clickable {
+    cursor: pointer;
+}
+
+/* Case Detail Modal */
+.case-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+}
+
+.case-modal .slds-modal__container {
+    background: white;
+    border-radius: 16px;
+    max-width: 600px;
+    width: 90%;
+    max-height: 80vh;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    animation: modalSlideIn 0.3s ease;
+}
+
+@keyframes modalSlideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.case-modal .slds-modal__header {
+    padding: 24px 24px 20px;
+    border-bottom: 1px solid #eef2f7;
+    position: relative;
+}
+
+.case-modal .slds-modal__title {
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: #1a2634;
+    margin: 0;
+}
+
+.case-modal .slds-modal__close {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    background: #f0f4f8;
+    border: none;
+    border-radius: 50%;
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.case-modal .slds-modal__close:hover {
+    background: #e0e0e0;
+}
+
+.case-modal .close-icon {
+    font-size: 1.1rem;
+    color: #666;
+}
+
+.case-modal .modal-content {
+    padding: 24px;
+    overflow-y: auto;
+    flex: 1;
+}
+
+.case-detail-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.case-detail-grid .detail-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 16px;
+    background: #f8fbff;
+    border-radius: 10px;
+}
+
+.case-detail-grid .detail-row.full-width {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+}
+
+.case-detail-grid .detail-label {
+    font-size: 0.9rem;
+    color: #666;
+    font-weight: 500;
+}
+
+.case-detail-grid .detail-value {
+    font-size: 0.95rem;
+    color: #1a2634;
+    font-weight: 600;
+}
+
+.case-detail-grid .detail-description {
+    font-size: 0.95rem;
+    color: #1a2634;
+    line-height: 1.6;
+    margin: 0;
+    padding: 12px;
+    background: white;
+    border-radius: 8px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.case-modal .slds-modal__footer {
+    padding: 16px 24px;
+    border-top: 1px solid #eef2f7;
+    display: flex;
+    justify-content: flex-end;
+}
+
+.btn-modal-close {
+    padding: 12px 32px;
+    background: #0070d2;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.btn-modal-close:hover {
+    background: #005bb5;
+    transform: translateY(-2px);
+}
+
+.slds-backdrop_open {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 9998;
 }

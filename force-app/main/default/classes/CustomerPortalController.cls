@@ -44,6 +44,7 @@ public without sharing class CustomerPortalController {
                 Asset asset = assets[0];
                 result.assetId = asset.Id;
                 result.assetName = asset.Name;
+                result.assetStatus = asset.Status;
                 result.branchName = asset.Home_Branch__r?.Name;
                 result.capacity = asset.Capacity__c != null ? Integer.valueOf(asset.Capacity__c) : 0;
                 result.doorLockPw = asset.Door_Lock_PW__c;
@@ -52,6 +53,27 @@ public without sharing class CustomerPortalController {
                 result.moveInDate = asset.InstallDate;
                 result.moveOutDate = asset.UsageEndDate;
                 result.productName = asset.Product2?.Name;
+                
+                List<WorkOrder> moveInWorkOrders = [
+                    SELECT Id, Status FROM WorkOrder 
+                    WHERE AssetId = :asset.Id AND Type__c = 'Move_In_Setup'
+                    LIMIT 1
+                ];
+                result.hasMoveInWorkOrder = !moveInWorkOrders.isEmpty();
+                if (!moveInWorkOrders.isEmpty()) {
+                    result.moveInWorkOrderStatus = moveInWorkOrders[0].Status;
+                }
+                
+                List<Opportunity> renewalOpps = [
+                    SELECT Id, StageName FROM Opportunity 
+                    WHERE AccountId = :contact.AccountId AND Type__c = 'Renewal' AND IsClosed = false
+                    ORDER BY CreatedDate DESC
+                    LIMIT 1
+                ];
+                result.hasRenewalOpportunity = !renewalOpps.isEmpty();
+                if (!renewalOpps.isEmpty()) {
+                    result.renewalOpportunityStage = renewalOpps[0].StageName;
+                }
                 
                 if (asset.ContractId__c != null) {
                     Contract contract = [
@@ -75,7 +97,7 @@ public without sharing class CustomerPortalController {
             }
             
             List<Case> cases = [
-                SELECT Id, CaseNumber, Subject, Status, Priority, Type, CreatedDate
+                SELECT Id, CaseNumber, Subject, Description, Status, Priority, Type, CreatedDate
                 FROM Case 
                 WHERE AccountId = :contact.AccountId
                 ORDER BY CreatedDate DESC
@@ -89,6 +111,7 @@ public without sharing class CustomerPortalController {
                 ci.caseId = c.Id;
                 ci.caseNumber = c.CaseNumber;
                 ci.subject = c.Subject;
+                ci.description = c.Description;
                 ci.status = c.Status;
                 ci.priority = c.Priority;
                 ci.caseType = c.Type;
@@ -175,6 +198,7 @@ public without sharing class CustomerPortalController {
         
         @AuraEnabled public Id assetId;
         @AuraEnabled public String assetName;
+        @AuraEnabled public String assetStatus;
         @AuraEnabled public String branchName;
         @AuraEnabled public Integer capacity;
         @AuraEnabled public String doorLockPw;
@@ -183,6 +207,11 @@ public without sharing class CustomerPortalController {
         @AuraEnabled public Date moveInDate;
         @AuraEnabled public Date moveOutDate;
         @AuraEnabled public String productName;
+        
+        @AuraEnabled public Boolean hasMoveInWorkOrder;
+        @AuraEnabled public String moveInWorkOrderStatus;
+        @AuraEnabled public Boolean hasRenewalOpportunity;
+        @AuraEnabled public String renewalOpportunityStage;
         
         @AuraEnabled public Id contractId;
         @AuraEnabled public String contractNumber;
@@ -200,6 +229,7 @@ public without sharing class CustomerPortalController {
         @AuraEnabled public Id caseId;
         @AuraEnabled public String caseNumber;
         @AuraEnabled public String subject;
+        @AuraEnabled public String description;
         @AuraEnabled public String status;
         @AuraEnabled public String priority;
         @AuraEnabled public String caseType;

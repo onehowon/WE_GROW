@@ -47,39 +47,42 @@
                             <span>입주 준비가 진행 중입니다</span>
                         </div>
                     </div>
-                    <p class="contract-date">입주일: {moveInDate} (D{daysUntilMoveIn})</p>
+                    <p class="contract-date">입주일: {moveInDate} ({moveInDayDisplay})</p>
                 </div>
 
-                <div class="progress-section">
-                    <div class="progress-tracker">
-                        <div class="progress-step completed">
-                            <div class="step-dot"></div>
-                            <span class="step-label">계약 체결 완료</span>
+                <template if:false={isNormalMode}>
+                    <div class="progress-section">
+                        <div class="progress-header">
+                            <h3 class="progress-title">{progressTitle}</h3>
+                            <p class="progress-subtitle">{progressSubtitle}</p>
                         </div>
-                        <div class="progress-connector completed"></div>
-                        <div class="progress-step completed">
-                            <div class="step-dot"></div>
-                            <span class="step-label">보증금 확인</span>
-                        </div>
-                        <div class="progress-connector active"></div>
-                        <div class="progress-step active">
-                            <div class="step-dot">
-                                <div class="pulse-ring"></div>
-                            </div>
-                            <span class="step-label">입주 세팅 중</span>
-                        </div>
-                        <div class="progress-connector"></div>
-                        <div class="progress-step">
-                            <div class="step-dot"></div>
-                            <span class="step-label">최종 점검</span>
-                        </div>
-                        <div class="progress-connector"></div>
-                        <div class="progress-step">
-                            <div class="step-dot"></div>
-                            <span class="step-label">입주 완료</span>
+                        <div class="progress-tracker">
+                            <template for:each={progressSteps} for:item="step" for:index="idx">
+                                <template if:true={idx}>
+                                    <div key={step.label} class={step.connectorClass}></div>
+                                </template>
+                                <div key={step.label} class={step.stepClass}>
+                                    <div class="step-dot">
+                                        <template if:true={step.isActive}>
+                                            <div class="pulse-ring"></div>
+                                        </template>
+                                    </div>
+                                    <span class="step-label">{step.label}</span>
+                                </div>
+                            </template>
                         </div>
                     </div>
-                </div>
+                </template>
+
+                <template if:true={isNormalMode}>
+                    <div class="normal-status-card">
+                        <div class="normal-status-icon">🏢</div>
+                        <div class="normal-status-content">
+                            <h3>현재 정상 이용 중입니다</h3>
+                            <p>계약 만료일: {contractEndDate} (D-{daysUntilContractEnd})</p>
+                        </div>
+                    </div>
+                </template>
 
                 <div class="cards-grid">
                     <div class="card">
@@ -92,18 +95,7 @@
                             <p class="location-detail">{officeName} ({capacity}인실)</p>
                             
                             <div class="info-list">
-                                <div class="info-row">
-                                    <span class="info-label">출입 카드</span>
-                                    <span class="info-value">20장 발급 예정</span>
-                                </div>
-                                <div class="info-row">
-                                    <span class="info-label">주차 배정</span>
-                                    <span class="info-value">무료 2대</span>
-                                </div>
-                                <div class="info-row">
-                                    <span class="info-label">도어락 PW</span>
-                                    <span class="info-value">입주 당일 공개</span>
-                                </div>
+                                <p class="info-note-link">상세 정보는 <a onclick={navigateToMyOffice} class="link-text">'나의 오피스'</a> 탭에서 확인하세요.</p>
                             </div>
                         </div>
                     </div>
@@ -139,7 +131,7 @@
                             <template if:true={hasCases}>
                                 <div class="case-list">
                                     <template for:each={recentCases} for:item="caseItem">
-                                        <div key={caseItem.caseId} class="case-item">
+                                        <div key={caseItem.caseId} class="case-item clickable" data-id={caseItem.caseId} onclick={handleCaseClick}>
                                             <div class="case-icon">{caseItem.icon}</div>
                                             <div class="case-content">
                                                 <h4 class="case-subject">{caseItem.subject}</h4>
@@ -225,7 +217,7 @@
                                 <div class="progress-fill" style="width: 75%;"></div>
                             </div>
                             <p class="progress-note">출입 카드 현황: 24장 발급완료</p>
-                            <p class="info-note-small">* 추가 발급은 '시설 및 민원' 탭에서 신청하세요.</p>
+                            <p class="info-note-small">* 추가 발급은 우측 하단 채팅을 통해 문의해주세요.</p>
                         </div>
 
                         <div class="info-card">
@@ -319,8 +311,8 @@
                         <div class="section-header-row">
                             <h3>청구 및 납부 내역</h3>
                             <select class="year-selector">
-                                <option>2024년</option>
-                                <option>2023년</option>
+                                <option>2026년</option>
+                                <option>2025년</option>
                             </select>
                         </div>
 
@@ -335,27 +327,22 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr class="urgent">
-                                    <td>2024년 11월분</td>
-                                    <td>5,500,000 원</td>
-                                    <td class="due-date">2024.10.25 (D-1)</td>
-                                    <td><span class="status-tag unpaid">미납 (Unpaid)</span></td>
-                                    <td><a onclick={openReceipt} class="link-pdf">PDF 보기</a></td>
-                                </tr>
-                                <tr>
-                                    <td>2024년 10월분</td>
-                                    <td>5,500,000 원</td>
-                                    <td>2024.09.25</td>
-                                    <td><span class="status-tag paid">납부 완료</span></td>
-                                    <td><a onclick={openReceipt} class="link-pdf">PDF 보기</a></td>
-                                </tr>
-                                <tr>
-                                    <td>보증금 (Deposit)</td>
-                                    <td>100,000,000 원</td>
-                                    <td>2024.10.12</td>
-                                    <td><span class="status-tag paid">납부 완료</span></td>
-                                    <td><a onclick={openReceipt} class="link-pdf">PDF 보기</a></td>
-                                </tr>
+                                <template if:true={hasInvoices}>
+                                    <template for:each={formattedInvoices} for:item="inv">
+                                        <tr key={inv.invoiceId} class={inv.rowClass}>
+                                            <td>{inv.billingMonthDisplay}</td>
+                                            <td>{inv.amountDisplay}</td>
+                                            <td class="due-date">{inv.dueDateDisplay}</td>
+                                            <td><span class={inv.statusClass}>{inv.statusDisplay}</span></td>
+                                            <td><a onclick={openReceipt} class="link-pdf">PDF 보기</a></td>
+                                        </tr>
+                                    </template>
+                                </template>
+                                <template if:false={hasInvoices}>
+                                    <tr>
+                                        <td colspan="5" class="empty-cell">청구 내역이 없습니다.</td>
+                                    </tr>
+                                </template>
                             </tbody>
                         </table>
                     </div>
@@ -395,6 +382,58 @@
 
 
 
+
+
         </div>
     </div>
+
+    <!-- Case Detail Modal -->
+    <template if:true={showCaseModal}>
+        <section role="dialog" tabindex="-1" class="slds-modal slds-fade-in-open case-modal">
+            <div class="slds-modal__container">
+                <header class="slds-modal__header">
+                    <button class="slds-button slds-button_icon slds-modal__close" onclick={closeCaseModal}>
+                        <span class="close-icon">✕</span>
+                    </button>
+                    <h2 class="slds-modal__title">민원 상세 정보</h2>
+                </header>
+                <div class="slds-modal__content modal-content">
+                    <div class="case-detail-grid">
+                        <div class="detail-row">
+                            <span class="detail-label">민원 번호</span>
+                            <span class="detail-value">{selectedCase.caseNumber}</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">제목</span>
+                            <span class="detail-value">{selectedCase.subject}</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">유형</span>
+                            <span class="detail-value">{selectedCase.caseType}</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">상태</span>
+                            <span class={selectedCase.statusClass}>{selectedCase.status}</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">우선순위</span>
+                            <span class="detail-value">{selectedCase.priority}</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">접수일</span>
+                            <span class="detail-value">{selectedCase.CreatedDateFormatted}</span>
+                        </div>
+                        <div class="detail-row full-width">
+                            <span class="detail-label">상세 내용</span>
+                            <p class="detail-description">{selectedCaseDescription}</p>
+                        </div>
+                    </div>
+                </div>
+                <footer class="slds-modal__footer">
+                    <button class="btn-modal-close" onclick={closeCaseModal}>닫기</button>
+                </footer>
+            </div>
+        </section>
+        <div class="slds-backdrop slds-backdrop_open" onclick={closeCaseModal}></div>
+    </template>
 </template>
