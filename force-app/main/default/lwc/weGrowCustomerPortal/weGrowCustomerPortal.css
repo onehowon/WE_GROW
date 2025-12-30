@@ -220,6 +220,17 @@
 
 .link-text:hover {
     text-decoration: underline;
+    cursor: pointer;
+}
+
+.info-note-link {
+    font-size: 0.9rem;
+    color: #666;
+    margin: 0;
+    padding: 12px;
+    background: white;
+    border-radius: 8px;
+    text-align: center;
 }
 
 /* 상태 배지 */
@@ -1202,6 +1213,14 @@
 
 .link-pdf:hover {
     text-decoration: underline;
+    cursor: pointer;
+}
+
+.empty-cell {
+    text-align: center;
+    color: #888;
+    padding: 40px 16px !important;
+    font-style: italic;
 }
 
 .link-edit {

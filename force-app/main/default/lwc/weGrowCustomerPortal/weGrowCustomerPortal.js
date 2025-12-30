@@ -299,6 +299,60 @@ export default class WeGrowCustomerPortal extends NavigationMixin(LightningEleme
         }
     }
     
+    get formattedInvoices() {
+        if (!this.invoices || this.invoices.length === 0) return [];
+        
+        return this.invoices.map(inv => {
+            const today = new Date();
+            let billingMonthDisplay = '-';
+            if (inv.billingMonth) {
+                const bDate = new Date(inv.billingMonth);
+                billingMonthDisplay = `${bDate.getFullYear()}년 ${bDate.getMonth() + 1}월분`;
+            }
+            
+            let dueDateDisplay = '-';
+            let dDayText = '';
+            let isUrgent = false;
+            if (inv.dueDate) {
+                const dDate = new Date(inv.dueDate);
+                dueDateDisplay = `${dDate.getFullYear()}.${String(dDate.getMonth() + 1).padStart(2, '0')}.${String(dDate.getDate()).padStart(2, '0')}`;
+                
+                const diffTime = dDate - today;
+                const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+                if (inv.status !== '납부 완료' && inv.status !== 'Paid') {
+                    if (diffDays > 0) {
+                        dDayText = ` (D-${diffDays})`;
+                    } else if (diffDays === 0) {
+                        dDayText = ' (오늘)';
+                        isUrgent = true;
+                    } else {
+                        dDayText = ` (${Math.abs(diffDays)}일 경과)`;
+                        isUrgent = true;
+                    }
+                }
+            }
+            
+            const isPaid = inv.status === '납부 완료' || inv.status === 'Paid';
+            const statusClass = isPaid ? 'status-tag paid' : 'status-tag unpaid';
+            const statusDisplay = isPaid ? '납부 완료' : '미납 (Unpaid)';
+            const rowClass = isUrgent ? 'urgent' : '';
+            
+            return {
+                invoiceId: inv.invoiceId,
+                billingMonthDisplay,
+                amountDisplay: this.formatCurrency(inv.amount),
+                dueDateDisplay: dueDateDisplay + dDayText,
+                statusClass,
+                statusDisplay,
+                rowClass
+            };
+        });
+    }
+    
+    get hasInvoices() {
+        return this.formattedInvoices.length > 0;
+    }
+    
     navigateToDashboard() { this.currentTab = 'dashboard'; }
     navigateToMyOffice() { this.currentTab = 'myoffice'; }
     navigateToCharge() { 

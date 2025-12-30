@@ -92,18 +92,7 @@
                             <p class="location-detail">{officeName} ({capacity}인실)</p>
                             
                             <div class="info-list">
-                                <div class="info-row">
-                                    <span class="info-label">출입 카드</span>
-                                    <span class="info-value">20장 발급 예정</span>
-                                </div>
-                                <div class="info-row">
-                                    <span class="info-label">주차 배정</span>
-                                    <span class="info-value">무료 2대</span>
-                                </div>
-                                <div class="info-row">
-                                    <span class="info-label">도어락 PW</span>
-                                    <span class="info-value">입주 당일 공개</span>
-                                </div>
+                                <p class="info-note-link">상세 정보는 <a onclick={navigateToMyOffice} class="link-text">'나의 오피스'</a> 탭에서 확인하세요.</p>
                             </div>
                         </div>
                     </div>
@@ -225,7 +214,7 @@
                                 <div class="progress-fill" style="width: 75%;"></div>
                             </div>
                             <p class="progress-note">출입 카드 현황: 24장 발급완료</p>
-                            <p class="info-note-small">* 추가 발급은 '시설 및 민원' 탭에서 신청하세요.</p>
+                            <p class="info-note-small">* 추가 발급은 우측 하단 채팅을 통해 문의해주세요.</p>
                         </div>
 
                         <div class="info-card">
@@ -319,8 +308,8 @@
                         <div class="section-header-row">
                             <h3>청구 및 납부 내역</h3>
                             <select class="year-selector">
-                                <option>2024년</option>
-                                <option>2023년</option>
+                                <option>2026년</option>
+                                <option>2025년</option>
                             </select>
                         </div>
 
@@ -335,27 +324,22 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr class="urgent">
-                                    <td>2024년 11월분</td>
-                                    <td>5,500,000 원</td>
-                                    <td class="due-date">2024.10.25 (D-1)</td>
-                                    <td><span class="status-tag unpaid">미납 (Unpaid)</span></td>
-                                    <td><a onclick={openReceipt} class="link-pdf">PDF 보기</a></td>
-                                </tr>
-                                <tr>
-                                    <td>2024년 10월분</td>
-                                    <td>5,500,000 원</td>
-                                    <td>2024.09.25</td>
-                                    <td><span class="status-tag paid">납부 완료</span></td>
-                                    <td><a onclick={openReceipt} class="link-pdf">PDF 보기</a></td>
-                                </tr>
-                                <tr>
-                                    <td>보증금 (Deposit)</td>
-                                    <td>100,000,000 원</td>
-                                    <td>2024.10.12</td>
-                                    <td><span class="status-tag paid">납부 완료</span></td>
-                                    <td><a onclick={openReceipt} class="link-pdf">PDF 보기</a></td>
-                                </tr>
+                                <template if:true={hasInvoices}>
+                                    <template for:each={formattedInvoices} for:item="inv">
+                                        <tr key={inv.invoiceId} class={inv.rowClass}>
+                                            <td>{inv.billingMonthDisplay}</td>
+                                            <td>{inv.amountDisplay}</td>
+                                            <td class="due-date">{inv.dueDateDisplay}</td>
+                                            <td><span class={inv.statusClass}>{inv.statusDisplay}</span></td>
+                                            <td><a onclick={openReceipt} class="link-pdf">PDF 보기</a></td>
+                                        </tr>
+                                    </template>
+                                </template>
+                                <template if:false={hasInvoices}>
+                                    <tr>
+                                        <td colspan="5" class="empty-cell">청구 내역이 없습니다.</td>
+                                    </tr>
+                                </template>
                             </tbody>
                         </table>
                     </div>
