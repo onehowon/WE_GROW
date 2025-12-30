@@ -47,39 +47,42 @@
                             <span>입주 준비가 진행 중입니다</span>
                         </div>
                     </div>
-                    <p class="contract-date">입주일: {moveInDate} (D{daysUntilMoveIn})</p>
+                    <p class="contract-date">입주일: {moveInDate} ({moveInDayDisplay})</p>
                 </div>
 
-                <div class="progress-section">
-                    <div class="progress-tracker">
-                        <div class="progress-step completed">
-                            <div class="step-dot"></div>
-                            <span class="step-label">계약 체결 완료</span>
+                <template if:false={isNormalMode}>
+                    <div class="progress-section">
+                        <div class="progress-header">
+                            <h3 class="progress-title">{progressTitle}</h3>
+                            <p class="progress-subtitle">{progressSubtitle}</p>
                         </div>
-                        <div class="progress-connector completed"></div>
-                        <div class="progress-step completed">
-                            <div class="step-dot"></div>
-                            <span class="step-label">보증금 확인</span>
-                        </div>
-                        <div class="progress-connector active"></div>
-                        <div class="progress-step active">
-                            <div class="step-dot">
-                                <div class="pulse-ring"></div>
-                            </div>
-                            <span class="step-label">입주 세팅 중</span>
-                        </div>
-                        <div class="progress-connector"></div>
-                        <div class="progress-step">
-                            <div class="step-dot"></div>
-                            <span class="step-label">최종 점검</span>
-                        </div>
-                        <div class="progress-connector"></div>
-                        <div class="progress-step">
-                            <div class="step-dot"></div>
-                            <span class="step-label">입주 완료</span>
+                        <div class="progress-tracker">
+                            <template for:each={progressSteps} for:item="step" for:index="idx">
+                                <template if:true={idx}>
+                                    <div key={step.label} class={step.connectorClass}></div>
+                                </template>
+                                <div key={step.label} class={step.stepClass}>
+                                    <div class="step-dot">
+                                        <template if:true={step.isActive}>
+                                            <div class="pulse-ring"></div>
+                                        </template>
+                                    </div>
+                                    <span class="step-label">{step.label}</span>
+                                </div>
+                            </template>
                         </div>
                     </div>
-                </div>
+                </template>
+
+                <template if:true={isNormalMode}>
+                    <div class="normal-status-card">
+                        <div class="normal-status-icon">🏢</div>
+                        <div class="normal-status-content">
+                            <h3>현재 정상 이용 중입니다</h3>
+                            <p>계약 만료일: {contractEndDate} (D-{daysUntilContractEnd})</p>
+                        </div>
+                    </div>
+                </template>
 
                 <div class="cards-grid">
                     <div class="card">

@@ -317,6 +317,61 @@
     margin-bottom: 30px;
 }
 
+.progress-header {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.progress-title {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: #1a2634;
+    margin: 0 0 8px 0;
+}
+
+.progress-subtitle {
+    font-size: 0.9rem;
+    color: #0070d2;
+    margin: 0;
+    font-weight: 600;
+}
+
+.normal-status-card {
+    background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
+    padding: 40px 30px;
+    border-radius: 16px;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+    margin-bottom: 30px;
+    display: flex;
+    align-items: center;
+    gap: 24px;
+}
+
+.normal-status-icon {
+    font-size: 3rem;
+}
+
+.normal-status-content h3 {
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: #2e7d32;
+    margin: 0 0 8px 0;
+}
+
+.normal-status-content p {
+    font-size: 0.95rem;
+    color: #1b5e20;
+    margin: 0;
+}
+
+.progress-step.pending .step-dot {
+    background: #e0e0e0;
+}
+
+.progress-step.pending .step-label {
+    color: #888;
+}
+
 .progress-tracker {
     display: flex;
     align-items: flex-start;
