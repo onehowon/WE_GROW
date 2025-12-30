@@ -139,7 +139,7 @@
                             <template if:true={hasCases}>
                                 <div class="case-list">
                                     <template for:each={recentCases} for:item="caseItem">
-                                        <div key={caseItem.caseId} class="case-item">
+                                        <div key={caseItem.caseId} class="case-item clickable" data-id={caseItem.caseId} onclick={handleCaseClick}>
                                             <div class="case-icon">{caseItem.icon}</div>
                                             <div class="case-content">
                                                 <h4 class="case-subject">{caseItem.subject}</h4>
@@ -395,6 +395,58 @@
 
 
 
+
+
         </div>
     </div>
+
+    <!-- Case Detail Modal -->
+    <template if:true={showCaseModal}>
+        <section role="dialog" tabindex="-1" class="slds-modal slds-fade-in-open case-modal">
+            <div class="slds-modal__container">
+                <header class="slds-modal__header">
+                    <button class="slds-button slds-button_icon slds-modal__close" onclick={closeCaseModal}>
+                        <span class="close-icon">✕</span>
+                    </button>
+                    <h2 class="slds-modal__title">민원 상세 정보</h2>
+                </header>
+                <div class="slds-modal__content modal-content">
+                    <div class="case-detail-grid">
+                        <div class="detail-row">
+                            <span class="detail-label">민원 번호</span>
+                            <span class="detail-value">{selectedCase.caseNumber}</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">제목</span>
+                            <span class="detail-value">{selectedCase.subject}</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">유형</span>
+                            <span class="detail-value">{selectedCase.caseType}</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">상태</span>
+                            <span class={selectedCase.statusClass}>{selectedCase.status}</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">우선순위</span>
+                            <span class="detail-value">{selectedCase.priority}</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">접수일</span>
+                            <span class="detail-value">{selectedCase.CreatedDateFormatted}</span>
+                        </div>
+                        <div class="detail-row full-width">
+                            <span class="detail-label">상세 내용</span>
+                            <p class="detail-description">{selectedCaseDescription}</p>
+                        </div>
+                    </div>
+                </div>
+                <footer class="slds-modal__footer">
+                    <button class="btn-modal-close" onclick={closeCaseModal}>닫기</button>
+                </footer>
+            </div>
+        </section>
+        <div class="slds-backdrop slds-backdrop_open" onclick={closeCaseModal}></div>
+    </template>
 </template>

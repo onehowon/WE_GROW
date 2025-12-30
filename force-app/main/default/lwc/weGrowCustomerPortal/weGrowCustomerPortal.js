@@ -34,6 +34,8 @@ export default class WeGrowCustomerPortal extends NavigationMixin(LightningEleme
     @track casePriority = 'Low';
     @track isUrgent = false;
     @track showDoorLockPw = false;
+    @track showCaseModal = false;
+    @track selectedCase = null;
     
     get isDashboardTab() { return this.currentTab === 'dashboard'; }
     get isMyOfficeTab() { return this.currentTab === 'myoffice'; }
@@ -135,6 +137,23 @@ export default class WeGrowCustomerPortal extends NavigationMixin(LightningEleme
     get caseCountText() { 
         const count = this.recentCases.length;
         return count > 0 ? `${count}건` : ''; 
+    }
+    get selectedCaseDescription() {
+        return this.selectedCase?.description || '상세 내용이 없습니다.';
+    }
+    
+    handleCaseClick(event) {
+        const caseId = event.currentTarget.dataset.id;
+        const caseItem = this.recentCases.find(c => c.caseId === caseId);
+        if (caseItem) {
+            this.selectedCase = caseItem;
+            this.showCaseModal = true;
+        }
+    }
+    
+    closeCaseModal() {
+        this.showCaseModal = false;
+        this.selectedCase = null;
     }
     
     connectedCallback() {

@@ -75,7 +75,7 @@ public without sharing class CustomerPortalController {
             }
             
             List<Case> cases = [
-                SELECT Id, CaseNumber, Subject, Status, Priority, Type, CreatedDate
+                SELECT Id, CaseNumber, Subject, Description, Status, Priority, Type, CreatedDate
                 FROM Case 
                 WHERE AccountId = :contact.AccountId
                 ORDER BY CreatedDate DESC
@@ -89,6 +89,7 @@ public without sharing class CustomerPortalController {
                 ci.caseId = c.Id;
                 ci.caseNumber = c.CaseNumber;
                 ci.subject = c.Subject;
+                ci.description = c.Description;
                 ci.status = c.Status;
                 ci.priority = c.Priority;
                 ci.caseType = c.Type;
@@ -200,6 +201,7 @@ public without sharing class CustomerPortalController {
         @AuraEnabled public Id caseId;
         @AuraEnabled public String caseNumber;
         @AuraEnabled public String subject;
+        @AuraEnabled public String description;
         @AuraEnabled public String status;
         @AuraEnabled public String priority;
         @AuraEnabled public String caseType;
