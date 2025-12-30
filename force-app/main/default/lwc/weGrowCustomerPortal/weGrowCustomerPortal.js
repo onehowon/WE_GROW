@@ -114,11 +114,14 @@ export default class WeGrowCustomerPortal extends NavigationMixin(LightningEleme
         const assetStatus = this.portalData.assetStatus;
         const daysToEnd = this.daysUntilContractEnd;
         
-        if (assetStatus === 'Occupied' && daysToEnd > 90) {
+        const isOccupied = assetStatus === 'Occupied' || assetStatus === '입주';
+        const isRenewalPending = assetStatus === 'Renewal_Pending_Quote' || assetStatus === '재계약 대상 견적';
+        const isRenewalComplete = assetStatus === 'Renewal_Complete' || assetStatus === '재계약 완료';
+        
+        if (isOccupied && daysToEnd > 90) {
             return 'normal';
         }
-        if (assetStatus === 'Renewal_Pending_Quote' || assetStatus === 'Renewal_Complete' || 
-            (assetStatus === 'Occupied' && daysToEnd <= 90 && daysToEnd > 0)) {
+        if (isRenewalPending || isRenewalComplete || (isOccupied && daysToEnd <= 90 && daysToEnd > 0)) {
             return 'renewal';
         }
         return 'moveIn';
@@ -138,19 +141,22 @@ export default class WeGrowCustomerPortal extends NavigationMixin(LightningEleme
         const hasRenewalOpp = this.portalData.hasRenewalOpportunity;
         const renewalStage = this.portalData.renewalOpportunityStage;
         
+        const isOccupied = assetStatus === 'Occupied' || assetStatus === '입주';
+        const isRenewalComplete = assetStatus === 'Renewal_Complete' || assetStatus === '재계약 완료';
+        
         if (mode === 'moveIn') {
             const step1 = { label: '계약 체결 완료', status: 'completed' };
             
             let step2Status = 'pending';
-            if (contractStatus === 'Activated' || contractStatus === 'Closed') {
+            if (contractStatus === 'Activated' || contractStatus === 'Closed' || contractStatus === '서명 완료') {
                 step2Status = 'completed';
-            } else if (contractStatus === 'In_Approval_Process') {
+            } else if (contractStatus === 'In_Approval_Process' || contractStatus === '서명 요청 발송') {
                 step2Status = 'active';
             }
             const step2 = { label: '보증금 확인', status: step2Status };
             
             let step3Status = 'pending';
-            if (assetStatus === 'Occupied') {
+            if (isOccupied) {
                 step3Status = 'completed';
             } else if (hasMoveInWO || (daysToMoveIn <= 14 && daysToMoveIn > 3)) {
                 step3Status = 'active';
@@ -160,7 +166,7 @@ export default class WeGrowCustomerPortal extends NavigationMixin(LightningEleme
             const step3 = { label: '입주 세팅 중', status: step3Status };
             
             let step4Status = 'pending';
-            if (assetStatus === 'Occupied') {
+            if (isOccupied) {
                 step4Status = 'completed';
             } else if (daysToMoveIn <= 3 && daysToMoveIn >= 0) {
                 step4Status = 'active';
@@ -168,7 +174,7 @@ export default class WeGrowCustomerPortal extends NavigationMixin(LightningEleme
             const step4 = { label: '최종 점검', status: step4Status };
             
             let step5Status = 'pending';
-            if (assetStatus === 'Occupied' || daysToMoveIn < 0) {
+            if (isOccupied || daysToMoveIn < 0) {
                 step5Status = 'completed';
             }
             const step5 = { label: '입주 완료', status: step5Status };
@@ -192,7 +198,7 @@ export default class WeGrowCustomerPortal extends NavigationMixin(LightningEleme
             const step2 = { label: '재계약 협의', status: step2Status };
             
             let step3Status = 'pending';
-            if (assetStatus === 'Renewal_Complete') {
+            if (isRenewalComplete) {
                 step3Status = 'completed';
             } else if (renewalStage === 'Proposal/Price Quote' || renewalStage === 'Negotiation/Review') {
                 step3Status = 'active';
@@ -200,7 +206,7 @@ export default class WeGrowCustomerPortal extends NavigationMixin(LightningEleme
             const step3 = { label: '견적 확정', status: step3Status };
             
             let step4Status = 'pending';
-            if (assetStatus === 'Renewal_Complete') {
+            if (isRenewalComplete) {
                 step4Status = 'completed';
             }
             const step4 = { label: '재계약 완료', status: step4Status };
