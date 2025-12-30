@@ -1,0 +1,36 @@
+.section-header {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+}
+
+.section-header:hover .link-text {
+    text-decoration: underline;
+    color: #0176d3;
+}
+
+.link-text {
+    font-weight: 600;
+    color: #1b5297;
+}
+
+.info-grid {
+    display: grid;
+    gap: 8px;
+}
+
+.info-item {
+    display: flex;
+    flex-direction: column;
+}
+
+.info-label {
+    font-size: 11px;
+    color: #706e6b;
+    text-transform: uppercase;
+}
+
+.info-value {
+    font-size: 13px;
+    color: #181818;
+}
