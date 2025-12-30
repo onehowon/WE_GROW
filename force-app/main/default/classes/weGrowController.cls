@@ -33,6 +33,7 @@ public with sharing class WeGrowController {
                 OR Branch_Account__r.Name LIKE :searchKey
             )
             AND Status IN :validStatuses
+            AND Name LIKE '%호%'
             LIMIT 3
         ];
     }
