@@ -1,0 +1,103 @@
+<template>
+    <lightning-card title="고객 정보" icon-name="standard:contact">
+        <lightning-button-icon slot="actions" icon-name="utility:refresh" onclick={loadContext} alternative-text="새로고침"></lightning-button-icon>
+        <template if:true={isLoading}>
+            <div class="slds-p-around_medium">
+                <lightning-spinner alternative-text="Loading..." size="small"></lightning-spinner>
+            </div>
+        </template>
+
+        <template if:false={isLoading}>
+            <template if:true={error}>
+                <div class="slds-p-around_medium slds-text-color_error">
+                    {error}
+                </div>
+            </template>
+
+            <template if:true={hasContact}>
+                <div class="slds-p-around_small">
+                    <div class="section-header" onclick={handleContactClick}>
+                        <lightning-icon icon-name="standard:contact" size="small"></lightning-icon>
+                        <span class="slds-m-left_x-small link-text">{contactInfo.name}</span>
+                    </div>
+                    <div class="info-grid slds-m-top_x-small">
+                        <template if:true={contactInfo.email}>
+                            <div class="info-item">
+                                <span class="info-label">이메일</span>
+                                <span class="info-value">{contactInfo.email}</span>
+                            </div>
+                        </template>
+                        <template if:true={contactInfo.phone}>
+                            <div class="info-item">
+                                <span class="info-label">전화</span>
+                                <span class="info-value">{contactInfo.phone}</span>
+                            </div>
+                        </template>
+                        <template if:true={contactInfo.accountName}>
+                            <div class="info-item">
+                                <span class="info-label">회사</span>
+                                <span class="info-value">{contactInfo.accountName}</span>
+                            </div>
+                        </template>
+                        <template if:true={contactInfo.assetName}>
+                            <div class="info-item">
+                                <span class="info-label">입주공간</span>
+                                <span class="info-value">{contactInfo.assetName}</span>
+                            </div>
+                        </template>
+                    </div>
+                </div>
+            </template>
+
+            <template if:false={hasContact}>
+                <div class="slds-p-around_medium slds-text-color_weak">
+                    연결된 고객 정보가 없습니다.
+                </div>
+            </template>
+        </template>
+    </lightning-card>
+
+    <template if:true={hasCase}>
+        <lightning-card title="최근 민원" icon-name="standard:case" class="slds-m-top_small">
+            <div class="slds-p-around_small">
+                <div class="section-header" onclick={handleCaseClick}>
+                    <lightning-icon icon-name="standard:case" size="small"></lightning-icon>
+                    <span class="slds-m-left_x-small link-text">{caseInfo.number}</span>
+                    <lightning-badge label={caseInfo.status} class="slds-m-left_x-small"></lightning-badge>
+                </div>
+                <div class="info-grid slds-m-top_x-small">
+                    <div class="info-item">
+                        <span class="info-label">제목</span>
+                        <span class="info-value">{caseInfo.subject}</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">전체 민원</span>
+                        <span class="info-value">{caseInfo.count}건</span>
+                    </div>
+                </div>
+            </div>
+        </lightning-card>
+    </template>
+
+    <template if:true={hasWorkOrder}>
+        <lightning-card title="최근 작업" icon-name="standard:work_order" class="slds-m-top_small">
+            <div class="slds-p-around_small">
+                <div class="section-header" onclick={handleWorkOrderClick}>
+                    <lightning-icon icon-name="standard:work_order" size="small"></lightning-icon>
+                    <span class="slds-m-left_x-small link-text">{workOrderInfo.number}</span>
+                    <lightning-badge label={workOrderInfo.status} class="slds-m-left_x-small"></lightning-badge>
+                </div>
+                <div class="info-grid slds-m-top_x-small">
+                    <div class="info-item">
+                        <span class="info-label">제목</span>
+                        <span class="info-value">{workOrderInfo.subject}</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">전체 작업</span>
+                        <span class="info-value">{workOrderInfo.count}건</span>
+                    </div>
+                </div>
+            </div>
+        </lightning-card>
+    </template>
+</template>

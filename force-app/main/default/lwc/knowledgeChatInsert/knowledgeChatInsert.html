@@ -1,0 +1,81 @@
+<template>
+    <lightning-card title="Knowledge 검색" icon-name="standard:knowledge">
+        <template if:true={showList}>
+            <div class="slds-p-horizontal_small">
+                <div class="search-container">
+                    <lightning-input 
+                        type="search" 
+                        placeholder="문서 검색..." 
+                        value={searchTerm}
+                        onchange={handleSearchChange}
+                        onkeypress={handleKeyPress}>
+                    </lightning-input>
+                    <lightning-button 
+                        variant="brand" 
+                        label="검색" 
+                        onclick={handleSearch}
+                        class="slds-m-left_x-small">
+                    </lightning-button>
+                </div>
+
+                <template if:true={isLoading}>
+                    <div class="slds-p-around_medium slds-align_absolute-center">
+                        <lightning-spinner size="small"></lightning-spinner>
+                    </div>
+                </template>
+
+                <template if:true={error}>
+                    <div class="slds-p-around_small slds-text-color_error">
+                        {error}
+                    </div>
+                </template>
+
+                <template if:true={hasArticles}>
+                    <ul class="article-list slds-m-top_small">
+                        <template for:each={articles} for:item="article">
+                            <li key={article.id} class="article-item" data-id={article.id} onclick={handleArticleClick}>
+                                <lightning-icon icon-name="standard:article" size="small"></lightning-icon>
+                                <span class="article-title slds-m-left_x-small">{article.title}</span>
+                            </li>
+                        </template>
+                    </ul>
+                </template>
+
+                <template if:true={noResults}>
+                    <div class="slds-p-around_small slds-text-color_weak slds-text-align_center">
+                        검색 결과가 없습니다.
+                    </div>
+                </template>
+            </div>
+        </template>
+
+        <template if:true={showDetail}>
+            <div class="slds-p-horizontal_small">
+                <div class="detail-header">
+                    <lightning-button-icon 
+                        icon-name="utility:back" 
+                        onclick={handleBack}
+                        alternative-text="뒤로">
+                    </lightning-button-icon>
+                    <h2 class="slds-text-heading_small slds-m-left_small">{selectedArticle.title}</h2>
+                </div>
+
+                <div class="article-content slds-m-top_small">
+                    <lightning-formatted-rich-text value={selectedArticle.content}></lightning-formatted-rich-text>
+                </div>
+
+                <div class="action-bar slds-m-top_small">
+                    <lightning-button 
+                        variant="brand" 
+                        label="내용 복사" 
+                        onclick={handleCopyContent}
+                        icon-name="utility:copy">
+                    </lightning-button>
+                    <template if:true={copiedMessage}>
+                        <span class="copied-message slds-m-left_small">{copiedMessage}</span>
+                    </template>
+                </div>
+            </div>
+        </template>
+    </lightning-card>
+</template>
