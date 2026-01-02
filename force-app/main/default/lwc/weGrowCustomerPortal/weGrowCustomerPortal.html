@@ -20,6 +20,10 @@
                     <span class="nav-icon">💰</span>
                     <span>계약 및 청구</span>
                 </div>
+                <div class={knowledgeNavClass} onclick={navigateToKnowledge}>
+                    <span class="nav-icon">📚</span>
+                    <span>지식 센터</span>
+                </div>
 
             </nav>
 
@@ -380,12 +384,82 @@
                 </div>
             </template>
 
+            <!-- [TAB 4] 지식 센터 -->
+            <template if:true={isKnowledgeTab}>
+                <div class="page-header knowledge-header">
+                    <div class="header-left">
+                        <h1 class="page-title">📚 지식 센터</h1>
+                        <p class="page-subtitle">자주 묻는 질문과 이용 가이드를 검색해보세요</p>
+                    </div>
+                    <div class="search-box">
+                        <input 
+                            type="text" 
+                            class="search-input" 
+                            placeholder="검색어를 입력하세요..." 
+                            value={knowledgeSearchTerm}
+                            onkeyup={handleKnowledgeSearchKeyup}
+                        />
+                        <button class="btn-search" onclick={handleKnowledgeSearch}>🔍 검색</button>
+                    </div>
+                </div>
 
+                <template if:true={isSearching}>
+                    <div class="loading-state">
+                        <div class="spinner"></div>
+                        <p>검색 중...</p>
+                    </div>
+                </template>
 
+                <template if:false={isSearching}>
+                    <template if:true={hasKnowledgeArticles}>
+                        <div class="knowledge-grid">
+                            <template for:each={knowledgeArticles} for:item="article">
+                                <div key={article.id} class="knowledge-card" data-id={article.id} onclick={handleArticleClick}>
+                                    <div class="knowledge-card-header">
+                                        <span class="article-icon">📄</span>
+                                        <span class="article-number">{article.number}</span>
+                                    </div>
+                                    <h3 class="article-title">{article.title}</h3>
+                                    <p class="article-summary">{article.summary}</p>
+                                    <div class="article-footer">
+                                        <span class="read-more">자세히 보기 →</span>
+                                    </div>
+                                </div>
+                            </template>
+                        </div>
+                    </template>
 
+                    <template if:false={hasKnowledgeArticles}>
+                        <div class="empty-state knowledge-empty">
+                            <div class="empty-icon">📚</div>
+                            <p class="empty-title">{knowledgeEmptyMessage}</p>
+                            <p class="empty-subtitle">검색어를 입력하여 원하는 정보를 찾아보세요</p>
+                        </div>
+                    </template>
+                </template>
+            </template>
 
         </div>
     </div>
+
+    <!-- Knowledge Article Detail Modal -->
+    <template if:true={showArticleModal}>
+        <div class="custom-modal-overlay" onclick={closeArticleModal}></div>
+        <div class="custom-modal-container">
+            <div class="custom-modal-box">
+                <header class="custom-modal-header">
+                    <h2 class="custom-modal-title">{selectedArticle.title}</h2>
+                    <button class="custom-modal-close" onclick={closeArticleModal}>✕</button>
+                </header>
+                <div class="custom-modal-body">
+                    <div class="article-content-body" lwc:dom="manual"></div>
+                </div>
+                <footer class="custom-modal-footer">
+                    <button class="btn-modal-close" onclick={closeArticleModal}>닫기</button>
+                </footer>
+            </div>
+        </div>
+    </template>
 
     <!-- Case Detail Modal -->
     <template if:true={showCaseModal}>

@@ -10,6 +10,8 @@ import getPortalData from '@salesforce/apex/CustomerPortalController.getPortalDa
 import getInvoices from '@salesforce/apex/CustomerPortalController.getInvoices';
 import createCase from '@salesforce/apex/CustomerPortalController.createCase';
 import saveChatContext from '@salesforce/apex/ChatContextManager.saveContext';
+import searchArticles from '@salesforce/apex/KnowledgeSearchController.searchArticles';
+import getArticleContent from '@salesforce/apex/KnowledgeSearchController.getArticleContent';
 
 export default class WeGrowCustomerPortal extends NavigationMixin(LightningElement) {
     logoUrl = WEGROW_LOGO;
@@ -37,9 +39,16 @@ export default class WeGrowCustomerPortal extends NavigationMixin(LightningEleme
     @track showCaseModal = false;
     @track selectedCase = null;
     
+    @track knowledgeSearchTerm = '';
+    @track knowledgeArticles = [];
+    @track isSearching = false;
+    @track showArticleModal = false;
+    @track selectedArticle = {};
+    
     get isDashboardTab() { return this.currentTab === 'dashboard'; }
     get isMyOfficeTab() { return this.currentTab === 'myoffice'; }
     get isChargeTab() { return this.currentTab === 'charge'; }
+    get isKnowledgeTab() { return this.currentTab === 'knowledge'; }
     
     get dashboardNavClass() {
         return `nav-item ${this.currentTab === 'dashboard' ? 'active' : ''}`;
@@ -49,6 +58,9 @@ export default class WeGrowCustomerPortal extends NavigationMixin(LightningEleme
     }
     get chargeNavClass() {
         return `nav-item ${this.currentTab === 'charge' ? 'active' : ''}`;
+    }
+    get knowledgeNavClass() {
+        return `nav-item ${this.currentTab === 'knowledge' ? 'active' : ''}`;
     }
 
     get bannerStyle() {
@@ -516,6 +528,94 @@ export default class WeGrowCustomerPortal extends NavigationMixin(LightningEleme
         if (this.accountId && this.invoices.length === 0) {
             this.loadInvoices();
         }
+    }
+    
+    navigateToKnowledge() { 
+        this.currentTab = 'knowledge';
+        if (this.knowledgeArticles.length === 0 && !this.knowledgeSearchTerm) {
+            this.loadDefaultArticles();
+        }
+    }
+    
+    async loadDefaultArticles() {
+        this.isSearching = true;
+        try {
+            const results = await searchArticles({ searchTerm: '이용' });
+            this.knowledgeArticles = results || [];
+        } catch (error) {
+            console.error('[CustomerPortal] Failed to load default articles:', error);
+            this.knowledgeArticles = [];
+        } finally {
+            this.isSearching = false;
+        }
+    }
+    
+    get hasKnowledgeArticles() {
+        return this.knowledgeArticles && this.knowledgeArticles.length > 0;
+    }
+    
+    get knowledgeEmptyMessage() {
+        if (this.knowledgeSearchTerm) {
+            return `'${this.knowledgeSearchTerm}' 에 대한 검색 결과가 없습니다`;
+        }
+        return '검색어를 입력해주세요';
+    }
+    
+    handleKnowledgeSearchKeyup(event) {
+        this.knowledgeSearchTerm = event.target.value;
+        if (event.key === 'Enter') {
+            this.handleKnowledgeSearch();
+        }
+    }
+    
+    async handleKnowledgeSearch() {
+        if (!this.knowledgeSearchTerm || this.knowledgeSearchTerm.trim() === '') {
+            this.showToast('알림', '검색어를 입력해주세요.', 'warning');
+            return;
+        }
+        
+        this.isSearching = true;
+        try {
+            const results = await searchArticles({ searchTerm: this.knowledgeSearchTerm });
+            this.knowledgeArticles = results || [];
+            console.log('[CustomerPortal] Knowledge search results:', this.knowledgeArticles.length);
+        } catch (error) {
+            console.error('[CustomerPortal] Knowledge search error:', error);
+            this.showToast('오류', '지식 문서 검색 중 오류가 발생했습니다.', 'error');
+            this.knowledgeArticles = [];
+        } finally {
+            this.isSearching = false;
+        }
+    }
+    
+    async handleArticleClick(event) {
+        const articleId = event.currentTarget.dataset.id;
+        console.log('[CustomerPortal] Article clicked:', articleId);
+        
+        try {
+            const result = await getArticleContent({ articleId: articleId });
+            this.selectedArticle = {
+                id: articleId,
+                title: result.title,
+                content: result.content
+            };
+            this.showArticleModal = true;
+            
+            setTimeout(() => {
+                const contentContainer = this.template.querySelector('.article-content-body');
+                if (contentContainer) {
+                    contentContainer.innerHTML = this.selectedArticle.content || '내용이 없습니다.';
+                }
+            }, 100);
+        } catch (error) {
+            console.error('[CustomerPortal] Failed to load article content:', error);
+            this.showToast('오류', '문서 내용을 불러오는데 실패했습니다.', 'error');
+        }
+    }
+    
+    closeArticleModal() {
+        this.showArticleModal = false;
+        this.selectedArticle = {};
     }
 
     toggleDoorLockPw() {

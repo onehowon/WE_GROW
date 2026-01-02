@@ -1,4 +1,4 @@
-public with sharing class KnowledgeSearchController {
+public without sharing class KnowledgeSearchController {
     @AuraEnabled
     public static List<Map<String, String>> searchArticles(String searchTerm) {
         List<Map<String, String>> results = new List<Map<String, String>>();
@@ -7,11 +7,14 @@ public with sharing class KnowledgeSearchController {
             return results;
         }
 
-        String searchQuery = 'FIND \'' + String.escapeSingleQuotes(searchTerm) + '*\' IN ALL FIELDS RETURNING Knowledge__kav(Id, Title, Summary, ArticleNumber WHERE PublishStatus = \'Online\' AND Language = \'ko\') LIMIT 20';
+        String searchQuery = 'FIND \'' + String.escapeSingleQuotes(searchTerm) + '*\' IN ALL FIELDS RETURNING Knowledge__kav(Id, Title, Summary, ArticleNumber WHERE PublishStatus = \'Online\' AND IsVisibleInCsp = true) LIMIT 20';
         
         try {
             List<List<SObject>> searchList = Search.query(searchQuery);
             List<Knowledge__kav> articles = (List<Knowledge__kav>)searchList[0];
+            
+            System.debug('Search term: ' + searchTerm);
+            System.debug('Articles found: ' + articles.size());
             
             for (Knowledge__kav article : articles) {
                 Map<String, String> item = new Map<String, String>();
@@ -32,7 +35,6 @@ public with sharing class KnowledgeSearchController {
     @AuraEnabled
     public static Map<String, String> getArticleContent(String articleId) {
         try {
-            // 1. Fetch standard fields and the custom content field (Field1__c)
             Knowledge__kav article = [
                 SELECT Title, Summary, ArticleNumber, Field1__c
                 FROM Knowledge__kav 
@@ -42,7 +44,6 @@ public with sharing class KnowledgeSearchController {
             
             Map<String, String> result = new Map<String, String>();
             result.put('title', article.Title);
-            // Use Field1__c (Rich Text) if available, otherwise fallback to Summary
             result.put('content', article.Field1__c != null ? article.Field1__c : article.Summary); 
             
             return result;
