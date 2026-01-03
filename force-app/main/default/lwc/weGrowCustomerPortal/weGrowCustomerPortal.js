@@ -74,6 +74,32 @@ export default class WeGrowCustomerPortal extends NavigationMixin(LightningEleme
     get officeFullName() { return `${this.branchName} - ${this.officeName}`; }
     get capacity() { return this.portalData.capacity || 0; }
     get productName() { return this.portalData.productName || '오피스'; }
+    
+    // 중복 제거: productName에 "인실"이 있으면 capacity 안 붙임
+    get officeTypeDisplay() {
+        const pn = this.productName;
+        if (pn.includes('인실')) {
+            return pn;
+        }
+        return `${this.capacity}인실 ${pn}`;
+    }
+    
+    // 상태 배지 동적 텍스트
+    get statusBadgeText() {
+        const mode = this.progressMode;
+        if (mode === 'moveIn') return '입주 준비 중';
+        if (mode === 'normal') return '계약 중 (Active)';
+        if (mode === 'renewal') return '재계약 대상';
+        return '계약 중 (Active)';
+    }
+    
+    get statusBadgeClass() {
+        const mode = this.progressMode;
+        if (mode === 'moveIn') return 'status-badge-movein';
+        if (mode === 'normal') return 'status-badge-active';
+        if (mode === 'renewal') return 'status-badge-renewal';
+        return 'status-badge-active';
+    }
     get doorLockPwDisplay() { 
         const pw = this.portalData.doorLockPw || '';
         return this.showDoorLockPw ? pw : '••••••••';
@@ -125,10 +151,16 @@ export default class WeGrowCustomerPortal extends NavigationMixin(LightningEleme
     get progressMode() {
         const assetStatus = this.portalData.assetStatus;
         const daysToEnd = this.daysUntilContractEnd;
+        const daysToMoveIn = this.daysUntilMoveIn;
         
         const isOccupied = assetStatus === 'Occupied' || assetStatus === '입주';
         const isRenewalPending = assetStatus === 'Renewal_Pending_Quote' || assetStatus === '재계약 대상 견적';
         const isRenewalComplete = assetStatus === 'Renewal_Complete' || assetStatus === '재계약 완료';
+        
+        // 입주일이 아직 안 지났으면 무조건 moveIn 모드
+        if (daysToMoveIn > 0) {
+            return 'moveIn';
+        }
         
         if (isOccupied && daysToEnd > 90) {
             return 'normal';
@@ -167,24 +199,31 @@ export default class WeGrowCustomerPortal extends NavigationMixin(LightningEleme
             }
             const step2 = { label: '보증금 확인', status: step2Status };
             
+            // Step 3 (입주 세팅 중): Step 2 완료 + WorkOrder 생성 필요
             let step3Status = 'pending';
             if (isOccupied) {
                 step3Status = 'completed';
-            } else if (hasMoveInWO || (daysToMoveIn <= 14 && daysToMoveIn > 3)) {
-                step3Status = 'active';
-            } else if (step2Status === 'completed') {
-                step3Status = 'active';
+            } else if (step2Status === 'completed' && hasMoveInWO) {
+                // WorkOrder가 있어야 진행
+                if (daysToMoveIn > 3) {
+                    step3Status = 'active';
+                } else {
+                    // 3일 이내면 세팅 완료로 간주
+                    step3Status = 'completed';
+                }
             }
             const step3 = { label: '입주 세팅 중', status: step3Status };
             
+            // Step 4 (최종 점검): Step 3가 완료되어야 진행 가능
             let step4Status = 'pending';
             if (isOccupied) {
                 step4Status = 'completed';
-            } else if (daysToMoveIn <= 3 && daysToMoveIn >= 0) {
+            } else if (step3Status === 'completed' && daysToMoveIn <= 3 && daysToMoveIn >= 0) {
                 step4Status = 'active';
             }
             const step4 = { label: '최종 점검', status: step4Status };
             
+            // Step 5 (입주 완료): Asset이 Occupied가 되거나 입주일이 지나면 완료
             let step5Status = 'pending';
             if (isOccupied || daysToMoveIn < 0) {
                 step5Status = 'completed';
@@ -255,6 +294,20 @@ export default class WeGrowCustomerPortal extends NavigationMixin(LightningEleme
         if (this.progressMode === 'moveIn') return '입주 진행 현황';
         if (this.progressMode === 'renewal') return '재계약 진행 현황';
         return '';
+    }
+    
+    get welcomeBadgeEmoji() {
+        if (this.progressMode === 'moveIn') return '👋';
+        if (this.progressMode === 'normal') return '🏢';
+        if (this.progressMode === 'renewal') return '📝';
+        return '👋';
+    }
+    
+    get welcomeBadgeText() {
+        if (this.progressMode === 'moveIn') return '입주 준비가 진행 중입니다';
+        if (this.progressMode === 'normal') return '정상 이용 중입니다';
+        if (this.progressMode === 'renewal') return '재계약 안내가 진행 중입니다';
+        return '입주 준비가 진행 중입니다';
     }
     
     get progressSubtitle() {
@@ -414,13 +467,18 @@ export default class WeGrowCustomerPortal extends NavigationMixin(LightningEleme
                 console.log('[CustomerPortal] accountName:', result.accountName || '(null)');
                 console.log('[CustomerPortal] assetId:', result.assetId || '(null)');
                 console.log('[CustomerPortal] assetName:', result.assetName || '(null)');
+                console.log('[CustomerPortal] assetStatus:', result.assetStatus || '(null)');
                 console.log('[CustomerPortal] branchName:', result.branchName || '(null)');
                 console.log('[CustomerPortal] capacity:', result.capacity || '(null)');
                 console.log('[CustomerPortal] doorLockPw:', result.doorLockPw ? '(exists)' : '(null)');
                 console.log('[CustomerPortal] wifiSsid:', result.wifiSsid || '(null)');
                 console.log('[CustomerPortal] contractId:', result.contractId || '(null)');
                 console.log('[CustomerPortal] contractNumber:', result.contractNumber || '(null)');
+                console.log('[CustomerPortal] contractStatus:', result.contractStatus || '(null)');
                 console.log('[CustomerPortal] monthlyPayment:', result.monthlyPayment || '(null)');
+                console.log('[CustomerPortal] moveInDate:', result.moveInDate || '(null)');
+                console.log('[CustomerPortal] hasMoveInWorkOrder:', result.hasMoveInWorkOrder);
+                console.log('[CustomerPortal] moveInWorkOrderStatus:', result.moveInWorkOrderStatus || '(null)');
                 console.log('[CustomerPortal] recentCases count:', result.recentCases?.length || 0);
                 console.log('[CustomerPortal] === END DATA CHECK ===');
                 
@@ -468,7 +526,21 @@ export default class WeGrowCustomerPortal extends NavigationMixin(LightningEleme
     }
     
     get formattedInvoices() {
-        if (!this.invoices || this.invoices.length === 0) return [];
+        // Invoice 데이터가 없으면 목업 데이터 반환 (신규 입주)
+        if (!this.invoices || this.invoices.length === 0) {
+            const monthlyPayment = this.portalData.monthlyPayment || 577500;
+            return [
+                {
+                    invoiceId: 'MOCK-001',
+                    billingMonthDisplay: '2026년 1월분',
+                    amountDisplay: this.formatCurrency(monthlyPayment),
+                    dueDateDisplay: '2026.01.15',
+                    statusClass: 'status-tag unpaid',
+                    statusDisplay: '청구 예정',
+                    rowClass: ''
+                }
+            ];
+        }
         
         return this.invoices.map(inv => {
             const today = new Date();

@@ -47,8 +47,8 @@
                     <div class="header-title-row">
                         <h1 class="page-title">입주 현황 대시보드</h1>
                         <div class="welcome-badge">
-                            <span class="emoji">👋</span>
-                            <span>입주 준비가 진행 중입니다</span>
+                            <span class="emoji">{welcomeBadgeEmoji}</span>
+                            <span>{welcomeBadgeText}</span>
                         </div>
                     </div>
                     <p class="contract-date">입주일: {moveInDate} ({moveInDayDisplay})</p>
@@ -165,13 +165,13 @@
             <template if:true={isMyOfficeTab}>
                 <div class="page-header">
                     <h1 class="page-title">나의 오피스 정보</h1>
-                    <span class="status-badge-active">계약 중 (Active)</span>
+                    <span class={statusBadgeClass}>{statusBadgeText}</span>
                 </div>
 
                 <div class="office-banner" style={bannerStyle}>
                     <div class="banner-overlay">
                         <h2 class="office-name">{officeFullName}</h2>
-                        <p class="office-type">{capacity}인실 {productName}</p>
+                        <p class="office-type">{officeTypeDisplay}</p>
                     </div>
                 </div>
 

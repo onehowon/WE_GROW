@@ -56,7 +56,9 @@ public without sharing class CustomerPortalController {
                 
                 List<WorkOrder> moveInWorkOrders = [
                     SELECT Id, Status FROM WorkOrder 
-                    WHERE AssetId = :asset.Id AND Type__c = 'Move_In_Setup'
+                    WHERE AssetId = :asset.Id 
+                    AND (Type__c = 'Move_In_Setup' OR Subject LIKE '%입주 청소%' OR Subject LIKE '%입주%')
+                    ORDER BY CreatedDate DESC
                     LIMIT 1
                 ];
                 result.hasMoveInWorkOrder = !moveInWorkOrders.isEmpty();
@@ -100,6 +102,8 @@ public without sharing class CustomerPortalController {
                 SELECT Id, CaseNumber, Subject, Description, Status, Priority, Type, CreatedDate
                 FROM Case 
                 WHERE AccountId = :contact.AccountId
+                AND (NOT Subject LIKE '%입주청소%')
+                AND (NOT Subject LIKE '%입주 청소%')
                 ORDER BY CreatedDate DESC
                 LIMIT 5
             ];
