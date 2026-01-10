@@ -1,0 +1,473 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Flow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>65.0</apiVersion>
+    <areMetricsLoggedToDataCloud>false</areMetricsLoggedToDataCloud>
+    <choices>
+        <name>Bad</name>
+        <choiceText>Bad</choiceText>
+        <dataType>String</dataType>
+        <value>
+            <stringValue>Bad</stringValue>
+        </value>
+    </choices>
+    <choices>
+        <name>Good</name>
+        <choiceText>긍정적</choiceText>
+        <dataType>String</dataType>
+        <value>
+            <stringValue>긍정적</stringValue>
+        </value>
+    </choices>
+    <choices>
+        <name>High</name>
+        <choiceText>상</choiceText>
+        <dataType>String</dataType>
+    </choices>
+    <choices>
+        <description>중</description>
+        <name>Middle</name>
+        <choiceText>중</choiceText>
+        <dataType>String</dataType>
+    </choices>
+    <choices>
+        <name>Nothing</name>
+        <choiceText>Nothing</choiceText>
+        <dataType>String</dataType>
+        <value>
+            <stringValue>Nothing</stringValue>
+        </value>
+    </choices>
+    <customProperties>
+        <name>ScreenProgressIndicator</name>
+        <value>
+            <stringValue>{&quot;location&quot;:&quot;top&quot;,&quot;type&quot;:&quot;simple&quot;}</stringValue>
+        </value>
+    </customProperties>
+    <environments>Default</environments>
+    <formulas>
+        <name>for_CombinedNote</name>
+        <dataType>String</dataType>
+        <expression>&quot;[&quot; &amp; 
+CASE({!Tour_Result.value}, 
+   &quot;Good&quot;, &quot;긍정적&quot;,
+   &quot;Bad&quot;, &quot;부정적&quot;,
+   &quot;Nothing&quot;, &quot;보류&quot;,
+   &quot;미선택&quot;
+) &amp; 
+&quot;]&quot; &amp; BR() &amp; 
+{!Tour_Note}</expression>
+    </formulas>
+    <interviewLabel>Mobile_Tour_App {!$Flow.CurrentDateTime}</interviewLabel>
+    <isAdditionalPermissionRequiredToRun>true</isAdditionalPermissionRequiredToRun>
+    <label>Mobile_Tour_App</label>
+    <processMetadataValues>
+        <name>BuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>CanvasMode</name>
+        <value>
+            <stringValue>AUTO_LAYOUT_CANVAS</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>OriginBuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processType>Flow</processType>
+    <recordLookups>
+        <name>Opportunity</name>
+        <label>기회 정보 조회</label>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
+        <connector>
+            <targetReference>tour</targetReference>
+        </connector>
+        <filterLogic>and</filterLogic>
+        <filters>
+            <field>Id</field>
+            <operator>EqualTo</operator>
+            <value>
+                <elementReference>recordId</elementReference>
+            </value>
+        </filters>
+        <getFirstRecordOnly>true</getFirstRecordOnly>
+        <object>Opportunity</object>
+        <storeOutputAutomatically>true</storeOutputAutomatically>
+    </recordLookups>
+    <recordUpdates>
+        <name>Save_Tour</name>
+        <label>투어 결과 저장하기</label>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <filterLogic>and</filterLogic>
+        <filters>
+            <field>Id</field>
+            <operator>EqualTo</operator>
+            <value>
+                <elementReference>recordId</elementReference>
+            </value>
+        </filters>
+        <inputAssignments>
+            <field>StageName</field>
+            <value>
+                <stringValue>제안/견적</stringValue>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Tour_Result__c</field>
+            <value>
+                <elementReference>for_CombinedNote</elementReference>
+            </value>
+        </inputAssignments>
+        <object>Opportunity</object>
+    </recordUpdates>
+    <screens>
+        <name>tour</name>
+        <label>투어 진행 화면</label>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <allowBack>false</allowBack>
+        <allowFinish>true</allowFinish>
+        <allowPause>false</allowPause>
+        <connector>
+            <targetReference>Save_Tour</targetReference>
+        </connector>
+        <fields>
+            <name>user_Tour_Info</name>
+            <extensionName>c:tourInfoCard</extensionName>
+            <fieldType>ComponentInstance</fieldType>
+            <inputParameters>
+                <name>accountName</name>
+                <value>
+                    <elementReference>Opportunity.Account.Name</elementReference>
+                </value>
+            </inputParameters>
+            <inputParameters>
+                <name>oppName</name>
+                <value>
+                    <elementReference>Opportunity.Name</elementReference>
+                </value>
+            </inputParameters>
+            <inputParameters>
+                <name>budget</name>
+                <value>
+                    <elementReference>Opportunity.Budget_Max__c</elementReference>
+                </value>
+            </inputParameters>
+            <inputParameters>
+                <name>headcount</name>
+                <value>
+                    <elementReference>Opportunity.Headcount__c</elementReference>
+                </value>
+            </inputParameters>
+            <inputParameters>
+                <name>branchName</name>
+                <value>
+                    <elementReference>Opportunity.Branch_Account__r.Name</elementReference>
+                </value>
+            </inputParameters>
+            <inputParameters>
+                <name>assetName</name>
+                <value>
+                    <elementReference>Opportunity.Asset__r.Name</elementReference>
+                </value>
+            </inputParameters>
+            <inputParameters>
+                <name>sdrNote</name>
+                <value>
+                    <elementReference>Opportunity.SDR_Handover_Note__c</elementReference>
+                </value>
+            </inputParameters>
+            <inputParameters>
+                <name>tourDate</name>
+                <value>
+                    <elementReference>Opportunity.Tour_Date__c</elementReference>
+                </value>
+            </inputParameters>
+            <inputParameters>
+                <name>moveInDate</name>
+                <value>
+                    <elementReference>Opportunity.Preferred_MoveIn_Date__c</elementReference>
+                </value>
+            </inputParameters>
+            <inputParameters>
+                <name>preferences</name>
+                <value>
+                    <elementReference>Opportunity.Preferences__c</elementReference>
+                </value>
+            </inputParameters>
+            <inputsOnNextNavToAssocScrn>UseStoredValues</inputsOnNextNavToAssocScrn>
+            <isRequired>true</isRequired>
+            <storeOutputAutomatically>true</storeOutputAutomatically>
+            <styleProperties>
+                <verticalAlignment>
+                    <stringValue>top</stringValue>
+                </verticalAlignment>
+                <width>
+                    <stringValue>12</stringValue>
+                </width>
+            </styleProperties>
+        </fields>
+        <fields>
+            <name>tour_Section1</name>
+            <fieldType>RegionContainer</fieldType>
+            <fields>
+                <name>tour_Section1_Column1</name>
+                <fieldType>Region</fieldType>
+                <inputParameters>
+                    <name>width</name>
+                    <value>
+                        <stringValue>12</stringValue>
+                    </value>
+                </inputParameters>
+                <isRequired>false</isRequired>
+            </fields>
+            <isRequired>false</isRequired>
+            <regionContainerType>SectionWithoutHeader</regionContainerType>
+            <styleProperties>
+                <verticalAlignment>
+                    <stringValue>top</stringValue>
+                </verticalAlignment>
+                <width>
+                    <stringValue>12</stringValue>
+                </width>
+            </styleProperties>
+        </fields>
+        <fields>
+            <name>Tour_Result</name>
+            <extensionName>c:horizontalButtonGroup</extensionName>
+            <fieldType>ComponentInstance</fieldType>
+            <inputParameters>
+                <name>label</name>
+                <value>
+                    <elementReference>Tour_Result.label</elementReference>
+                </value>
+            </inputParameters>
+            <inputParameters>
+                <name>value</name>
+                <value>
+                    <elementReference>Tour_Result.value</elementReference>
+                </value>
+            </inputParameters>
+            <inputsOnNextNavToAssocScrn>UseStoredValues</inputsOnNextNavToAssocScrn>
+            <isRequired>true</isRequired>
+            <storeOutputAutomatically>true</storeOutputAutomatically>
+            <styleProperties>
+                <verticalAlignment>
+                    <stringValue>top</stringValue>
+                </verticalAlignment>
+                <width>
+                    <stringValue>12</stringValue>
+                </width>
+            </styleProperties>
+        </fields>
+        <fields>
+            <name>Tour_Note</name>
+            <fieldText>투어 결과 메모</fieldText>
+            <fieldType>LargeTextArea</fieldType>
+            <inputsOnNextNavToAssocScrn>UseStoredValues</inputsOnNextNavToAssocScrn>
+            <isRequired>false</isRequired>
+            <styleProperties>
+                <verticalAlignment>
+                    <stringValue>top</stringValue>
+                </verticalAlignment>
+                <width>
+                    <stringValue>12</stringValue>
+                </width>
+            </styleProperties>
+        </fields>
+        <fields>
+            <name>tour_Section2</name>
+            <fieldType>RegionContainer</fieldType>
+            <fields>
+                <name>tour_Section2_Column1</name>
+                <fieldType>Region</fieldType>
+                <inputParameters>
+                    <name>width</name>
+                    <value>
+                        <stringValue>12</stringValue>
+                    </value>
+                </inputParameters>
+                <isRequired>false</isRequired>
+            </fields>
+            <isRequired>false</isRequired>
+            <regionContainerType>SectionWithoutHeader</regionContainerType>
+            <styleProperties>
+                <verticalAlignment>
+                    <stringValue>top</stringValue>
+                </verticalAlignment>
+                <width>
+                    <stringValue>12</stringValue>
+                </width>
+            </styleProperties>
+        </fields>
+        <showFooter>true</showFooter>
+        <showHeader>true</showHeader>
+    </screens>
+    <start>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <connector>
+            <targetReference>Opportunity</targetReference>
+        </connector>
+    </start>
+    <status>Active</status>
+    <textTemplates>
+        <name>box</name>
+        <isViewedAsPlainText>true</isViewedAsPlainText>
+        <text>&lt;div style=&quot;background-color: #f0f0e0; border: 1px solid #dcdcdc; font-family: &apos;Helvetica Neue&apos;, sans-serif; padding: 30px; width: 100%; box-sizing: border-box; position: relative; overflow: hidden;&quot;&gt;
+
+    &lt;!-- 대각선 배경 요소 (동적 긴장) --&gt;
+    &lt;div style=&quot;position: absolute; top: -50px; left: -50px; width: 300px; height: 300px; background-color: rgba(220, 220, 200, 0.5); transform: rotate(45deg); z-index: 0;&quot;&gt;&lt;/div&gt;
+
+    &lt;!-- 타이틀 --&gt;
+    &lt;div style=&quot;position: relative; z-index: 1;&quot;&gt;
+        &lt;p style=&quot;font-size: 11px; color: #54698d; margin: 0 0 2px 0; text-transform: uppercase; letter-spacing: 1px;&quot;&gt;Client &amp; Tour&lt;/p&gt;
+        &lt;h2 style=&quot;margin: 0; font-size: 24px; font-weight: bold; color: #080707;&quot;&gt;{!Opportunity.Account.Name} - {!Opportunity.Name}&lt;/h2&gt;
+    &lt;/div&gt;
+
+    &lt;!-- 기능적 분할선 --&gt;
+    &lt;div style=&quot;position: relative; width: 80%; height: 2px; background-color: #333; margin: 25px 0;&quot;&gt;&lt;/div&gt;
+
+    &lt;!-- Section 2 &amp; 3: 정보 중첩 (다성음악적 구성) --&gt;
+    &lt;div style=&quot;position: relative; z-index: 1;&quot;&gt;
+        &lt;!-- 핵심 정보 (비대칭 배치) --&gt;
+        &lt;div style=&quot;margin-bottom: 25px;&quot;&gt;
+            &lt;div style=&quot;display: inline-block; vertical-align: top; margin-right: 40px;&quot;&gt;
+                &lt;p style=&quot;font-size: 12px; color: #54698d; margin: 0 0 4px 0;&quot;&gt;예산 (Budget)&lt;/p&gt;
+                &lt;p style=&quot;font-size: 20px; font-weight: 500; color: #080707; margin: 0;&quot;&gt;{!Opportunity.Budget_Max__c}&lt;/p&gt;
+            &lt;/div&gt;
+            &lt;div style=&quot;display: inline-block; vertical-align: top;&quot;&gt;
+                &lt;p style=&quot;font-size: 12px; color: #54698d; margin: 0 0 4px 0;&quot;&gt;인원 (Headcount)&lt;/p&gt;
+                &lt;p style=&quot;font-size: 20px; font-weight: 500; color: #080707; margin: 0;&quot;&gt;{!Opportunity.Headcount__c} 명&lt;/p&gt;
+            &lt;/div&gt;
+        &lt;/div&gt;
+
+        &lt;!-- SDR 인계사항 (투명 중첩) --&gt;
+        &lt;div style=&quot;background-color: rgba(255, 255, 255, 0.7); border-left: 3px solid #e60000; /* 빨강 강조 */ padding: 16px; margin-bottom: 25px; backdrop-filter: blur(5px);&quot;&gt;
+            &lt;p style=&quot;font-size: 12px; font-weight: bold; color: #3e3e3c; margin: 0 0 8px 0;&quot;&gt;SDR 인계 사항&lt;/p&gt;
+            &lt;p style=&quot;font-size: 13px; color: #3e3e3c; line-height: 1.6; margin: 0;&quot;&gt;{!Opportunity.SDR_Handover_Note__c}&lt;/p&gt;
+        &lt;/div&gt;
+
+        &lt;!-- 희망 지점 및 날짜 (레이어 분리) --&gt;
+        &lt;div style=&quot;background-color: rgba(255, 255, 255, 0.9); padding: 20px; border-top: 2px solid #333;&quot;&gt;
+             &lt;p style=&quot;font-size: 12px; color: #54698d; margin: 0 0 4px 0;&quot;&gt;희망 지점/호실&lt;/p&gt;
+             &lt;p style=&quot;font-size: 14px; font-weight: bold; color: #080707; margin: 0 0 15px 0;&quot;&gt;{!Opportunity.Branch_Account__r.Name} / {!Opportunity.Asset__r.Name}&lt;/p&gt;
+
+             &lt;div style=&quot;font-size: 13px; line-height: 1.7;&quot;&gt;
+                &lt;span style=&quot;display: inline-block; min-width: 200px;&quot;&gt;&lt;b&gt;투어 날짜:&lt;/b&gt; &lt;span style=&quot;background-color: #ffd700; padding: 2px 4px;&quot;&gt;{!Opportunity.Tour_Date__c}&lt;/span&gt;&lt;/span&gt;  &lt;!-- 노랑 강조 --&gt;
+                &lt;span style=&quot;display: inline-block; min-width: 200px;&quot;&gt;&lt;b&gt;선호 상담:&lt;/b&gt; {!Opportunity.Preferred_Consult_Time__c}&lt;/span&gt;
+                &lt;span style=&quot;display: inline-block;&quot;&gt;&lt;b&gt;선호 입주:&lt;/b&gt; {!Opportunity.Preferred_MoveIn_Date__c}&lt;/span&gt;
+             &lt;/div&gt;
+        &lt;/div&gt;
+         
+        &lt;!-- 핵심 니즈 (원형 요소 추가) --&gt;
+        &lt;div style=&quot;margin-top: 25px; padding-left: 20px; border-left: 2px solid #0055b8;&quot;&gt; &lt;!-- 파랑 강조 --&gt;
+            &lt;p style=&quot;font-size: 12px; color: #54698d; margin: 0 0 4px 0;&quot;&gt;핵심 니즈 &amp; 선호사항&lt;/p&gt;
+            &lt;p style=&quot;font-size: 14px; color: #080707; margin: 0;&quot;&gt;&lt;b&gt;{!Opportunity.Description}&lt;/b&gt; (선호: {!Opportunity.Preferences__c})&lt;/p&gt;
+        &lt;/div&gt;
+    &lt;/div&gt;
+&lt;/div&gt;</text>
+    </textTemplates>
+    <textTemplates>
+        <name>box2</name>
+        <isViewedAsPlainText>true</isViewedAsPlainText>
+        <text>&lt;div style=&quot;background-color: #ffffff; border: 1px solid #e0e0e0; border-radius: 4px; font-family: &apos;Salesforce Sans&apos;, sans-serif; padding: 24px; box-sizing: border-box; width: 100%;&quot;&gt;
+
+    &lt;!-- Section 1: 핵심 정보 --&gt;
+    &lt;div style=&quot;margin-bottom: 20px;&quot;&gt;
+        &lt;p style=&quot;font-size: 11px; color: #54698d; margin: 0 0 2px 0; text-transform: uppercase; letter-spacing: 0.5px;&quot;&gt;Client &amp; Tour&lt;/p&gt;
+        &lt;h2 style=&quot;margin: 0; font-size: 20px; font-weight: bold; color: #080707;&quot;&gt;{!Opportunity.Account.Name} - {!Opportunity.Name}&lt;/h2&gt;
+    &lt;/div&gt;
+
+    &lt;hr style=&quot;border: 0; border-top: 1px solid #e0e0e0; margin: 24px 0;&quot;&gt;
+
+    &lt;!-- Section 2: 상세 정보 (통합) --&gt;
+    &lt;div&gt;
+        &lt;p style=&quot;font-size: 12px; color: #54698d; margin: 0 0 4px 0;&quot;&gt;핵심 니즈 &amp; 선호사항&lt;/p&gt;
+        &lt;p style=&quot;font-size: 14px; color: #080707; margin-bottom: 20px;&quot;&gt;&lt;b&gt;{!Opportunity.Description}&lt;/b&gt; (선호: {!Opportunity.Preferences__c})&lt;/p&gt;
+    &lt;/div&gt;
+
+    &lt;!-- Section 3: SDR 노트 (강조) --&gt;
+    &lt;div style=&quot;background-color: #f3f3f3; padding: 16px; border-radius: 4px;&quot;&gt;
+        &lt;p style=&quot;font-size: 12px; font-weight: bold; color: #3e3e3c; margin: 0 0 8px 0;&quot;&gt;SDR 인계 사항&lt;/p&gt;
+        &lt;p style=&quot;font-size: 13px; color: #3e3e3c; line-height: 1.6; margin: 0;&quot;&gt;{!Opportunity.SDR_Handover_Note__c}&lt;/p&gt;
+    &lt;/div&gt;
+&lt;/div&gt;</text>
+    </textTemplates>
+    <textTemplates>
+        <name>box3</name>
+        <isViewedAsPlainText>true</isViewedAsPlainText>
+        <text>&lt;p&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-family: monospace; color: rgb(50, 48, 44);&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-family: monospace; color: rgb(34, 134, 58);&quot;&gt;div&lt;/span&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-family: monospace; color: rgb(50, 48, 44);&quot;&gt; &lt;/span&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-family: monospace; color: rgb(0, 92, 197);&quot;&gt;style&lt;/span&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-family: monospace; color: rgb(50, 48, 44);&quot;&gt;=&lt;/span&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-family: monospace; color: rgb(3, 47, 98);&quot;&gt;&quot;background-color: #ffffff; border: 1px solid #e0e0e0; border-radius: 4px; font-family: &apos;Salesforce Sans&apos;, sans-serif; padding: 24px; box-sizing: border-box; width: 100%;&quot;&lt;/span&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-family: monospace; color: rgb(50, 48, 44);&quot;&gt;&amp;gt;&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;br&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-family: monospace; color: rgb(50, 48, 44);&quot;&gt;    &lt;/span&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-family: monospace; color: rgb(106, 115, 125);&quot;&gt;&amp;lt;!-- Section 1: 타이틀 --&amp;gt;&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-family: monospace; color: rgb(50, 48, 44);&quot;&gt;    &amp;lt;&lt;/span&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-family: monospace; color: rgb(34, 134, 58);&quot;&gt;div&lt;/span&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-family: monospace; color: rgb(50, 48, 44);&quot;&gt;&amp;gt;&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-family: monospace; color: rgb(50, 48, 44);&quot;&gt;        &amp;lt;&lt;/span&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-family: monospace; color: rgb(34, 134, 58);&quot;&gt;p&lt;/span&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-family: monospace; color: rgb(50, 48, 44);&quot;&gt; &lt;/span&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-family: monospace; color: rgb(0, 92, 197);&quot;&gt;style&lt;/span&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-family: monospace; color: rgb(50, 48, 44);&quot;&gt;=&lt;/span&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-family: monospace; color: rgb(3, 47, 98);&quot;&gt;&quot;font-size: 11px; color: #54698d; margin: 0 0 2px 0; text-transform: uppercase; letter-spacing: 0.5px;&quot;&lt;/span&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-family: monospace; color: rgb(50, 48, 44);&quot;&gt;&amp;gt;Client &amp;amp; Tour&amp;lt;/&lt;/span&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-family: monospace; color: rgb(34, 134, 58);&quot;&gt;p&lt;/span&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-family: monospace; color: rgb(50, 48, 44);&quot;&gt;&amp;gt;&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-family: monospace; color: rgb(50, 48, 44);&quot;&gt;        &amp;lt;&lt;/span&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-family: monospace; color: rgb(34, 134, 58);&quot;&gt;h2&lt;/span&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-family: monospace; color: rgb(50, 48, 44);&quot;&gt; &lt;/span&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-family: monospace; color: rgb(0, 92, 197);&quot;&gt;style&lt;/span&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-family: monospace; color: rgb(50, 48, 44);&quot;&gt;=&lt;/span&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-family: monospace; color: rgb(3, 47, 98);&quot;&gt;&quot;margin: 0; font-size: 20px; font-weight: bold; color: #080707;&quot;&lt;/span&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-family: monospace; color: rgb(50, 48, 44);&quot;&gt;&amp;gt;{!Opportunity.Account.Name} - {!Opportunity.Name}&amp;lt;/&lt;/span&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-family: monospace; color: rgb(34, 134, 58);&quot;&gt;h2&lt;/span&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-family: monospace; color: rgb(50, 48, 44);&quot;&gt;&amp;gt;&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-family: monospace; color: rgb(50, 48, 44);&quot;&gt;    &amp;lt;/&lt;/span&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-family: monospace; color: rgb(34, 134, 58);&quot;&gt;div&lt;/span&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-family: monospace; color: rgb(50, 48, 44);&quot;&gt;&amp;gt;&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;br&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-family: monospace; color: rgb(50, 48, 44);&quot;&gt;    &amp;lt;&lt;/span&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-family: monospace; color: rgb(34, 134, 58);&quot;&gt;hr&lt;/span&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-family: monospace; color: rgb(50, 48, 44);&quot;&gt; &lt;/span&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-family: monospace; color: rgb(0, 92, 197);&quot;&gt;style&lt;/span&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-family: monospace; color: rgb(50, 48, 44);&quot;&gt;=&lt;/span&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-family: monospace; color: rgb(3, 47, 98);&quot;&gt;&quot;border: 0; border-top: 1px solid #e0e0e0; margin: 20px 0;&quot;&lt;/span&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-family: monospace; color: rgb(50, 48, 44);&quot;&gt;&amp;gt;&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;br&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-family: monospace; color: rgb(50, 48, 44);&quot;&gt;    &lt;/span&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-family: monospace; color: rgb(106, 115, 125);&quot;&gt;&amp;lt;!-- Section 2: 핵심 정보 (4단 구성으로 변경) --&amp;gt;&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-family: monospace; color: rgb(50, 48, 44);&quot;&gt;    &amp;lt;&lt;/span&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-family: monospace; color: rgb(34, 134, 58);&quot;&gt;table&lt;/span&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-family: monospace; color: rgb(50, 48, 44);&quot;&gt; &lt;/span&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-family: monospace; color: rgb(0, 92, 197);&quot;&gt;style&lt;/span&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-family: monospace; color: rgb(50, 48, 44);&quot;&gt;=&lt;/span&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-family: monospace; color: rgb(3, 47, 98);&quot;&gt;&quot;width: 100%; border-collapse: collapse; margin-bottom: 20px;&quot;&lt;/span&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-family: monospace; color: rgb(50, 48, 44);&quot;&gt;&amp;gt;&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-family: monospace; color: rgb(50, 48, 44);&quot;&gt;        &amp;lt;&lt;/span&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-family: monospace; color: rgb(34, 134, 58);&quot;&gt;tr&lt;/span&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-family: monospace; color: rgb(50, 48, 44);&quot;&gt;&amp;gt;&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-family: monospace; color: rgb(50, 48, 44);&quot;&gt;            &amp;lt;&lt;/span&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-family: monospace; color: rgb(34, 134, 58);&quot;&gt;td&lt;/span&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-family: monospace; color: rgb(50, 48, 44);&quot;&gt; &lt;/span&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-family: monospace; color: rgb(0, 92, 197);&quot;&gt;style&lt;/span&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-family: monospace; color: rgb(50, 48, 44);&quot;&gt;=&lt;/span&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-family: monospace; color: rgb(3, 47, 98);&quot;&gt;&quot;width: 25%; vertical-align: top; padding-right: 12px;&quot;&lt;/span&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-family: monospace; color: rgb(50, 48, 44);&quot;&gt;&amp;gt;&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-family: monospace; color: rgb(50, 48, 44);&quot;&gt;                &amp;lt;&lt;/span&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-family: monospace; color: rgb(34, 134, 58);&quot;&gt;p&lt;/span&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-family: monospace; color: rgb(50, 48, 44);&quot;&gt; &lt;/span&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-family: monospace; color: rgb(0, 92, 197);&quot;&gt;style&lt;/span&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-family: monospace; color: rgb(50, 48, 44);&quot;&gt;=&lt;/span&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-family: monospace; color: rgb(3, 47, 98);&quot;&gt;&quot;font-size: 12px; color: #54698d; margin: 0 0 4px 0;&quot;&lt;/span&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-family: monospace; color: rgb(50, 48, 44);&quot;&gt;&amp;gt;예산 (Budget)&amp;lt;/&lt;/span&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-family: monospace; color: rgb(34, 134, 58);&quot;&gt;p&lt;/span&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-family: monospace; color: rgb(50, 48, 44);&quot;&gt;&amp;gt;&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-family: monospace; color: rgb(50, 48, 44);&quot;&gt;                &amp;lt;&lt;/span&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-family: monospace; color: rgb(34, 134, 58);&quot;&gt;p&lt;/span&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-family: monospace; color: rgb(50, 48, 44);&quot;&gt; &lt;/span&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-family: monospace; color: rgb(0, 92, 197);&quot;&gt;style&lt;/span&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-family: monospace; color: rgb(50, 48, 44);&quot;&gt;=&lt;/span&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-family: monospace; color: rgb(3, 47, 98);&quot;&gt;&quot;font-size: 18px; font-weight: 500; color: #080707; margin: 0;&quot;&lt;/span&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-family: monospace; color: rgb(50, 48, 44);&quot;&gt;&amp;gt;{!Opportunity.Budget_Max__c}&amp;lt;/&lt;/span&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-family: monospace; color: rgb(34, 134, 58);&quot;&gt;p&lt;/span&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-family: monospace; color: rgb(50, 48, 44);&quot;&gt;&amp;gt;&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-family: monospace; color: rgb(50, 48, 44);&quot;&gt;            &amp;lt;/&lt;/span&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-family: monospace; color: rgb(34, 134, 58);&quot;&gt;td&lt;/span&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-family: monospace; color: rgb(50, 48, 44);&quot;&gt;&amp;gt;&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-family: monospace; color: rgb(50, 48, 44);&quot;&gt;            &amp;lt;&lt;/span&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-family: monospace; color: rgb(34, 134, 58);&quot;&gt;td&lt;/span&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-family: monospace; color: rgb(50, 48, 44);&quot;&gt; &lt;/span&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-family: monospace; color: rgb(0, 92, 197);&quot;&gt;style&lt;/span&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-family: monospace; color: rgb(50, 48, 44);&quot;&gt;=&lt;/span&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-family: monospace; color: rgb(3, 47, 98);&quot;&gt;&quot;width: 25%; vertical-align: top; padding-left: 12px;&quot;&lt;/span&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-family: monospace; color: rgb(50, 48, 44);&quot;&gt;&amp;gt;&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-family: monospace; color: rgb(50, 48, 44);&quot;&gt;                &amp;lt;&lt;/span&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-family: monospace; color: rgb(34, 134, 58);&quot;&gt;p&lt;/span&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-family: monospace; color: rgb(50, 48, 44);&quot;&gt; &lt;/span&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-family: monospace; color: rgb(0, 92, 197);&quot;&gt;style&lt;/span&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-family: monospace; color: rgb(50, 48, 44);&quot;&gt;=&lt;/span&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-family: monospace; color: rgb(3, 47, 98);&quot;&gt;&quot;font-size: 12px; color: #54698d; margin: 0 0 4px 0;&quot;&lt;/span&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-family: monospace; color: rgb(50, 48, 44);&quot;&gt;&amp;gt;인원 (Headcount)&amp;lt;/&lt;/span&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-family: monospace; color: rgb(34, 134, 58);&quot;&gt;p&lt;/span&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-family: monospace; color: rgb(50, 48, 44);&quot;&gt;&amp;gt;&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-family: monospace; color: rgb(50, 48, 44);&quot;&gt;                &amp;lt;&lt;/span&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-family: monospace; color: rgb(34, 134, 58);&quot;&gt;p&lt;/span&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-family: monospace; color: rgb(50, 48, 44);&quot;&gt; &lt;/span&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-family: monospace; color: rgb(0, 92, 197);&quot;&gt;style&lt;/span&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-family: monospace; color: rgb(50, 48, 44);&quot;&gt;=&lt;/span&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-family: monospace; color: rgb(3, 47, 98);&quot;&gt;&quot;font-size: 18px; font-weight: 500; color: #080707; margin: 0;&quot;&lt;/span&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-family: monospace; color: rgb(50, 48, 44);&quot;&gt;&amp;gt;{!Opportunity.Headcount__c} 명&amp;lt;/&lt;/span&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-family: monospace; color: rgb(34, 134, 58);&quot;&gt;p&lt;/span&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-family: monospace; color: rgb(50, 48, 44);&quot;&gt;&amp;gt;&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-family: monospace; color: rgb(50, 48, 44);&quot;&gt;            &amp;lt;/&lt;/span&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-family: monospace; color: rgb(34, 134, 58);&quot;&gt;td&lt;/span&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-family: monospace; color: rgb(50, 48, 44);&quot;&gt;&amp;gt;&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-family: monospace; color: rgb(50, 48, 44);&quot;&gt;            &amp;lt;&lt;/span&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-family: monospace; color: rgb(34, 134, 58);&quot;&gt;td&lt;/span&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-family: monospace; color: rgb(50, 48, 44);&quot;&gt; &lt;/span&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-family: monospace; color: rgb(0, 92, 197);&quot;&gt;style&lt;/span&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-family: monospace; color: rgb(50, 48, 44);&quot;&gt;=&lt;/span&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-family: monospace; color: rgb(3, 47, 98);&quot;&gt;&quot;width: 50%; vertical-align: top; padding-left: 24px; border-left: 1px solid #e0e0e0;&quot;&lt;/span&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-family: monospace; color: rgb(50, 48, 44);&quot;&gt;&amp;gt;&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-family: monospace; color: rgb(50, 48, 44);&quot;&gt;                &amp;lt;&lt;/span&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-family: monospace; color: rgb(34, 134, 58);&quot;&gt;p&lt;/span&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-family: monospace; color: rgb(50, 48, 44);&quot;&gt; &lt;/span&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-family: monospace; color: rgb(0, 92, 197);&quot;&gt;style&lt;/span&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-family: monospace; color: rgb(50, 48, 44);&quot;&gt;=&lt;/span&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-family: monospace; color: rgb(3, 47, 98);&quot;&gt;&quot;font-size: 12px; color: #54698d; margin: 0 0 4px 0;&quot;&lt;/span&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-family: monospace; color: rgb(50, 48, 44);&quot;&gt;&amp;gt;희망 지점/호실&amp;lt;/&lt;/span&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-family: monospace; color: rgb(34, 134, 58);&quot;&gt;p&lt;/span&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-family: monospace; color: rgb(50, 48, 44);&quot;&gt;&amp;gt;&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-family: monospace; color: rgb(50, 48, 44);&quot;&gt;                &amp;lt;&lt;/span&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-family: monospace; color: rgb(34, 134, 58);&quot;&gt;p&lt;/span&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-family: monospace; color: rgb(50, 48, 44);&quot;&gt; &lt;/span&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-family: monospace; color: rgb(0, 92, 197);&quot;&gt;style&lt;/span&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-family: monospace; color: rgb(50, 48, 44);&quot;&gt;=&lt;/span&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-family: monospace; color: rgb(3, 47, 98);&quot;&gt;&quot;font-size: 14px; font-weight: 500; color: #080707; margin: 0;&quot;&lt;/span&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-family: monospace; color: rgb(50, 48, 44);&quot;&gt;&amp;gt;{!Opportunity.Branch_Account__r.Name} / {!Opportunity.Asset__r.Name}&amp;lt;/&lt;/span&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-family: monospace; color: rgb(34, 134, 58);&quot;&gt;p&lt;/span&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-family: monospace; color: rgb(50, 48, 44);&quot;&gt;&amp;gt;&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-family: monospace; color: rgb(50, 48, 44);&quot;&gt;            &amp;lt;/&lt;/span&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-family: monospace; color: rgb(34, 134, 58);&quot;&gt;td&lt;/span&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-family: monospace; color: rgb(50, 48, 44);&quot;&gt;&amp;gt;&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-family: monospace; color: rgb(50, 48, 44);&quot;&gt;        &amp;lt;/&lt;/span&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-family: monospace; color: rgb(34, 134, 58);&quot;&gt;tr&lt;/span&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-family: monospace; color: rgb(50, 48, 44);&quot;&gt;&amp;gt;&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-family: monospace; color: rgb(50, 48, 44);&quot;&gt;    &amp;lt;/&lt;/span&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-family: monospace; color: rgb(34, 134, 58);&quot;&gt;table&lt;/span&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-family: monospace; color: rgb(50, 48, 44);&quot;&gt;&amp;gt;&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;br&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-family: monospace; color: rgb(50, 48, 44);&quot;&gt;    &amp;lt;&lt;/span&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-family: monospace; color: rgb(34, 134, 58);&quot;&gt;table&lt;/span&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-family: monospace; color: rgb(50, 48, 44);&quot;&gt; &lt;/span&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-family: monospace; color: rgb(0, 92, 197);&quot;&gt;style&lt;/span&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-family: monospace; color: rgb(50, 48, 44);&quot;&gt;=&lt;/span&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-family: monospace; color: rgb(3, 47, 98);&quot;&gt;&quot;width: 100%; border-collapse: collapse; font-size: 13px;&quot;&lt;/span&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-family: monospace; color: rgb(50, 48, 44);&quot;&gt;&amp;gt;&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-family: monospace; color: rgb(50, 48, 44);&quot;&gt;        &amp;lt;&lt;/span&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-family: monospace; color: rgb(34, 134, 58);&quot;&gt;tr&lt;/span&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-family: monospace; color: rgb(50, 48, 44);&quot;&gt;&amp;gt;&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-family: monospace; color: rgb(50, 48, 44);&quot;&gt;            &amp;lt;&lt;/span&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-family: monospace; color: rgb(34, 134, 58);&quot;&gt;td&lt;/span&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-family: monospace; color: rgb(50, 48, 44);&quot;&gt; &lt;/span&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-family: monospace; color: rgb(0, 92, 197);&quot;&gt;style&lt;/span&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-family: monospace; color: rgb(50, 48, 44);&quot;&gt;=&lt;/span&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-family: monospace; color: rgb(3, 47, 98);&quot;&gt;&quot;width: 33.3%;&quot;&lt;/span&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-family: monospace; color: rgb(50, 48, 44);&quot;&gt;&amp;gt;&amp;lt;&lt;/span&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-family: monospace; color: rgb(34, 134, 58);&quot;&gt;b&lt;/span&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-family: monospace; color: rgb(50, 48, 44);&quot;&gt;&amp;gt;투어 날짜:&amp;lt;/&lt;/span&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-family: monospace; color: rgb(34, 134, 58);&quot;&gt;b&lt;/span&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-family: monospace; color: rgb(50, 48, 44);&quot;&gt;&amp;gt; {!Opportunity.Tour_Date__c}&amp;lt;/&lt;/span&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-family: monospace; color: rgb(34, 134, 58);&quot;&gt;td&lt;/span&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-family: monospace; color: rgb(50, 48, 44);&quot;&gt;&amp;gt;&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-family: monospace; color: rgb(50, 48, 44);&quot;&gt;            &amp;lt;&lt;/span&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-family: monospace; color: rgb(34, 134, 58);&quot;&gt;td&lt;/span&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-family: monospace; color: rgb(50, 48, 44);&quot;&gt; &lt;/span&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-family: monospace; color: rgb(0, 92, 197);&quot;&gt;style&lt;/span&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-family: monospace; color: rgb(50, 48, 44);&quot;&gt;=&lt;/span&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-family: monospace; color: rgb(3, 47, 98);&quot;&gt;&quot;width: 33.3%;&quot;&lt;/span&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-family: monospace; color: rgb(50, 48, 44);&quot;&gt;&amp;gt;&amp;lt;&lt;/span&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-family: monospace; color: rgb(34, 134, 58);&quot;&gt;b&lt;/span&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-family: monospace; color: rgb(50, 48, 44);&quot;&gt;&amp;gt;선호 상담:&amp;lt;/&lt;/span&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-family: monospace; color: rgb(34, 134, 58);&quot;&gt;b&lt;/span&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-family: monospace; color: rgb(50, 48, 44);&quot;&gt;&amp;gt; {!Opportunity.Preferred_Consult_Time__c}&amp;lt;/&lt;/span&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-family: monospace; color: rgb(34, 134, 58);&quot;&gt;td&lt;/span&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-family: monospace; color: rgb(50, 48, 44);&quot;&gt;&amp;gt;&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-family: monospace; color: rgb(50, 48, 44);&quot;&gt;            &amp;lt;&lt;/span&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-family: monospace; color: rgb(34, 134, 58);&quot;&gt;td&lt;/span&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-family: monospace; color: rgb(50, 48, 44);&quot;&gt; &lt;/span&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-family: monospace; color: rgb(0, 92, 197);&quot;&gt;style&lt;/span&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-family: monospace; color: rgb(50, 48, 44);&quot;&gt;=&lt;/span&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-family: monospace; color: rgb(3, 47, 98);&quot;&gt;&quot;width: 33.3%;&quot;&lt;/span&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-family: monospace; color: rgb(50, 48, 44);&quot;&gt;&amp;gt;&amp;lt;&lt;/span&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-family: monospace; color: rgb(34, 134, 58);&quot;&gt;b&lt;/span&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-family: monospace; color: rgb(50, 48, 44);&quot;&gt;&amp;gt;선호 입주:&amp;lt;/&lt;/span&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-family: monospace; color: rgb(34, 134, 58);&quot;&gt;b&lt;/span&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-family: monospace; color: rgb(50, 48, 44);&quot;&gt;&amp;gt; {!Opportunity.Preferred_MoveIn_Date__c}&amp;lt;/&lt;/span&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-family: monospace; color: rgb(34, 134, 58);&quot;&gt;td&lt;/span&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-family: monospace; color: rgb(50, 48, 44);&quot;&gt;&amp;gt;&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-family: monospace; color: rgb(50, 48, 44);&quot;&gt;        &amp;lt;/&lt;/span&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-family: monospace; color: rgb(34, 134, 58);&quot;&gt;tr&lt;/span&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-family: monospace; color: rgb(50, 48, 44);&quot;&gt;&amp;gt;&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-family: monospace; color: rgb(50, 48, 44);&quot;&gt;    &amp;lt;/&lt;/span&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-family: monospace; color: rgb(34, 134, 58);&quot;&gt;table&lt;/span&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-family: monospace; color: rgb(50, 48, 44);&quot;&gt;&amp;gt;&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-family: monospace; color: rgb(50, 48, 44);&quot;&gt;    &lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-family: monospace; color: rgb(50, 48, 44);&quot;&gt;    &amp;lt;&lt;/span&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-family: monospace; color: rgb(34, 134, 58);&quot;&gt;hr&lt;/span&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-family: monospace; color: rgb(50, 48, 44);&quot;&gt; &lt;/span&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-family: monospace; color: rgb(0, 92, 197);&quot;&gt;style&lt;/span&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-family: monospace; color: rgb(50, 48, 44);&quot;&gt;=&lt;/span&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-family: monospace; color: rgb(3, 47, 98);&quot;&gt;&quot;border: 0; border-top: 1px solid #e0e0e0; margin: 20px 0;&quot;&lt;/span&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-family: monospace; color: rgb(50, 48, 44);&quot;&gt;&amp;gt;&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;br&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-family: monospace; color: rgb(50, 48, 44);&quot;&gt;    &lt;/span&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-family: monospace; color: rgb(106, 115, 125);&quot;&gt;&amp;lt;!-- Section 3: 니즈 &amp;amp; 노트 --&amp;gt;&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-family: monospace; color: rgb(50, 48, 44);&quot;&gt;    &amp;lt;&lt;/span&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-family: monospace; color: rgb(34, 134, 58);&quot;&gt;div&lt;/span&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-family: monospace; color: rgb(50, 48, 44);&quot;&gt;&amp;gt;&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-family: monospace; color: rgb(50, 48, 44);&quot;&gt;        &amp;lt;&lt;/span&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-family: monospace; color: rgb(34, 134, 58);&quot;&gt;p&lt;/span&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-family: monospace; color: rgb(50, 48, 44);&quot;&gt; &lt;/span&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-family: monospace; color: rgb(0, 92, 197);&quot;&gt;style&lt;/span&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-family: monospace; color: rgb(50, 48, 44);&quot;&gt;=&lt;/span&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-family: monospace; color: rgb(3, 47, 98);&quot;&gt;&quot;font-size: 12px; color: #54698d; margin: 0 0 4px 0;&quot;&lt;/span&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-family: monospace; color: rgb(50, 48, 44);&quot;&gt;&amp;gt;핵심 니즈 &amp;amp; 선호사항&amp;lt;/&lt;/span&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-family: monospace; color: rgb(34, 134, 58);&quot;&gt;p&lt;/span&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-family: monospace; color: rgb(50, 48, 44);&quot;&gt;&amp;gt;&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-family: monospace; color: rgb(50, 48, 44);&quot;&gt;        &amp;lt;&lt;/span&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-family: monospace; color: rgb(34, 134, 58);&quot;&gt;p&lt;/span&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-family: monospace; color: rgb(50, 48, 44);&quot;&gt; &lt;/span&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-family: monospace; color: rgb(0, 92, 197);&quot;&gt;style&lt;/span&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-family: monospace; color: rgb(50, 48, 44);&quot;&gt;=&lt;/span&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-family: monospace; color: rgb(3, 47, 98);&quot;&gt;&quot;font-size: 14px; color: #080707; margin: 0 0 20px 0;&quot;&lt;/span&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-family: monospace; color: rgb(50, 48, 44);&quot;&gt;&amp;gt;&amp;lt;&lt;/span&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-family: monospace; color: rgb(34, 134, 58);&quot;&gt;b&lt;/span&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-family: monospace; color: rgb(50, 48, 44);&quot;&gt;&amp;gt;{!Opportunity.Description}&amp;lt;/&lt;/span&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-family: monospace; color: rgb(34, 134, 58);&quot;&gt;b&lt;/span&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-family: monospace; color: rgb(50, 48, 44);&quot;&gt;&amp;gt; (선호: {!Opportunity.Preferences__c})&amp;lt;/&lt;/span&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-family: monospace; color: rgb(34, 134, 58);&quot;&gt;p&lt;/span&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-family: monospace; color: rgb(50, 48, 44);&quot;&gt;&amp;gt;&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;br&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-family: monospace; color: rgb(50, 48, 44);&quot;&gt;        &amp;lt;&lt;/span&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-family: monospace; color: rgb(34, 134, 58);&quot;&gt;div&lt;/span&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-family: monospace; color: rgb(50, 48, 44);&quot;&gt; &lt;/span&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-family: monospace; color: rgb(0, 92, 197);&quot;&gt;style&lt;/span&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-family: monospace; color: rgb(50, 48, 44);&quot;&gt;=&lt;/span&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-family: monospace; color: rgb(3, 47, 98);&quot;&gt;&quot;background-color: #f3f3f3; padding: 16px; border-radius: 4px;&quot;&lt;/span&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-family: monospace; color: rgb(50, 48, 44);&quot;&gt;&amp;gt;&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-family: monospace; color: rgb(50, 48, 44);&quot;&gt;            &amp;lt;&lt;/span&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-family: monospace; color: rgb(34, 134, 58);&quot;&gt;p&lt;/span&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-family: monospace; color: rgb(50, 48, 44);&quot;&gt; &lt;/span&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-family: monospace; color: rgb(0, 92, 197);&quot;&gt;style&lt;/span&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-family: monospace; color: rgb(50, 48, 44);&quot;&gt;=&lt;/span&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-family: monospace; color: rgb(3, 47, 98);&quot;&gt;&quot;font-size: 12px; font-weight: bold; color: #3e3e3c; margin: 0 0 8px 0;&quot;&lt;/span&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-family: monospace; color: rgb(50, 48, 44);&quot;&gt;&amp;gt;SDR 인계 사항&amp;lt;/&lt;/span&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-family: monospace; color: rgb(34, 134, 58);&quot;&gt;p&lt;/span&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-family: monospace; color: rgb(50, 48, 44);&quot;&gt;&amp;gt;&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-family: monospace; color: rgb(50, 48, 44);&quot;&gt;            &amp;lt;&lt;/span&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-family: monospace; color: rgb(34, 134, 58);&quot;&gt;p&lt;/span&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-family: monospace; color: rgb(50, 48, 44);&quot;&gt; &lt;/span&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-family: monospace; color: rgb(0, 92, 197);&quot;&gt;style&lt;/span&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-family: monospace; color: rgb(50, 48, 44);&quot;&gt;=&lt;/span&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-family: monospace; color: rgb(3, 47, 98);&quot;&gt;&quot;font-size: 13px; color: #3e3e3c; line-height: 1.6; margin: 0;&quot;&lt;/span&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-family: monospace; color: rgb(50, 48, 44);&quot;&gt;&amp;gt;{!Opportunity.SDR_Handover_Note__c}&amp;lt;/&lt;/span&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-family: monospace; color: rgb(34, 134, 58);&quot;&gt;p&lt;/span&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-family: monospace; color: rgb(50, 48, 44);&quot;&gt;&amp;gt;&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-family: monospace; color: rgb(50, 48, 44);&quot;&gt;        &amp;lt;/&lt;/span&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-family: monospace; color: rgb(34, 134, 58);&quot;&gt;div&lt;/span&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-family: monospace; color: rgb(50, 48, 44);&quot;&gt;&amp;gt;&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-family: monospace; color: rgb(50, 48, 44);&quot;&gt;    &amp;lt;/&lt;/span&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-family: monospace; color: rgb(34, 134, 58);&quot;&gt;div&lt;/span&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-family: monospace; color: rgb(50, 48, 44);&quot;&gt;&amp;gt;&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-family: monospace; color: rgb(50, 48, 44);&quot;&gt;&amp;lt;/&lt;/span&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-family: monospace; color: rgb(34, 134, 58);&quot;&gt;div&lt;/span&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); font-family: monospace; color: rgb(50, 48, 44);&quot;&gt;&amp;gt;&lt;/span&gt;&lt;/p&gt;</text>
+    </textTemplates>
+    <textTemplates>
+        <name>box4</name>
+        <isViewedAsPlainText>true</isViewedAsPlainText>
+        <text>&lt;div style=&quot;font-family: &apos;Salesforce Sans&apos;, sans-serif; width: 100%; box-sizing: border-box; line-height: 1.1;&quot;&gt;
+
+    &lt;div style=&quot;margin-bottom: 8px;&quot;&gt;
+        &lt;p style=&quot;font-size: 11px; color: #0176d3; font-weight: 700; margin: 0 0 2px 0; text-transform: uppercase; letter-spacing: -0.5px;&quot;&gt;Client &amp; Tour&lt;/p&gt;
+        &lt;h2 style=&quot;margin: 0; font-size: 20px; font-weight: 800; color: #080707; line-height: 1;&quot;&gt;
+            {!Opportunity.Account.Name}
+            &lt;span style=&quot;font-weight: 400; color: #706e6b; font-size: 16px;&quot;&gt; — {!Opportunity.Name}&lt;/span&gt;
+        &lt;/h2&gt;
+    &lt;/div&gt;
+
+    &lt;div style=&quot;background-color: #f5f5f5; border-radius: 6px; padding: 10px; margin-bottom: 8px;&quot;&gt;
+        
+        &lt;table style=&quot;width: 100%; border-collapse: collapse;&quot;&gt;
+            &lt;tr&gt;
+                &lt;td style=&quot;width: 25%; vertical-align: top; border-right: 1px solid #d0d0d0; padding-right: 6px;&quot;&gt;
+                    &lt;p style=&quot;font-size: 10px; color: #5c5c5c; margin: 0;&quot;&gt;예산 (Budget)&lt;/p&gt;
+                    &lt;p style=&quot;font-size: 15px; font-weight: 700; color: #080707; margin: 0;&quot;&gt;{!Opportunity.Budget_Max__c}&lt;/p&gt;
+                &lt;/td&gt;
+                &lt;td style=&quot;width: 15%; vertical-align: top; border-right: 1px solid #d0d0d0; padding-left: 8px;&quot;&gt;
+                    &lt;p style=&quot;font-size: 10px; color: #5c5c5c; margin: 0;&quot;&gt;인원&lt;/p&gt;
+                    &lt;p style=&quot;font-size: 15px; font-weight: 700; color: #080707; margin: 0;&quot;&gt;{!Opportunity.Headcount__c}&lt;/p&gt;
+                &lt;/td&gt;
+                &lt;td style=&quot;width: 60%; vertical-align: top; padding-left: 8px;&quot;&gt;
+                    &lt;p style=&quot;font-size: 10px; color: #5c5c5c; margin: 0;&quot;&gt;희망 지점/호실&lt;/p&gt;
+                    &lt;div style=&quot;font-size: 13px; font-weight: 600; color: #005fb2; margin: 0; line-height: 1.2;&quot;&gt;
+                        {!Opportunity.Branch_Account__r.Name} / {!Opportunity.Asset__r.Name}
+                    &lt;/div&gt;
+                &lt;/td&gt;
+            &lt;/tr&gt;
+        &lt;/table&gt;
+
+        &lt;div style=&quot;margin-top: 8px; background-color: #ffffff; border-left: 3px solid #0176d3; padding: 6px 8px; border-radius: 2px;&quot;&gt;
+             &lt;div style=&quot;display:flex; align-items:center; margin-bottom: 2px;&quot;&gt;
+                &lt;span style=&quot;font-size: 10px; font-weight: 800; color: #0176d3;&quot;&gt;📢 SDR Note &amp; AI Summary&lt;/span&gt;
+             &lt;/div&gt;
+             &lt;p style=&quot;font-size: 12px; color: #333; line-height: 1.3; margin: 0;&quot;&gt;
+                {!Opportunity.SDR_Handover_Note__c}
+             &lt;/p&gt;
+        &lt;/div&gt;
+    &lt;/div&gt;
+
+    &lt;div style=&quot;display: flex; flex-wrap: wrap; gap: 4px; align-items: center;&quot;&gt;
+        &lt;div style=&quot;background: #eef4ff; color: #2e844a; padding: 2px 6px; border-radius: 4px; font-size: 11px; display: inline-block;&quot;&gt;
+            📅 &lt;b&gt;{!Opportunity.Tour_Date__c}&lt;/b&gt;
+        &lt;/div&gt;
+        &lt;div style=&quot;background: #fff03f; color: #5e5200; padding: 2px 6px; border-radius: 4px; font-size: 11px; display: inline-block;&quot;&gt;
+            🔑 입주: &lt;b&gt;{!Opportunity.Preferred_MoveIn_Date__c}&lt;/b&gt;
+        &lt;/div&gt;
+        &lt;div style=&quot;font-size: 11px; color: #555; padding-left: 4px;&quot;&gt;
+            ❤️ 선호: {!Opportunity.Preferences__c}
+        &lt;/div&gt;
+    &lt;/div&gt;
+&lt;/div&gt;</text>
+    </textTemplates>
+    <variables>
+        <name>recordId</name>
+        <dataType>String</dataType>
+        <isCollection>false</isCollection>
+        <isInput>true</isInput>
+        <isOutput>false</isOutput>
+    </variables>
+</Flow>
