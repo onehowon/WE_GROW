@@ -153,4 +153,3 @@ public without sharing class GetMessagingUserContext {
         public String branchName;
     }
 }
-

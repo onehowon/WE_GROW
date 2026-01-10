@@ -42,7 +42,6 @@ public without sharing class EscalateToHumanAgent {
             
             try {
                 MessagingSession session = new MessagingSession(Id = request.sessionId);
-                session.OwnerId = queueId;
                 session.Is_Escalated_c__c = true;
                 update session;
                 

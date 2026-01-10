@@ -21,14 +21,12 @@ public class InvokeTransferFlow {
             sessionsToUpdate.add(session);
         }
         
-        String updateError = '';
         if (!sessionsToUpdate.isEmpty()) {
             try {
                 update sessionsToUpdate;
-                System.debug('Successfully updated Is_Escalated_c__c to true for sessions: ' + sessionIds);
             } catch (Exception e) {
-                updateError = 'Session Update Failed: ' + e.getMessage();
-                System.debug(updateError);
+                System.debug('Error updating MessagingSession: ' + e.getMessage());
+                // 업데이트 실패하더라도 Flow 시도는 계속 진행
             }
         }
         
@@ -44,14 +42,10 @@ public class InvokeTransferFlow {
                 transferFlow.start();
                 
                 res.isSuccess = true;
-                if (String.isNotBlank(updateError)) {
-                     res.message = 'Flow Started but ' + updateError;
-                } else {
-                     res.message = '상담사 연결 및 에스컬레이션 상태 업데이트 완료.';
-                }
+                res.message = '상담사 연결 요청이 완료되었습니다.';
             } catch (Exception e) {
                 res.isSuccess = false;
-                res.message = 'Flow Failed: ' + e.getMessage() + ' | ' + updateError;
+                res.message = '오류 발생: ' + e.getMessage();
             }
             results.add(res);
         }
