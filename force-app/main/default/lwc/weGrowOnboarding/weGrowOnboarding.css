@@ -1,0 +1,204 @@
+/* 전체 레이아웃: 좌우 50:50 분할 */
+.landing-container {
+    display: flex;
+    width: 100%;
+    height: 100vh; /* 전체 화면 높이 */
+    background: #ffffff;
+    font-family: 'Salesforce Sans', sans-serif;
+    overflow: hidden;
+}
+
+/* 왼쪽: 브랜드 섹션 (네이비 배경) */
+.brand-section {
+    flex: 1;
+    background: linear-gradient(135deg, #1a2634 0%, #0d1219 100%); /* WeGrow Dark Navy */
+    color: white;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 80px;
+    position: relative;
+    overflow: hidden;
+}
+
+.brand-content {
+    position: relative;
+    z-index: 2;
+    max-width: 600px;
+}
+
+.brand-logo {
+    width: 140px;
+    margin-bottom: 50px;
+    filter: brightness(0) invert(1); /* 로고를 흰색으로 변경 */
+}
+
+.main-title {
+    font-size: 4rem;
+    font-weight: 800;
+    line-height: 1.1;
+    margin-bottom: 30px;
+    letter-spacing: -1px;
+}
+
+.sub-text {
+    font-size: 1.2rem;
+    line-height: 1.6;
+    color: #a0b0c0;
+    margin-bottom: 50px;
+}
+
+.sub-text strong {
+    color: #4b9fe1; /* 포인트 블루 */
+}
+
+.feature-list {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.feature-item {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    font-size: 1.1rem;
+    font-weight: 500;
+    color: #e0e0e0;
+}
+
+.feature-item .icon {
+    background: rgba(255,255,255,0.1);
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+}
+
+/* 배경 원형 데코 */
+.circle-bg {
+    position: absolute;
+    width: 800px;
+    height: 800px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(75, 159, 225, 0.1) 0%, rgba(0,0,0,0) 70%);
+    top: -200px;
+    right: -200px;
+    z-index: 1;
+}
+
+/* 오른쪽: 액션 섹션 (흰색 배경) */
+.action-section {
+    flex: 0.8;
+    background: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 60px;
+}
+
+.login-box {
+    width: 100%;
+    max-width: 450px;
+    padding: 20px;
+}
+
+.header-text {
+    margin-bottom: 40px;
+}
+
+.header-text h2 {
+    font-size: 2.2rem;
+    font-weight: 700;
+    color: #1a2634;
+    margin-bottom: 10px;
+}
+
+.header-text p {
+    color: #888;
+}
+
+.input-group {
+    margin-bottom: 25px;
+}
+
+.input-group label {
+    display: block;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #555;
+    margin-bottom: 8px;
+}
+
+.we-input {
+    width: 100%;
+    padding: 16px;
+    border: 2px solid #eef2f7;
+    border-radius: 12px;
+    font-size: 1rem;
+    transition: all 0.3s;
+    outline: none;
+    background: #f8fbff;
+}
+
+.we-input:focus {
+    border-color: #0070d2;
+    background: #fff;
+}
+
+.btn-primary {
+    width: 100%;
+    padding: 16px;
+    background: #0070d2;
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: transform 0.2s;
+    margin-bottom: 25px;
+}
+
+.btn-primary:hover {
+    background: #005fb2;
+    transform: translateY(-2px);
+}
+
+.footer-info {
+    text-align: center;
+    font-size: 0.8rem;
+    color: #ccc;
+    line-height: 1.5;
+    margin-top: 40px;
+}
+
+/* 애니메이션 */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateX(-20px); }
+    to { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fade-in { animation: fadeIn 1s ease forwards; }
+.animate-fade-up { animation: fadeUp 0.8s ease 0.3s forwards; opacity: 0; }
+
+/* 모바일 반응형 */
+@media (max-width: 1024px) {
+    .landing-container {
+        flex-direction: column;
+        height: auto;
+    }
+    .brand-section {
+        padding: 60px 40px;
+    }
+    .action-section {
+        padding: 40px 20px;
+    }
+}

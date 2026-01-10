@@ -1,0 +1,168 @@
+<template>
+    <div class="dashboard-container">
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <img src={logoUrl} alt="WE:GROW" class="sidebar-logo"/>
+                <p class="sidebar-tagline">Work Smart, Grow Together</p>
+            </div>
+
+            <nav class="sidebar-nav">
+                <div class="nav-item active" onclick={navigateToDashboard}>
+                    <span class="nav-icon">📊</span>
+                    <span>대시보드</span>
+                </div>
+                <div class="nav-item" onclick={navigateToMyOffice}>
+                    <span class="nav-icon">🏢</span>
+                    <span>나의 오피스</span>
+                </div>
+                <div class="nav-item" onclick={navigateToCharge}>
+                    <span class="nav-icon">💰</span>
+                    <span>계약 및 청구</span>
+                </div>
+                <div class="nav-item" onclick={navigateToService}>
+                    <span class="nav-icon">🔧</span>
+                    <span>시설 및 민원</span>
+                    <span class="badge">3</span>
+                </div>
+            </nav>
+
+            <div class="sidebar-footer">
+                <div class="user-profile">
+                    <div class="user-avatar">👤</div>
+                    <div class="user-info">
+                        <p class="user-name">박재정 매니저</p>
+                        <p class="user-role">김재웅님의 파트너</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="main-content">
+            <div class="page-header">
+                <div class="header-left">
+                    <div class="welcome-badge">
+                        <span class="emoji">👋</span>
+                        <span>입주 준비가 진행 중입니다</span>
+                    </div>
+                    <p class="contract-date">계약 진행일: 2024년 10월 25일 (D-12)</p>
+                </div>
+                <button class="btn-action">사항별 문의하기</button>
+            </div>
+
+            <div class="progress-section">
+                <div class="progress-bar-wrapper">
+                    <div class="progress-step completed">
+                        <div class="step-indicator"></div>
+                        <p class="step-label">계약 체결 완료</p>
+                    </div>
+                    <div class="progress-line completed"></div>
+                    <div class="progress-step completed">
+                        <div class="step-indicator"></div>
+                        <p class="step-label">보증금 확인</p>
+                    </div>
+                    <div class="progress-line active"></div>
+                    <div class="progress-step active">
+                        <div class="step-indicator"></div>
+                        <p class="step-label">입주 세팅 중</p>
+                    </div>
+                    <div class="progress-line"></div>
+                    <div class="progress-step">
+                        <div class="step-indicator"></div>
+                        <p class="step-label">청구 입금</p>
+                    </div>
+                    <div class="progress-line"></div>
+                    <div class="progress-step">
+                        <div class="step-indicator"></div>
+                        <p class="step-label">입주 완료</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="dashboard-section">
+                <div class="section-header">
+                    <h2 class="dashboard-title">입주 현황 대시보드</h2>
+                </div>
+
+                <div class="cards-grid">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>계약 공간</h3>
+                            <span class="badge-success">계약 완료</span>
+                        </div>
+                        <div class="card-body">
+                            <h2 class="location-title">강남 1호점</h2>
+                            <p class="location-detail">1동, 303호 (26호실)</p>
+                            
+                            <div class="info-list">
+                                <div class="info-row">
+                                    <span class="info-label">층별 카드</span>
+                                    <span class="info-value">20개 공급 예정</span>
+                                </div>
+                                <div class="info-row">
+                                    <span class="info-label">주차 배정</span>
+                                    <span class="info-value">무료 2대</span>
+                                </div>
+                                <div class="info-row">
+                                    <span class="info-label">모바일 크기</span>
+                                    <span class="info-value">업무 환경 공간</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>이번 달 청구 예정액</h3>
+                        </div>
+                        <div class="card-body">
+                            <h2 class="billing-amount">5,500,000 원</h2>
+                            <p class="billing-note">(VAT 포함 기준)</p>
+                            
+                            <div class="billing-breakdown">
+                                <div class="breakdown-row">
+                                    <span class="breakdown-label">월 임대료</span>
+                                    <span class="breakdown-value">5,000,000 원</span>
+                                </div>
+                                <div class="breakdown-row">
+                                    <span class="breakdown-label">관리비</span>
+                                    <span class="breakdown-value">500,000 원</span>
+                                </div>
+                                <div class="breakdown-row highlight">
+                                    <span class="breakdown-label">입주 할인율 (특별)</span>
+                                    <span class="breakdown-value discount">0 원 (면제)</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card card-wide">
+                        <div class="card-header">
+                            <h3>빠른 요청 현황</h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="request-list">
+                                <div class="request-item">
+                                    <div class="request-icon">📝</div>
+                                    <div class="request-content">
+                                        <h4>입주 전 체크 사항 (28건)</h4>
+                                        <p>마감일: 10월 25일 오후 1시 (D-3)</p>
+                                    </div>
+                                    <button class="btn-status active">진행중</button>
+                                </div>
+                                <div class="request-item">
+                                    <div class="request-icon">🔑</div>
+                                    <div class="request-content">
+                                        <h4>네트워크/보안 세팅</h4>
+                                        <p>마감일: 10월 25일 오후 4시 (D-3)</p>
+                                    </div>
+                                    <button class="btn-status">대기</button>
+                                </div>
+                            </div>
+                            <button class="btn-add-request">+ 새로운 민원 신청하기</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</template>

@@ -1,0 +1,437 @@
+.contract-container {
+    display: flex;
+    width: 100%;
+    min-height: 100vh;
+    background: #f5f7fa;
+    font-family: 'Salesforce Sans', sans-serif;
+}
+
+.sidebar {
+    width: 280px;
+    background: linear-gradient(180deg, #1a2634 0%, #0d1219 100%);
+    color: white;
+    display: flex;
+    flex-direction: column;
+    padding: 30px 20px;
+    box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.sidebar-header {
+    margin-bottom: 40px;
+}
+
+.sidebar-logo {
+    width: 120px;
+    margin-bottom: 10px;
+    filter: brightness(0) invert(1);
+}
+
+.sidebar-tagline {
+    font-size: 0.75rem;
+    color: #a0b0c0;
+    margin: 0;
+}
+
+.sidebar-nav {
+    flex: 1;
+}
+
+.nav-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 16px;
+    margin-bottom: 8px;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.3s;
+    font-size: 0.95rem;
+}
+
+.nav-item:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.nav-item.active {
+    background: #0070d2;
+    font-weight: 600;
+}
+
+.nav-icon {
+    font-size: 1.2rem;
+}
+
+.sidebar-footer {
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    padding-top: 20px;
+}
+
+.user-profile {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+}
+
+.user-avatar {
+    width: 40px;
+    height: 40px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+}
+
+.user-info {
+    flex: 1;
+}
+
+.user-name {
+    margin: 0;
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+.user-role {
+    margin: 0;
+    font-size: 0.75rem;
+    color: #a0b0c0;
+}
+
+.main-content {
+    flex: 1;
+    padding: 30px 40px;
+    overflow-y: auto;
+}
+
+.page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+}
+
+.page-title {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: #1a2634;
+    margin: 0;
+}
+
+.btn-download {
+    padding: 12px 24px;
+    background: white;
+    border: 2px solid #0070d2;
+    border-radius: 10px;
+    color: #0070d2;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.btn-download:hover {
+    background: #0070d2;
+    color: white;
+}
+
+.contract-header-card {
+    background: white;
+    padding: 30px;
+    border-radius: 16px;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+    margin-bottom: 30px;
+}
+
+.contract-info-section {
+    margin-bottom: 24px;
+}
+
+.contract-main-title {
+    font-size: 1.8rem;
+    font-weight: 800;
+    color: #1a2634;
+    margin: 0 16px 8px 0;
+    display: inline-block;
+}
+
+.status-badge {
+    display: inline-block;
+    padding: 6px 16px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+
+.status-badge.active {
+    background: #e6f4ea;
+    color: #1e8e3e;
+}
+
+.contract-subtitle {
+    font-size: 0.9rem;
+    color: #666;
+    margin: 8px 0 0 0;
+}
+
+.contract-details-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+}
+
+.detail-box {
+    background: #f8fbff;
+    padding: 20px;
+    border-radius: 12px;
+    border-left: 4px solid #0070d2;
+}
+
+.detail-label {
+    font-size: 0.85rem;
+    color: #666;
+    margin: 0 0 8px 0;
+}
+
+.detail-value {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: #1a2634;
+    margin: 0 0 8px 0;
+}
+
+.detail-note {
+    font-size: 0.8rem;
+    color: #0070d2;
+    margin: 0;
+}
+
+.content-grid {
+    display: grid;
+    grid-template-columns: 1fr 400px;
+    gap: 24px;
+}
+
+.billing-section {
+    background: white;
+    padding: 24px;
+    border-radius: 16px;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+}
+
+.section-header-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.section-header-row h3 {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: #1a2634;
+    margin: 0;
+}
+
+.year-selector {
+    padding: 8px 16px;
+    border: 2px solid #eef2f7;
+    border-radius: 8px;
+    background: white;
+    color: #1a2634;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.year-selector:hover {
+    border-color: #0070d2;
+}
+
+.billing-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.billing-table thead {
+    background: #f8fbff;
+}
+
+.billing-table th {
+    padding: 14px 16px;
+    text-align: left;
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: #666;
+    border-bottom: 2px solid #eef2f7;
+}
+
+.billing-table td {
+    padding: 16px;
+    border-bottom: 1px solid #eef2f7;
+    font-size: 0.95rem;
+}
+
+.billing-table tr.urgent {
+    background: #fff3e0;
+}
+
+.due-date {
+    color: #ff6b35;
+    font-weight: 600;
+}
+
+.status-tag {
+    display: inline-block;
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+
+.status-tag.paid {
+    background: #e6f4ea;
+    color: #1e8e3e;
+}
+
+.status-tag.unpaid {
+    background: #fce8e6;
+    color: #d93025;
+}
+
+.link-pdf {
+    color: #0070d2;
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.link-pdf:hover {
+    text-decoration: underline;
+}
+
+.info-section {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+.info-card {
+    background: white;
+    padding: 24px;
+    border-radius: 16px;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+}
+
+.card-title {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: #1a2634;
+    margin: 0 0 20px 0;
+}
+
+.card-header-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.card-header-row h3 {
+    margin: 0;
+}
+
+.link-edit {
+    color: #0070d2;
+    font-size: 0.9rem;
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.link-edit:hover {
+    text-decoration: underline;
+}
+
+.account-info-highlight {
+    background: #f0f8ff;
+    padding: 20px;
+    border-radius: 12px;
+    border: 2px solid #0070d2;
+    margin-bottom: 16px;
+}
+
+.account-label {
+    font-size: 0.85rem;
+    color: #666;
+    margin: 0 0 8px 0;
+}
+
+.account-number {
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: #0070d2;
+    margin: 0 0 8px 0;
+}
+
+.account-holder {
+    font-size: 0.95rem;
+    color: #1a2634;
+    font-weight: 600;
+    margin: 0;
+}
+
+.info-note {
+    font-size: 0.85rem;
+    color: #666;
+    line-height: 1.6;
+    margin: 0 0 12px 0;
+}
+
+.tax-info-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.tax-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 12px;
+    background: #f8fbff;
+    border-radius: 8px;
+}
+
+.tax-label {
+    font-size: 0.9rem;
+    color: #666;
+}
+
+.tax-value {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #1a2634;
+}
+
+.inquiry-hours {
+    font-size: 1rem;
+    color: #1a2634;
+    font-weight: 600;
+    margin: 0;
+}
+
+@media (max-width: 1024px) {
+    .content-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .contract-details-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .contract-container {
+        flex-direction: column;
+    }
+    
+    .sidebar {
+        width: 100%;
+    }
+}

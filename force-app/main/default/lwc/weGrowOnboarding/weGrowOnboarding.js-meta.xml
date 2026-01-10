@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LightningComponentBundle xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>59.0</apiVersion>
+    <isExposed>true</isExposed>
+    <masterLabel>WeGrow Welcome Screen</masterLabel>
+    <description>WeGrow 내부 직원 및 외부 고객용 온보딩 화면입니다.</description>
+    <targets>
+        <!-- 내부 앱용 -->
+        <target>lightning__AppPage</target>
+        <target>lightning__HomePage</target>
+        <target>lightning__RecordPage</target>
+        
+        <!-- ★ 외부 고객 포털(Experience Cloud)용 ★ -->
+        <target>lightningCommunity__Page</target>
+        <target>lightningCommunity__Default</target>
+    </targets>
+</LightningComponentBundle>
