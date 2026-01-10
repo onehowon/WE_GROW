@@ -143,21 +143,20 @@
     <allowInChatterGroups>false</allowInChatterGroups>
     <compactLayoutAssignment>SYSTEM</compactLayoutAssignment>
     <deploymentStatus>Deployed</deploymentStatus>
-    <description>채팅 시작 시 사용자 컨텍스트를 임시 저장하는 객체</description>
-    <enableActivities>false</enableActivities>
+    <enableActivities>true</enableActivities>
     <enableBulkApi>true</enableBulkApi>
     <enableFeeds>false</enableFeeds>
     <enableHistory>false</enableHistory>
     <enableLicensing>false</enableLicensing>
-    <enableReports>false</enableReports>
+    <enableReports>true</enableReports>
     <enableSearch>false</enableSearch>
     <enableSharing>true</enableSharing>
     <enableStreamingApi>true</enableStreamingApi>
-    <externalSharingModel>Private</externalSharingModel>
-    <label>Chat Context</label>
+    <externalSharingModel>ReadWrite</externalSharingModel>
+    <label>Invoice</label>
     <nameField>
-        <displayFormat>CTX-{0000}</displayFormat>
-        <label>Context Number</label>
+        <displayFormat>INV-{0000}</displayFormat>
+        <label>Invoice Number</label>
         <type>AutoNumber</type>
     </nameField>
     <searchLayouts></searchLayouts>

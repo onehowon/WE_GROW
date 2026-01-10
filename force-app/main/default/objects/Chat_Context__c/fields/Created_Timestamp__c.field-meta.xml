@@ -3,5 +3,6 @@
     <fullName>Created_Timestamp__c</fullName>
     <label>Created Timestamp</label>
     <required>false</required>
+    <trackTrending>false</trackTrending>
     <type>DateTime</type>
 </CustomField>

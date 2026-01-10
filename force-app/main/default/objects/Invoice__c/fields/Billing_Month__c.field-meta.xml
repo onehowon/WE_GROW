@@ -1,11 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
-    <fullName>Branch_Name__c</fullName>
-    <externalId>false</externalId>
-    <label>Branch Name</label>
-    <length>255</length>
+    <fullName>Billing_Month__c</fullName>
+    <description>청구 기준월</description>
+    <label>청구월</label>
     <required>false</required>
     <trackTrending>false</trackTrending>
-    <type>Text</type>
-    <unique>false</unique>
+    <type>Date</type>
 </CustomField>

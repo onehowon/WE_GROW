@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Status__c</fullName>
+    <description>청구 상태</description>
+    <inlineHelpText>(선택) 청구서의 납부 상태</inlineHelpText>
+    <label>상태</label>
+    <required>false</required>
+    <trackTrending>false</trackTrending>
+    <type>Picklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>미납 (Unpaid)</fullName>
+                <default>true</default>
+                <label>미납 (Unpaid)</label>
+            </value>
+            <value>
+                <fullName>납부완료 (Paid)</fullName>
+                <default>false</default>
+                <label>납부완료 (Paid)</label>
+            </value>
+            <value>
+                <fullName>연체 (Overdue)</fullName>
+                <default>false</default>
+                <label>연체 (Overdue)</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>
