@@ -41,6 +41,7 @@ WE:GROW는 기존 공유오피스 시장의 물리적 공간 임대 서비스를
 
 ## 🎞 Demo
 [Sales 시연영상보기](https://github.com/user-attachments/assets/1d4487bd-bc4f-489e-a926-230f1e5acc1f)
+<br/>
 [Service 시연영상보기](https://github.com/user-attachments/assets/9015b1af-e041-4fea-a6e7-7b38bffa4b6a)
 <br/>
 
@@ -50,73 +51,77 @@ WE:GROW는 기존 공유오피스 시장의 물리적 공간 임대 서비스를
 - **자동 레코드 생성**: 수집된 정보를 바탕으로 Salesforce 내에 Case 레코드를 즉시 생성하고 적절한 카테고리를 할당합니다.
 - **비즈니스 가치**: 수동 데이터 입력 시간을 단축하고, 지점별 민원 통계를 자동화하여 운영 효율성을 높입니다.
 
-![Agentforce 기반 지능형 유지보수 접수](<img width="1893" height="937" alt="image" src="https://github.com/user-attachments/assets/e5a66330-ee9a-498d-988a-400a8920dfdb" />)
-![Service Cloud 대시보드](<img width="1917" height="848" alt="image" src="https://github.com/user-attachments/assets/2fdfeaab-23d2-4185-8240-da23e94b2254" />)
+![Agentforce 기반 지능형 유지보수 접수](<img width="1893" height="937" alt="스크린샷 2026-01-11 104931" src="https://github.com/user-attachments/assets/0ae640fa-6bc1-4de2-9b5a-1a1df764edd0" />)
+![Service Cloud 대시보드](<img width="1917" height="848" alt="스크린샷 2026-01-11 105148" src="https://github.com/user-attachments/assets/19a2b06e-3657-4b77-aaae-b7ce4e4d2274" />)
+
 
 - **하이브리드 리드(Lead) 수집 시스템** : 마케팅 효과를 극대화하기 위해 표준 UI의 제약을 극복한 맞춤형 UI를 제공합니다.
 - **중앙 집중형 커스텀 UI**: 페이지 우측 하단의 표준 위젯 대신, 랜딩 페이지 중앙에 위치한 Apex/LWC 기반 채팅창을 통해 시선을 집중시킵니다.
 - **실시간 데이터 검증**: 연락처 형식이나 중복 여부를 Apex 로직을 통해 실시간으로 검증하여 고품질의 리드 데이터만 CRM에 적재합니다.
 - **비즈니스 가치**: 첫 방문자의 전환율(Conversion Rate)을 높이고 마케팅 데이터의 신뢰성을 확보합니다.
 
-![리드 유입 페이지](<img width="1896" height="939" alt="image" src="https://github.com/user-attachments/assets/ac2642b5-5ab0-4502-a75e-27936cff81c0" />)
-![리드 유입 페이지](<img width="1895" height="932" alt="image" src="https://github.com/user-attachments/assets/e849ee95-56a1-4718-8d94-76358383e913" />)
+![리드 유입 페이지](<img width="1896" height="939" alt="스크린샷 2026-01-11 105302" src="https://github.com/user-attachments/assets/5b8c3c47-91bc-4e63-8291-608c65ecbb09" />)
+![리드 유입 페이지](<img width="1895" height="932" alt="스크린샷 2026-01-11 105328" src="https://github.com/user-attachments/assets/86a93fba-be10-4a55-8321-81e036b49c17" />)
 
 - **심리스(Seamless) 상담사 에스컬레이션** : AI가 해결하기 어려운 문제는 옴니채널을 통해 실시간으로 전문 상담사에게 인계합니다.
 - **지능형 라우팅**: Autolaunched Flow와 Route Work 액션을 연동하여 대기열(Queue)에 있는 상담사에게 알림을 보냅니다.
 - **응답 제어(Turn Management)**: 상담사 연결 즉시 에이전트의 권한을 중단시키는 System Escalation 설정을 통해 대화 간섭을 방지합니다.
 - **비즈니스 가치**: 24/7 대응 체계를 구축함과 동시에, 고난도 문의에 대한 고객 만족도를 유지합니다.
 
-![상담사 에스컬레이션](<img width="1901" height="779" alt="image" src="https://github.com/user-attachments/assets/cb1a2a54-cb63-4de4-b2f5-d02050598ad1" />)
+![상담사 에스컬레이션](<img width="1901" height="779" alt="스크린샷 2026-01-11 105512" src="https://github.com/user-attachments/assets/27d3884b-1bff-44e4-937d-97a89bf21f1f" />)
 
 - **AI 기반 계약 확인 및 오딧(Audit) 자동화** : 계약 과정에서의 오류를 방지하기 위해 AI가 문서를 검토하고 알림을 발송합니다
 
-![AI 기반 계약 검수](<img width="1911" height="934" alt="image" src="https://github.com/user-attachments/assets/65504d02-f2a8-47b4-888c-38d78673bc58" />)
+![AI 기반 계약 검수](<img width="1911" height="934" alt="스크린샷 2026-01-11 105652" src="https://github.com/user-attachments/assets/7a9bb728-d082-4726-b6c3-7cfe5d9e6db6" />)
 
 <br/>
 
 ## 🔨 프로젝트 구조
-![아키텍처](https://firebasestorage.googleapis.com/v0/b/fir-readme-storage.appspot.com/o/%E1%84%89%E1%85%B3%E1%84%8F%E1%85%B3%E1%84%85%E1%85%B5%E1%86%AB%E1%84%89%E1%85%A3%E1%86%BA%202022-06-02%20%E1%84%8B%E1%85%A9%E1%84%92%E1%85%AE%2011.19.37.png?alt=media&token=79093ff3-9c0a-40fd-8721-f0fa54625694)
+- 세일즈포스 DX(SFDX) 표준 구조를 따르며, 핵심 로직은 다음과 같이 분류되어 있습니다.
+![아키텍처](<img width="2816" height="1536" alt="Gemini_Generated_Image_8lgxm8lgxm8lgxm8" src="https://github.com/user-attachments/assets/3b719f7a-19b2-4957-9971-0395b2eb8e62" />)
 
 <br/>
 
 ## 🔧 Stack
 
 **Frontend(Web)**
-- **Language** : JavaScript, TypeScript
-- **Library & Framework** : React, Styled-Components, Axios, Recoil, React-Quill, React-Rnd, React-To-Pdf
-- **Deploy**: AWS(S3)
+- **Language** : JavaScript (ES6+), HTML, CSS
+- **Library & Framework** : Lightning Web Components (LWC), SLDS (Salesforce Lightning Design System)
+- **Component** : Custom Central Lead Chat UI, Messaging for In-App and Web (MIAW)
+- **Tools** : Salesforce Lightning Experience, VS Code (SFDX)
 <br />
 
 **Backend**
-- **Language** : Java 
-- **Library & Framework** : Spring Boot
-- **Database** : MySQLDB
-- **ORM** : JPA
-- **Deploy**: AWS(EC2, RDS), Firebase(Storage)
+- **Language** : Apex 
+- **AI Engine** : Agentforce (Agent Builder, Prompt Builder - AI_real)
+- **Automation** : Flow Builder (Autolaunched Flow, Omni-Channel Flow, Email Flow)
+- **Database** : Salesforce Objects (Case, Lead, Account, MessagingSession, etc.)
+- **Routing** : Omni-Channel (Skills-based/Queue-based Routing)
+- **Security** : Permission Sets, Field-Level Security (FLS), System Escalation
 
 <br/>
 
 ## 💡 기대효과
 
-**자신이 만든 포트폴리오 양식을 웹 사이트에서 관리 및 공유를 할 수 있어 인터넷에 연결만 되어 있다면 언제 어디서든 디자인을 할 수 있다.**
+**운영 효율성 극대화**: AI 에이전트의 24/7 민원 대응으로 MTTR(평균 처리 시간)을 50% 이상 단축하고 인적 리소스를 고난도 케어에 집중시킵니다.
 
-**드래그 앤 드롭 (DND) 기술과 이를 활용하는 법에 대해 학습할 수 있다.**
+**고객 경험 완성도 향상**: 심리스한 상담사 핸드오버와 실시간 피드백 시스템을 통해 고객 만족도(CSAT)를 높이고 이탈률을 효과적으로 방지합니다.
 
-**데이터 형성과 상태관리, 구축 기술, 서비스 배포에 대해 학습할 수 있다.**
+**마케팅 성과 및 데이터 무결성**: 전략적 커스텀 UI로 리드 전환율을 높이며, Apex 실시간 검증을 통해 CRM 데이터의 신뢰성을 확보합니다.
 
-**RESTful API를 적용한 프론트엔드&백엔드 간의 통신을 학습할 수 있다.**
+**지속 가능한 비즈니스 확장성**: 중앙 집중형 AI 아키텍처를 활용하여 추가 인력 충원 없이도 신규 지점으로 서비스를 빠르게 확장할 수 있습니다.
 
 <br/>
 
 ## 👍 활용분야
 
-**편의성**: 학생과 취업준비생이 문서 형식에 구애받지 않고 손쉽게 포트폴리오 제작이 가능하다.
+**스마트 공간 및 시설 관리: 공유 오피스, 호텔, 리조트 등 다수 지점의 유지보수 접수와 시설 관리 프로세스를 자동화하여 운영 효율을 높입니다.**
 
-**확장성**: 학생과 취업준비생 뿐만 아니라 기업 등의 고유 양식으로도 제공하여 다양한 분야에 활용할 수 있다.
+**24/7 하이브리드 고객 지원: 전문 상담사 연결(Handoff) 기능과 AI 상담을 결합하여, 업종에 관계없이 중단 없는 고도화된 고객 응대 환경을 구축합니다.**
 
-**수익성**: 사용자가 자신의 디자인을 판매해 수익을 창출할 수 있고 운영자는 판매 수수료를 통하여 수익 창출이 가능하다.
+**고효율 마케팅 및 리드 관리: 정확한 데이터 수집과 커스텀 UI가 필요한 랜딩 페이지에 적용하여 잠재 고객 확보 및 CRM 데이터 적재를 최적화합니다.**
 
-**획일화된 양식**: 제출물을 하나의 디자인 양식으로 관리하여 자료를 분류 및 보관하는데 용이하다.
+**엔터프라이즈 백오피스 자동화: 계약서 검토, 견적서 오딧(Audit), 내부 결제 승인 등 정확도와 속도가 동시에 요구되는 복잡한 행정 업무를 자동화합니다.**
 
 <br/>
 
@@ -125,4 +130,4 @@ WE:GROW는 기존 공유오피스 시장의 물리적 공간 임대 서비스를
 |                                          Backend                                           |                                         Frontend                                          |                                         Frontend                                          |                                         Frontend                                         |             
 | :----------------------------------------------------------------------------------------: | :--------------------------------------------------------------------------------------: | :--------------------------------------------------------------------------------------: | :-------------------------------------------------------------------------------------: | 
 |  |  |  |  | 
-|                            [박정근](https://github.com/JGeun)                            |                           [유준호](https://github.com/yjh-1008)                           |                          [이재영](https://github.com/2jaebbang)                          |                         [이찬우](https://github.com/tigerlcw)                          |                           
+|                            [성원호](https://github.com/onehowon)                            |                           [김민석](https://github.com/yjh-1008)                           |                                                  
