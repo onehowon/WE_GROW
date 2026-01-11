@@ -131,4 +131,4 @@ WE:GROW는 기존 공유오피스 시장의 물리적 공간 임대 서비스를
 | Backend | Frontend | Admin | Admin |
 | :---: | :---: | :---: | :---: |
 | <img src="https://github.com/onehowon.png" width="100"> | <img src="https://github.com/yjh-1008.png" width="100"> | <img src="https://github.com/github.png" width="100"> | <img src="https://github.com/github.png" width="100"> |
-| [성원호](https://github.com/onehowon) | [김민석](https://github.com/yjh-1008) | 이건 | 김우연 |
+| [성원호](https://github.com/onehowon) | [김민석](https://github.com/minseok-lab) | 이건 | 김우연 |
