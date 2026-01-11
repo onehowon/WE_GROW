@@ -50,8 +50,8 @@ WE:GROW는 기존 공유오피스 시장의 물리적 공간 임대 서비스를
 - **자동 레코드 생성**: 수집된 정보를 바탕으로 Salesforce 내에 Case 레코드를 즉시 생성하고 적절한 카테고리를 할당합니다.
 - **비즈니스 가치**: 수동 데이터 입력 시간을 단축하고, 지점별 민원 통계를 자동화하여 운영 효율성을 높입니다.
 
-![Agentforce 기반 지능형 유지보수 접수](<img width="1893" height="937" alt="스크린샷 2026-01-11 104931" src="https://github.com/user-attachments/assets/0ae640fa-6bc1-4de2-9b5a-1a1df764edd0" />)
-![Service Cloud 대시보드](<img width="1917" height="848" alt="스크린샷 2026-01-11 105148" src="https://github.com/user-attachments/assets/19a2b06e-3657-4b77-aaae-b7ce4e4d2274" />)
+<img src="https://github.com/user-attachments/assets/0ae640fa-6bc1-4de2-9b5a-1a1df764edd0" width="100%" alt="Agentforce 기반 지능형 유지보수 접수">
+<img src="https://github.com/user-attachments/assets/19a2b06e-3657-4b77-aaae-b7ce4e4d2274" width="100%" alt="Service Cloud 대시보드">
 
 
 - **하이브리드 리드(Lead) 수집 시스템** : 마케팅 효과를 극대화하기 위해 표준 UI의 제약을 극복한 맞춤형 UI를 제공합니다.
