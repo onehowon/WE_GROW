@@ -1,5 +1,4 @@
-<img width="1893" height="937" alt="image" src="https://github.com/user-attachments/assets/0b6ae7b0-0406-4eda-a97d-2590b5afd7ef" /><p align="middle" >
-  <img width="960" height="672" alt="Salesforce com_logo svg (1)" src="https://github.com/user-attachments/assets/cab61035-cc1f-4fd2-b824-3bee2ae31111" />
+<img width="1024" height="1024" alt="WeGrowLogo" src="https://github.com/user-attachments/assets/44073941-d111-40d6-9ce5-053733de73e0" />
 </p>
 <h1 align="middle">WE:GROW - Agentforce & Omni-Channel Service Hub</h1>
 <h3 align="middle">Salesforce Agentforce와 Omni-Channel을 결합하여 구축한 지능형 유지보수 및 리드 관리 시스템</h3>
